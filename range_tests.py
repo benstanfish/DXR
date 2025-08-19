@@ -4,7 +4,12 @@ import openpyxl.utils
 
 file_path = './output.xlsx'
 
-DEFAULT_FONT.__init__(name='Aptos', size=10.5)
+# normal_font = Font(name='Arial', size=14)
+# openpyxl.styles.DEFAULT_FONT.font = Font(name='Arial', size=14)
+# DEFAULT_FONT.__init__(name='Aptos Narrow', size=15)
+
+# openpyxl.styles.DEFAULT_FONT.name = 'Aptos'
+# print(DEFAULT_FONT.name)
 
 
 wb = Workbook()
