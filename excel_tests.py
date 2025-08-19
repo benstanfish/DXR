@@ -1,6 +1,7 @@
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Fill, Border, Side, Alignment, NamedStyle, Font
 from openpyxl.worksheet.table import Table, TableStyleInfo
+import openpyxl.utils as utils
 
 file_path = './output.xlsx'
 
@@ -20,17 +21,18 @@ for row in tree_data:
 #                                vertical='top',
 #                                wrapText=True)
 
-# font = Font(name='Arial',
-#             size=10,
-#             bold=True,
-#             italic=False,
-#             vertAlign=None,
-#             underline='none',
-#             strike=False,
-#             color='00CC99FF')
+font = Font(name='Arial',
+            size=18,
+            bold=True,
+            italic=False,
+            vertAlign=None,
+            underline='none',
+            strike=False,
+            color='00CC99FF')
 
-# ws['A1'].font = font
-# header_range = ws['C1']
+
+header_range = ws['A1':'C1']
+print(utils.coordinate_to_tuple(header_range))
 # header_range.font = Font(name='Aptos', bold=True, color='FF000000')
 
 
@@ -40,7 +42,7 @@ for row in tree_data:
 # wb.add_named_style(named_style)
 # ws['b3'].style = 'my_style'
 
-my_table = Table(displayName='my_table', ref='A1:C4')
+# my_table = Table(displayName='my_table', ref='A1:C4')
 # has_no_style = True
 # if has_no_style:
 #     style = TableStyleInfo(name='TableStyleMedium9', 
@@ -54,7 +56,7 @@ my_table = Table(displayName='my_table', ref='A1:C4')
 # simply adds a default table style.
 
 
-ws.add_table(my_table)
+# ws.add_table(my_table)
 
 
 
