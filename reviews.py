@@ -1,0 +1,93 @@
+"""Module that provides top-level ProjNet Dr Checks reviews XML parsing functionality"""
+
+from defusedxml import ElementTree as ET
+from utils import parse_helper
+
+
+_PROJECT_INFO_INDEX = 0
+_COMMENTS_INDEX = 1
+
+
+class ProjectInfo():
+    
+    def __init__(self, 
+                 project_id,
+                 control_number,
+                 project_name,
+                 review_id,
+                 review_name):
+        self._project_id = project_id
+        self._control_number = control_number
+        self._project_name = project_name
+        self._review_id = review_id
+        self._review_name = review_name
+
+    @classmethod
+    def from_tree(cls, element):
+        project_id = parse_helper('ProjectID', element)
+        control_number = parse_helper('ProjectControlNbr', element)
+        project_name = parse_helper('ProjectName', element)
+        review_id = parse_helper('ReviewID', element)
+        review_name = parse_helper('ReviewName', element)
+        return ProjectInfo(project_id=project_id,
+                           control_number=control_number,
+                           project_name=project_name,
+                           review_id=review_id,
+                           review_name=review_name)
+
+    @property
+    def project_id(self):
+        return self._project_id
+    
+    @property
+    def control_number(self):
+        return self._control_number
+    
+    @property
+    def project_name(self):
+        return self._project_name
+    
+    @property
+    def review_id(self):
+        return self._review_id
+    
+    @property
+    def review_name(self):
+        return self._review_name
+    
+    @property
+    def all_data(self):
+        return {
+            'Project Name': self._project_name,
+            'Project ID': self._project_id,
+            'Control Number': self._control_number,
+            'Review Name': self._review_name,
+            'Review ID': self._review_id
+        }
+
+
+def get_root(path):
+    try:
+        root = ET.parse(path).getroot()
+        if root.tag.lower() == 'projnet': # type: ignore
+            return root
+    except Exception as e:
+        print(e)
+
+def get_review(root):
+    """Returns a tuple of the element nodes for project info and all comments"""
+    return (root[_PROJECT_INFO_INDEX], root[_COMMENTS_INDEX])
+
+def _get_project_info_element(root):
+    # This is a fallback method incase get_review fails
+    try:
+        return root[_PROJECT_INFO_INDEX]
+    except Exception as e:
+        print(e)
+
+def _get_review_comments_element(root):
+    # This is a fallback method incase get_review fails
+    try:
+        return root[_COMMENTS_INDEX]
+    except Exception as e:
+        print(e)

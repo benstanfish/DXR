@@ -13,11 +13,11 @@ class Evaluation():
         self.impact_time = element.find('impactTime').text if element.find('impactTime') is not None else None
         self.text = element.find('evaluationText').text.replace('<br />', '\n') if element.find('evaluationText') is not None else None
         self.attachment = element.find('attachment').text if element.find('attachment') is not None else None
-        self.author = element.find('createdBy').text if element.find('createdBy') is not None else None
+        self.author = element.find('createdBy').text if element.find('createdBy') is not None else None # type: ignore
         self.date = datetime.strptime(element.find('createdOn').text, '%b %d %Y %I:%M %p').isoformat() if element.find('createdOn') is not None else None
 
     @classmethod
-    def from_element(self, element: Element):
+    def from_element(cls, element: Element):
         return Evaluation(element)
 
     def dump(self) -> Dict:
