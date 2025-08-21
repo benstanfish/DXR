@@ -1,6 +1,6 @@
 """ 
-This module defines the abstract class used for deserializing Evaulations
-and Backchecks from ProjNet DrChecks XML reports.
+This module defines the abstract and concrete class used for deserializing
+Evaulations and Backchecks from ProjNet DrChecks XML reports.
 """
 
 from abc import ABC, abstractmethod
@@ -233,3 +233,4 @@ class Backcheck(Reply):
     def evaulation_id(self):
         return self._evaulation_id
     
+
