@@ -5,6 +5,7 @@ ProjNet DrChecks XML reports.
 """
 
 from abc import ABC, abstractmethod
+from typing import List, Dict, Tuple
 from datetime import datetime
 from heapq import merge
 from utils import parse_helper
@@ -225,6 +226,24 @@ class Comment(Remark):
     def print_chronological_responses(self):
         for reply in self.get_chronological_responses:
             print(reply.remark_type) # TODO: need to complete this code
+
+    def get_dict(self) -> Dict:
+        return {
+            'id': self._id,
+            'status': self._status,
+            'discipline': self._discipline,
+            'author': self._author,
+            'date': self._date_created,
+            'comment': self._text,
+            'critical': self._is_critical,
+            'att': self._has_attachment
+        }
+
+    def get_data(self):
+        return {
+            'columns': ['id', 'status', 'discipline'],
+            'value': [self._id, self._status, self._discipline]
+        }
 
 
 class Evaluation(Remark):
