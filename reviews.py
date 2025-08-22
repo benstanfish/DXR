@@ -1,11 +1,39 @@
 """Module that provides top-level ProjNet Dr Checks reviews XML parsing functionality"""
 
+from typing import List, Dict, Tuple
 from defusedxml import ElementTree as ET
 from utils import parse_helper
-
+from remarks import Comment
 
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
+
+
+def get_root(path):
+    try:
+        root = ET.parse(path).getroot()
+        if root.tag.lower() == 'projnet': # type: ignore
+            return root
+    except Exception as e:
+        print(e)
+
+def get_review(root):
+    """Returns a tuple of the element nodes for project info and all comments"""
+    return (root[_PROJECT_INFO_INDEX], root[_COMMENTS_INDEX])
+
+def _get_project_info_element(root):
+    # This is a fallback method incase get_review fails
+    try:
+        return root[_PROJECT_INFO_INDEX]
+    except Exception as e:
+        print(e)
+
+def _get_review_comments_element(root):
+    # This is a fallback method incase get_review fails
+    try:
+        return root[_COMMENTS_INDEX]
+    except Exception as e:
+        print(e)
 
 
 class ProjectInfo():
@@ -66,28 +94,63 @@ class ProjectInfo():
         }
 
 
-def get_root(path):
-    try:
-        root = ET.parse(path).getroot()
-        if root.tag.lower() == 'projnet': # type: ignore
-            return root
-    except Exception as e:
-        print(e)
+class ReviewComments():
 
-def get_review(root):
-    """Returns a tuple of the element nodes for project info and all comments"""
-    return (root[_PROJECT_INFO_INDEX], root[_COMMENTS_INDEX])
+    def __init__(self,
+                 comments: List=[]):
+        self._comments = comments
 
-def _get_project_info_element(root):
-    # This is a fallback method incase get_review fails
-    try:
-        return root[_PROJECT_INFO_INDEX]
-    except Exception as e:
-        print(e)
+    @classmethod
+    def from_tree(cls, element):
+        comments = []
+        for comment in element.findall('comment'):
+            comments.append(Comment.from_tree(comment))
+        return ReviewComments(comments=comments)
+    
+    @property
+    def comments(self):
+        return self._comments
 
-def _get_review_comments_element(root):
-    # This is a fallback method incase get_review fails
-    try:
-        return root[_COMMENTS_INDEX]
-    except Exception as e:
-        print(e)
+    @property
+    def comment_count(self):
+        return len(self._comments)
+
+    @property
+    def max_evaulations_count(self):
+        temp_count = 0
+        for comment in self.comments:
+            if comment.evaluations_count > temp_count:
+                temp_count = comment.evaluations_count 
+        return temp_count
+
+    @property
+    def max_backchecks_count(self):
+        temp_count = 0
+        for comment in self.comments:
+            if comment.backchecks_count > temp_count:
+                temp_count = comment.backchecks_count 
+        return temp_count    
+
+    @property
+    def max_response_counts(self):
+        return (self.max_evaulations_count, 
+                self.max_backchecks_count)
+
+    @property
+    def total_evaulations_count(self):
+        temp_count = 0
+        for comment in self.comments:
+            temp_count += comment.evaluations_count
+        return temp_count
+
+    @property
+    def total_backchecks_count(self):
+        temp_count = 0
+        for comment in self.comments:
+            temp_count += comment.backchecks_count
+        return temp_count
+    
+    @property
+    def total_responses_count(self):
+        return self.total_evaulations_count + self.total_backchecks_count
+    
