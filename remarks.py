@@ -5,7 +5,6 @@ ProjNet DrChecks XML reports.
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Tuple
 from datetime import datetime
 from heapq import merge
 from utils import parse_helper
@@ -13,6 +12,30 @@ from utils import parse_helper
 
 class Remark(ABC):
     """Abstraction of commonalities between Comment, Evaluation and Backcheck classes"""
+
+    @property
+    def attributes_list(self):
+        """Return list of class attribute names, with prefix _ removed."""
+        return [item.replace('_', '', 1) for item in self.__dict__]
+
+    def values_list(self, attrs=[]):
+        """Return a list of values in supplied attrs list or all values if [].
+        
+        The values in the supplied attrs must match the names of the Remark properties
+        except without the private '_' prefix. However, if an empty list (default) is
+        provided all attribute values are returned.
+        """
+        if len(attrs) > 0:
+            _attrs = []
+            for item in attrs:
+                if item == '' or None:
+                    _attrs.append('')
+                else:
+                    _attrs.append(self.__dict__[f'{'_' + item}'])
+            return _attrs
+        else:
+            # For comments, three .pop() will drop the last three items
+            return [self.__dict__[f'{'_' + item}'] for item in self.attributes_list]          
 
     @abstractmethod
     def from_tree(self, xml_element_node):
@@ -227,7 +250,7 @@ class Comment(Remark):
         for reply in self.get_chronological_responses:
             print(reply.remark_type) # TODO: need to complete this code
 
-    def get_dict(self) -> Dict:
+    def get_dict(self):
         return {
             'id': self._id,
             'status': self._status,
@@ -239,11 +262,6 @@ class Comment(Remark):
             'att': self._has_attachment
         }
 
-    def get_data(self):
-        return {
-            'columns': ['id', 'status', 'discipline'],
-            'value': [self._id, self._status, self._discipline]
-        }
 
 
 class Evaluation(Remark):

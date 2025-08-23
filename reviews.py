@@ -7,7 +7,16 @@ from remarks import Comment
 
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
-
+_COMMENT_COLUMNS = ['id', 
+                    'status', 
+                    'discipline',
+                    'author',
+                    '',
+                    'date_created',
+                    'text',
+                    'is_critical',
+                    '',
+                    'has_attachment']
 
 def get_root(path):
     try:

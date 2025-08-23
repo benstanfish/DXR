@@ -1,5 +1,6 @@
 import reviews
-from reviews import ProjectInfo, ReviewComments
+from reviews import ProjectInfo, ReviewComments, _COMMENT_COLUMNS
+import remarks
 import pandas as pd
 
 
@@ -43,10 +44,21 @@ review_comments = ReviewComments.from_tree(review_comments_element)
 # print(review_comments.comments[0].id)
 # print(review_comments.comments[0].get_dict())
 
-# df = pd.DataFrame(review_comments.comments[0].get_dict())
+# df = pd.DataFrame.from_dict(review_comments.comments[0].get_dict(), orient='columns')
+
+
+# print(review_comments.comments[0].get_data())
+# df = pd.DataFrame.from_dict(review_comments.comments[0].get_data(),
+#                             orient='index')
 # print(df)
 
-print(review_comments.comments[0].get_data())
-df = pd.DataFrame.from_dict(review_comments.comments[0].get_data(),
-                            orient='index')
-print(df)
+# for item in review_comments.comments[0].__dict__:
+#     print(item.replace('_', '', 1))
+
+# print(review_comments.comments[0].attributes_list)
+
+attrs = ['id', 'author', 'discipline']
+for item in review_comments.comments[0].values_list(attrs):
+    print(item)
+
+# print(remarks.Remark.values_list.__doc__)
