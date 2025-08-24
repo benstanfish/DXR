@@ -12,6 +12,7 @@ from defusedxml import ElementTree as ET
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
 
+@staticmethod
 def get_root(path):
     try:
         root = ET.parse(path).getroot()
@@ -22,10 +23,12 @@ def get_root(path):
     except Exception as e:
         print(e)
 
+@staticmethod
 def get_review_elements(root):
     """Returns a tuple of the element nodes for project info and all comments"""
     return (root[_PROJECT_INFO_INDEX], root[_COMMENTS_INDEX])
 
+@staticmethod
 def _get_project_info_element(root):
     # This is a fallback method incase get_review fails
     try:
@@ -33,6 +36,7 @@ def _get_project_info_element(root):
     except Exception as e:
         print(e)
 
+@staticmethod
 def _get_review_comments_element(root):
     # This is a fallback method incase get_review fails
     try:
@@ -49,6 +53,7 @@ def clean_text(text):
 
 
 class Review():
+    """Returns a Review object containing project info and review comments objects."""
 
     def __init__(self,
                  project_info=None,
@@ -70,7 +75,8 @@ class Review():
 
 
 class ProjectInfo():
-    
+    """Returns a list of all project identification data in a Dr Checks review."""
+
     def __init__(self, 
                  project_id,
                  control_number,
@@ -108,6 +114,7 @@ class ProjectInfo():
 
 
 class ReviewComments():
+    """Returns list of all Comment objects in a Dr Checks review."""
 
     def __init__(self,
                  comments=[]):
