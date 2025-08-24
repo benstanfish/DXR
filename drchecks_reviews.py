@@ -12,7 +12,6 @@ from defusedxml import ElementTree as ET
 
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
-
 _COMMENT_COLUMNS = {
     'ID': 'id',
     'Status': 'status',
@@ -26,7 +25,6 @@ _COMMENT_COLUMNS = {
     'Att': 'has_attachment',
     'Days Open': 'days_open'
 }
-
 _RESPONSE_COLUMNS = {
     'Status': 'status',
     'Author': 'author',
@@ -34,6 +32,12 @@ _RESPONSE_COLUMNS = {
     'Date': 'date_created',
     'Text': 'text',
     'Att': 'has_attachment'
+}
+_RESPONSE_VALUES = {
+    'concur': 1,
+    'for information only': 2,
+    'non-concur': 3,
+    'check and resolve': 4
 }
 
 def get_root(path):
@@ -47,9 +51,11 @@ def get_root(path):
     except Exception as e:
         print(e)
 
+
 def get_review_elements(root):
     """Returns a tuple of the element nodes for project info and all comments"""
     return (root[_PROJECT_INFO_INDEX], root[_COMMENTS_INDEX])
+
 
 def _get_project_info_element(root):
     # This is a fallback method incase get_review fails
@@ -58,6 +64,7 @@ def _get_project_info_element(root):
     except Exception as e:
         print(e)
 
+
 def _get_review_comments_element(root):
     # This is a fallback method incase get_review fails
     try:
@@ -65,15 +72,19 @@ def _get_review_comments_element(root):
     except Exception as e:
         print(e)
 
+
 def parse_single_tag(tag, element):
     """Helper method to extract XML data for first child element node with tag of tag."""
     return element.find(tag).text if element.find(tag) is not None else None
 
+
 def parse_date_node(tag, element):
     return datetime.strptime(element.find('createdOn').text, '%b %d %Y %I:%M %p').isoformat() if element.find('createdOn') is not None else None
 
+
 def date_to_excel(iso_date):
     return datetime.fromisoformat(iso_date)
+
 
 def clean_text(text):
     """Method to strip new-line entities from XML string."""
@@ -386,6 +397,42 @@ class Comment(Remark):
         """Returns list of Responses in chronological order, regardless of Evaluation or Backcheck type."""
         sort_key = lambda Remark: Remark.date_created
         return list(merge(self.evaluations, self.backchecks, key=sort_key))
+
+    @property
+    def highest_response(self):
+        all_responses = self.list_reponses
+        resp_value = 0
+        for resp in all_responses:
+            if _RESPONSE_VALUES[resp.status.lower()] > resp_value:
+                resp_value = _RESPONSE_VALUES[resp.status.lower()]
+        resp_dict = {}
+        for key, value in _RESPONSE_VALUES.items():
+            resp_dict.update({value: key}) 
+        return resp_dict[resp_value].title()
+
+    @property
+    def highest_evaluation_response(self):
+        all_responses = self.evaluations
+        resp_value = 0
+        for resp in all_responses:
+            if _RESPONSE_VALUES[resp.status.lower()] > resp_value:
+                resp_value = _RESPONSE_VALUES[resp.status.lower()]
+        resp_dict = {}
+        for key, value in _RESPONSE_VALUES.items():
+            resp_dict.update({value: key}) 
+        return resp_dict[resp_value].title()
+
+    @property
+    def highest_backcheck_response(self):
+        all_responses = self.backchecks
+        resp_value = 0
+        for resp in all_responses:
+            if _RESPONSE_VALUES[resp.status.lower()] > resp_value:
+                resp_value = _RESPONSE_VALUES[resp.status.lower()]
+        resp_dict = {}
+        for key, value in _RESPONSE_VALUES.items():
+            resp_dict.update({value: key}) 
+        return resp_dict[resp_value].title()
 
 
 class Evaluation(Remark):
