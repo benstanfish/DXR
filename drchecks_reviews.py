@@ -9,6 +9,7 @@ from datetime import datetime
 from heapq import merge
 from defusedxml import ElementTree as ET
 
+
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
 
@@ -41,9 +42,12 @@ def _get_review_comments_element(root):
     except Exception as e:
         print(e)
 
-def parse_single_tag(tag, xml_element_node):
+def parse_single_tag(tag, element):
     """Helper method to extract XML data for first child element node with tag of tag."""
-    return xml_element_node.find(tag).text if xml_element_node.find(tag) is not None else None
+    return element.find(tag).text if element.find(tag) is not None else None
+
+def parse_date_node(tag, element):
+    return datetime.strptime(element.find('createdOn').text, '%b %d %Y %I:%M %p').isoformat() if element.find('createdOn') is not None else None
 
 def clean_text(text):
     """Method to strip new-line entities from XML string."""
@@ -194,11 +198,27 @@ class Remark(ABC):
     @abstractmethod
     def from_tree(self):
         pass
-
+    
+    @property
     @abstractmethod
-    def dump_values(self):
+    def dump(self) -> dict:
         pass
 
+    def to_list(self, attrs):
+        props = self.dump
+        if isinstance(attrs, list):
+            return [props[item] if item in props else '' for item in attrs]
+        if isinstance(attrs, dict):
+            for key in attrs.keys():
+                return [props[attrs[key]] if attrs[key] in props else '' for key in attrs]
+        else:
+            return None
+        
+    @property
+    def days_open(self):
+        current_date = datetime.now()
+        time_diff = current_date - datetime.fromisoformat(str(self.date_created))
+        return time_diff.days
 
 class Comment(Remark):
     """Returns a Comment object containing all the data from a Dr Checks 'comment' element; 
@@ -249,9 +269,10 @@ class Comment(Remark):
         text = clean_text(parse_single_tag('commentText', element))
         has_attachment = True if element.find('attachment') is not None else False
         author = parse_single_tag('createdBy', element)
-        date_created = datetime.strptime(element.find('createdOn').text, 
-                                        '%b %d %Y %I:%M %p').isoformat() if \
-                                            element.find('createdOn') is not None else None,
+        date_created = parse_date_node('createdOn', element)
+        # date_created = datetime.strptime(element.find('createdOn').text, 
+        #                                 '%b %d %Y %I:%M %p').isoformat() if \
+        #                                     element.find('createdOn') is not None else None
         evaluations = [Evaluation.from_tree(eval) for eval in element.find('evaluations')] \
             if element.find('evaluations') is not None else []
         backchecks = [Backcheck.from_tree(bc) for bc in element.find('backchecks')] \
@@ -273,9 +294,29 @@ class Comment(Remark):
                     evaluations=evaluations,
                     backchecks=backchecks)
 
-    def dump_values(self):
-        raise NotImplementedError
-
+    @property
+    def dump(self):
+        return {
+            'id': self.id,
+            'status': self.status,
+            'text': self.text,
+            'has_attachment': self.status,
+            'author': self.author,
+            'date_created': str(self.date_created).replace('T', ' '),
+            'remark_type': self.remark_type,
+            'spec': self.spec,
+            'sheet': self.sheet,
+            'detail': self.detail,
+            'is_critical': self.is_critical,
+            'docref': self.docref,
+            'doctype': self.doctype,
+            'discipline': self.discipline,
+            'coordinating_discipline': self.coordinating_discipline,
+            'days_open': self.days_open,
+            'evaluations': self.evaluations,
+            'backchecks': self.backchecks
+        }
+    
     @property
     def evaluations_count(self):
         return len(self.evaluations)
@@ -316,10 +357,10 @@ class Evaluation(Remark):
                  impact_cost=None,
                  impact_time=None):
         super().__init__(id_, status, text, has_attachment, author, date_created, remark_type)
-        self._parent_id = parent_id
-        self._impact_scope = impact_scope
-        self._impact_cost = impact_cost
-        self._impact_time = impact_time
+        self.parent_id = parent_id
+        self.impact_scope = impact_scope
+        self.impact_cost = impact_cost
+        self.impact_time = impact_time
 
     @classmethod
     def from_tree(cls, element):
@@ -332,9 +373,10 @@ class Evaluation(Remark):
         text = clean_text(parse_single_tag('evaluationText', element))
         has_attachment = True if element.find('attachment').text is not None else False
         author = parse_single_tag('createdBy', element)
-        date_created = datetime.strptime(element.find('createdOn').text, 
-                                        '%b %d %Y %I:%M %p').isoformat() if \
-                                            element.find('createdOn') is not None else None
+        date_created = parse_date_node('createdOn', element)
+        # date_created = datetime.strptime(element.find('createdOn').text, 
+        #                                 '%b %d %Y %I:%M %p').isoformat() if \
+        #                                     element.find('createdOn') is not None else None
         return Evaluation(id_=id_, 
                         parent_id=parent_id, 
                         status=status, 
@@ -346,8 +388,22 @@ class Evaluation(Remark):
                         author=author,
                         date_created=date_created)
 
-    def dump_values(self):
-        raise NotImplementedError
+    @property
+    def dump(self):
+        return {
+            'id': self.id,
+            'status': self.status,
+            'text': self.text,
+            'has_attachment': self.status,
+            'author': self.author,
+            'date_created': str(self.date_created).replace('T', ' '),
+            'remark_type': self.remark_type,
+            'parent_id': self.parent_id,
+            'impact_scope': self.impact_scope,
+            'impact_cost': self.impact_cost,
+            'impact_time': self.impact_time,
+            'days_open': self.days_open
+        }
 
 
 class Backcheck(Remark):
@@ -364,8 +420,8 @@ class Backcheck(Remark):
                  parent_id=None,
                  evaluation_id=None):
         super().__init__(id_, status, text, has_attachment, author, date_created, remark_type)
-        self._parent_id = parent_id
-        self._evaulation_id = evaluation_id
+        self.parent_id = parent_id
+        self.evaulation_id = evaluation_id
 
     @classmethod
     def from_tree(cls, element):
@@ -376,9 +432,10 @@ class Backcheck(Remark):
         text = clean_text(parse_single_tag('backcheckText', element))
         has_attachment = True if element.find('attachment').text is not None else False
         author = parse_single_tag('createdBy', element)
-        date_created = datetime.strptime(element.find('createdOn').text, 
-                                        '%b %d %Y %I:%M %p').isoformat() if \
-                                            element.find('createdOn') is not None else None
+        date_created = parse_date_node('createdOn', element)
+        # date_created = datetime.strptime(element.find('createdOn').text, 
+        #                                 '%b %d %Y %I:%M %p').isoformat() if \
+        #                                     element.find('createdOn') is not None else None
         return Backcheck(id_=id_, 
                         parent_id=parent_id, 
                         status=status, 
@@ -388,5 +445,18 @@ class Backcheck(Remark):
                         author=author,
                         date_created=date_created)
     
-    def dump_values(self):
-        raise NotImplementedError
+    @property
+    def dump(self):
+        return {
+            'id': self.id,
+            'status': self.status,
+            'text': self.text,
+            'has_attachment': self.status,
+            'author': self.author,
+            'date_created': str(self.date_created).replace('T', ' '),
+            'remark_type': self.remark_type,
+            'parent_id': self.parent_id,
+            'evaluation_id': self.evaulation_id,
+            'days_open': self.days_open
+        }
+    
