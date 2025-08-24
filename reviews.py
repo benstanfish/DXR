@@ -2,8 +2,10 @@
 
 from typing import List, Dict, Tuple
 from defusedxml import ElementTree as ET
-from utils import parse_helper
-from remarks import Comment
+# from utils import parse_single_tag
+# from remarks import Comment
+
+from blocks import Comment, parse_single_tag
 
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
@@ -17,6 +19,25 @@ _COMMENT_COLUMNS = ['id',
                     'is_critical',
                     '',
                     'has_attachment']
+
+_COMMENTS_COLUMNS = {
+    'ID': 'id',
+    'Status': 'status',
+    'Discipline': 'discipline',
+    'Author': 'author',
+    'Email': 'email',
+    'Date': 'date_created',
+    'Comment': 'text',
+    'Critical': 'is_critical',
+    'Class': '',
+    'Att.': ''
+}
+
+
+
+
+
+
 
 def get_root(path):
     try:
@@ -61,11 +82,11 @@ class ProjectInfo():
 
     @classmethod
     def from_tree(cls, element):
-        project_id = parse_helper('ProjectID', element)
-        control_number = parse_helper('ProjectControlNbr', element)
-        project_name = parse_helper('ProjectName', element)
-        review_id = parse_helper('ReviewID', element)
-        review_name = parse_helper('ReviewName', element)
+        project_id = parse_single_tag('ProjectID', element)
+        control_number = parse_single_tag('ProjectControlNbr', element)
+        project_name = parse_single_tag('ProjectName', element)
+        review_id = parse_single_tag('ReviewID', element)
+        review_name = parse_single_tag('ReviewName', element)
         return ProjectInfo(project_id=project_id,
                            control_number=control_number,
                            project_name=project_name,

@@ -1,6 +1,5 @@
 import reviews
 from reviews import ProjectInfo, ReviewComments, _COMMENT_COLUMNS
-import remarks
 import pandas as pd
 
 
@@ -57,8 +56,14 @@ review_comments = ReviewComments.from_tree(review_comments_element)
 
 # print(review_comments.comments[0].attributes_list)
 
-attrs = ['id', 'author', 'discipline']
-for item in review_comments.comments[0].values_list(attrs):
-    print(item)
+# attrs = ['id', 'author', 'discipline']
+# for item in review_comments.comments[0].values_list(attrs):
+#     print(item)
 
 # print(remarks.Remark.values_list.__doc__)
+
+# print(review_comments.comments[0].remark_type)
+print(review_comments.comments[0].evaluations[0].author)
+print(review_comments.comments[0].backchecks[0].author)
+
+print(review_comments.comments[0].author + '\n' + review_comments.comments[0].text)
