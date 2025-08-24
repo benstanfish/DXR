@@ -12,7 +12,6 @@ from defusedxml import ElementTree as ET
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
 
-@staticmethod
 def get_root(path):
     try:
         root = ET.parse(path).getroot()
@@ -23,12 +22,10 @@ def get_root(path):
     except Exception as e:
         print(e)
 
-@staticmethod
 def get_review_elements(root):
     """Returns a tuple of the element nodes for project info and all comments"""
     return (root[_PROJECT_INFO_INDEX], root[_COMMENTS_INDEX])
 
-@staticmethod
 def _get_project_info_element(root):
     # This is a fallback method incase get_review fails
     try:
@@ -36,7 +33,6 @@ def _get_project_info_element(root):
     except Exception as e:
         print(e)
 
-@staticmethod
 def _get_review_comments_element(root):
     # This is a fallback method incase get_review fails
     try:
@@ -50,28 +46,6 @@ def parse_single_tag(tag, xml_element_node):
 
 def clean_text(text):
     return text.replace('<br />', '\n')
-
-
-class Review():
-    """Returns a Review object containing project info and review comments objects."""
-
-    def __init__(self,
-                 project_info=None,
-                 review_comments=None,
-                 root=None):
-        self.project_info = project_info
-        self.review_comments = review_comments
-        self.root = root
-
-    @classmethod
-    def from_file(cls, path):
-        root = get_root(path)
-        if root:
-            project_info = root[_PROJECT_INFO_INDEX]
-            review_comments = root[_COMMENTS_INDEX]
-        return Review(project_info=project_info,
-                      review_comments=review_comments,
-                      root=root)
 
 
 class ProjectInfo():
@@ -128,11 +102,11 @@ class ReviewComments():
         return ReviewComments(comments=comments)
     
     @property
-    def comment_count(self):
+    def count(self):
         return len(self.comments)
 
     @property
-    def max_evaulations_count(self):
+    def max_evaulations(self):
         temp_count = 0
         for comment in self.comments:
             if comment.evaluations_count > temp_count:
@@ -140,7 +114,7 @@ class ReviewComments():
         return temp_count
 
     @property
-    def max_backchecks_count(self):
+    def max_backchecks(self):
         temp_count = 0
         for comment in self.comments:
             if comment.backchecks_count > temp_count:
@@ -148,19 +122,19 @@ class ReviewComments():
         return temp_count    
 
     @property
-    def max_response_counts(self):
-        return (self.max_evaulations_count, 
-                self.max_backchecks_count)
+    def max_responses(self):
+        return (self.max_evaulations, 
+                self.max_backchecks)
 
     @property
-    def total_evaulations_count(self):
+    def evaluations_count(self):
         temp_count = 0
         for comment in self.comments:
             temp_count += comment.evaluations_count
         return temp_count
 
     @property
-    def total_backchecks_count(self):
+    def backchecks_count(self):
         temp_count = 0
         for comment in self.comments:
             temp_count += comment.backchecks_count
@@ -168,7 +142,29 @@ class ReviewComments():
     
     @property
     def total_responses_count(self):
-        return self.total_evaulations_count + self.total_backchecks_count
+        return self.evaluations_count + self.backchecks_count
+
+
+class Review():
+    """Returns a Review object containing project info and review comments objects."""
+
+    def __init__(self,
+                 project_info: ProjectInfo,
+                 review_comments: ReviewComments,
+                 root=None):
+        self.project_info = project_info
+        self.review_comments = review_comments
+        self.root = root
+
+    @classmethod
+    def from_file(cls, path):
+        root = get_root(path) if not None else None
+        if root:
+            project_info = ProjectInfo.from_tree(root[_PROJECT_INFO_INDEX]) if not None else None
+            review_comments = ReviewComments.from_tree(root[_COMMENTS_INDEX]) if not None else None
+        return Review(project_info=project_info,
+                      review_comments=review_comments,
+                      root=root)
 
 
 class Remark(ABC):

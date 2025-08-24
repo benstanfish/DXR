@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from heapq import merge
 from utils import parse_helper
-from settings import COMMENT_PARAMS
+from stash.settings import COMMENT_PARAMS
 from blocks import Remark, Comment
 
 # class Remark(ABC):
