@@ -13,7 +13,7 @@ from defusedxml import ElementTree as ET
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
 
-COMMENT_COLUMNS = {
+_COMMENT_COLUMNS = {
     'ID': 'id',
     'Status': 'status',
     'Discipline': 'discipline',
@@ -25,6 +25,15 @@ COMMENT_COLUMNS = {
     'Class': 'classification',
     'Att': 'has_attachment',
     'Days Open': 'days_open'
+}
+
+_RESPONSE_COLUMNS = {
+    'Status': 'status',
+    'Author': 'author',
+    'Email': 'email',
+    'Date': 'date_created',
+    'Text': 'text',
+    'Att': 'has_attachment'
 }
 
 def get_root(path):
@@ -166,6 +175,17 @@ class ReviewComments():
     @property
     def total_responses_count(self):
         return self.evaluations_count + self.backchecks_count
+
+    @property
+    def to_list(self, attrs=_COMMENT_COLUMNS):
+        my_data = []
+        for comment in self.comments:
+            my_data.append(comment.to_list(attrs))
+        return my_data
+
+    @property
+    def column_names(self, attrs=_COMMENT_COLUMNS):
+        return [key for key in attrs.keys()]
 
 
 class Review():
