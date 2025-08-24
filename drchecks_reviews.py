@@ -13,6 +13,20 @@ from defusedxml import ElementTree as ET
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
 
+COMMENT_COLUMNS = {
+    'ID': 'id',
+    'Status': 'status',
+    'Discipline': 'discipline',
+    'Author': 'author',
+    'Email': 'email',
+    'Date': 'date_created',
+    'Comment': 'text',
+    'Critical': 'is_critical',
+    'Class': 'classification',
+    'Att': 'has_attachment',
+    'Days Open': 'days_open'
+}
+
 def get_root(path):
     """Returns 'ProjNet' element as root for Dr Checks XML report files. Other XML files return None."""
     try:
@@ -48,6 +62,9 @@ def parse_single_tag(tag, element):
 
 def parse_date_node(tag, element):
     return datetime.strptime(element.find('createdOn').text, '%b %d %Y %I:%M %p').isoformat() if element.find('createdOn') is not None else None
+
+def date_to_excel(iso_date):
+    return datetime.fromisoformat(iso_date)
 
 def clean_text(text):
     """Method to strip new-line entities from XML string."""
@@ -280,12 +297,9 @@ class Comment(Remark):
         coordinating_discipline = parse_single_tag('CoordinatingDiscipline', element)     
         status = parse_single_tag('status', element)
         text = clean_text(parse_single_tag('commentText', element))
-        has_attachment = True if element.find('attachment') is not None else False
+        has_attachment = '〇' if parse_single_tag('attachment', element) is not None else None
         author = parse_single_tag('createdBy', element)
         date_created = parse_date_node('createdOn', element)
-        # date_created = datetime.strptime(element.find('createdOn').text, 
-        #                                 '%b %d %Y %I:%M %p').isoformat() if \
-        #                                     element.find('createdOn') is not None else None
         evaluations = [Evaluation.from_tree(eval) for eval in element.find('evaluations')] \
             if element.find('evaluations') is not None else []
         backchecks = [Backcheck.from_tree(bc) for bc in element.find('backchecks')] \
@@ -313,9 +327,9 @@ class Comment(Remark):
             'id': self.id,
             'status': self.status,
             'text': self.text,
-            'has_attachment': self.status,
+            'has_attachment': self.has_attachment,
             'author': self.author,
-            'date_created': str(self.date_created).replace('T', ' '),
+            'date_created': date_to_excel(self.date_created),
             'remark_type': self.remark_type,
             'spec': self.spec,
             'sheet': self.sheet,
@@ -384,12 +398,9 @@ class Evaluation(Remark):
         impact_cost = parse_single_tag('impactCost', element)
         impact_time = parse_single_tag('impactTime', element)
         text = clean_text(parse_single_tag('evaluationText', element))
-        has_attachment = True if element.find('attachment').text is not None else False
+        has_attachment = '〇' if parse_single_tag('attachment', element) is not None else None
         author = parse_single_tag('createdBy', element)
         date_created = parse_date_node('createdOn', element)
-        # date_created = datetime.strptime(element.find('createdOn').text, 
-        #                                 '%b %d %Y %I:%M %p').isoformat() if \
-        #                                     element.find('createdOn') is not None else None
         return Evaluation(id_=id_, 
                         parent_id=parent_id, 
                         status=status, 
@@ -443,12 +454,9 @@ class Backcheck(Remark):
         evaluation_id = parse_single_tag('evaluation', element)
         status = parse_single_tag('status', element)
         text = clean_text(parse_single_tag('backcheckText', element))
-        has_attachment = True if element.find('attachment').text is not None else False
+        has_attachment = '〇' if parse_single_tag('attachment', element) is not None else None
         author = parse_single_tag('createdBy', element)
         date_created = parse_date_node('createdOn', element)
-        # date_created = datetime.strptime(element.find('createdOn').text, 
-        #                                 '%b %d %Y %I:%M %p').isoformat() if \
-        #                                     element.find('createdOn') is not None else None
         return Backcheck(id_=id_, 
                         parent_id=parent_id, 
                         status=status, 

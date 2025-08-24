@@ -1,4 +1,4 @@
-from drchecks_reviews import Review, ProjectInfo, ReviewComments
+from drchecks_reviews import Review, ProjectInfo, ReviewComments, COMMENT_COLUMNS
 import utils
 from utils import _NL as NL
 import pandas as pd
@@ -16,29 +16,32 @@ review_comments = review.review_comments
 
 a_comment = review_comments.comments[0]
 
-attrs_keys = {
-    'ID': 'id',
-    'Author': 'author',
-    'Email': 'email',
-    'Date': 'date_created',
-    'Comment': 'text',
-    'Critical': 'is_critical',
-    'Class': 'classification',
-    'Days Open': 'days_open'
-}
+# attrs_keys = {
+#     'ID': 'id',
+#     'Status': 'status',
+#     'Discipline': 'discipline',
+#     'Author': 'author',
+#     'Email': 'email',
+#     'Date': 'date_created',
+#     'Comment': 'text',
+#     'Critical': 'is_critical',
+#     'Class': 'classification',
+#     'Att': 'has_attachment',
+#     'Days Open': 'days_open'
+# }
 
-attrs = ['id', 'author', 'date_created', 'text', 'is_critical', 'days_open']
+# attrs = ['id', 'author', 'date_created', 'text', 'is_critical', 'days_open']
 # my_list = a_comment.to_list(attrs)
-my_list = a_comment.to_list(attrs_keys)
+my_list = a_comment.to_list(COMMENT_COLUMNS)
 
 # print(my_list)
 
 my_data = []
 for comment in review_comments.comments:
-    my_data.append(comment.to_list(attrs_keys))
+    my_data.append(comment.to_list(COMMENT_COLUMNS))
 
 
-column_names = [key for key in attrs_keys.keys()]
+column_names = [key for key in COMMENT_COLUMNS.keys()]
 df = pd.DataFrame(my_data, columns=column_names)
 print(df)
 df.to_excel('output.xlsx', index=False)
