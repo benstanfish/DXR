@@ -13,6 +13,7 @@ _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
 
 def get_root(path):
+    """Returns 'ProjNet' element as root for Dr Checks XML report files. Other XML files return None."""
     try:
         root = ET.parse(path).getroot()
         if root.tag.lower() == 'projnet': # type: ignore
@@ -45,6 +46,7 @@ def parse_single_tag(tag, xml_element_node):
     return xml_element_node.find(tag).text if xml_element_node.find(tag) is not None else None
 
 def clean_text(text):
+    """Method to strip new-line entities from XML string."""
     return text.replace('<br />', '\n')
 
 
@@ -199,7 +201,9 @@ class Remark(ABC):
 
 
 class Comment(Remark):
-    
+    """Returns a Comment object containing all the data from a Dr Checks 'comment' element; 
+    including children 'evaulation' and 'backcheck' elements."""
+
     def __init__(self, 
                  id_=None, 
                  status=None, 
@@ -297,6 +301,7 @@ class Comment(Remark):
 
 
 class Evaluation(Remark):
+    """Returns an Evaulation object containing information from a Dr Checks 'evaluation' element."""
 
     def __init__(self, 
                  id_=None, 
@@ -346,6 +351,7 @@ class Evaluation(Remark):
 
 
 class Backcheck(Remark):
+    """Returns a Backcheck object containing information from a Dr Checks 'backcheck' element."""
 
     def __init__(self, 
                  id_=None, 
