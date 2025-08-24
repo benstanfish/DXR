@@ -1,0 +1,41 @@
+"""Module that provides top-level ProjNet Dr Checks reviews XML parsing functionality"""
+
+from typing import List, Dict, Tuple
+
+# from utils import parse_single_tag
+# from remarks import Comment
+
+from blocks import Comment, parse_single_tag
+
+
+_COMMENT_COLUMNS = ['id', 
+                    'status', 
+                    'discipline',
+                    'author',
+                    '',
+                    'date_created',
+                    'text',
+                    'is_critical',
+                    '',
+                    'has_attachment']
+
+_COMMENTS_COLUMNS = {
+    'ID': 'id',
+    'Status': 'status',
+    'Discipline': 'discipline',
+    'Author': 'author',
+    'Email': 'email',
+    'Date': 'date_created',
+    'Comment': 'text',
+    'Critical': 'is_critical',
+    'Class': '',
+    'Att.': ''
+}
+
+
+
+
+
+
+
+
