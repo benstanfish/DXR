@@ -216,9 +216,22 @@ class Remark(ABC):
         
     @property
     def days_open(self):
+        # TODO: Need to add the logic to determine of the comment is closed or not
+        # and to calculate when it was closed.
         current_date = datetime.now()
         time_diff = current_date - datetime.fromisoformat(str(self.date_created))
         return time_diff.days
+    
+    @property
+    def is_reopened(self):
+        # TODO: Add a function to determine if the Comment was closed at one point,
+        # determine by looking at Backchecks, but then reopened by a reviewer.
+        # Make sure overarching test to see if the comment is closed.
+        if str(self.status).lower() == 'closed':
+            return False
+        else:
+            pass
+        
 
 class Comment(Remark):
     """Returns a Comment object containing all the data from a Dr Checks 'comment' element; 
