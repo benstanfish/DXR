@@ -224,6 +224,52 @@ class Review():
                       review_comments=review_comments,
                       root=root)
 
+
+def get_all(review_comments: ReviewComments, 
+            comment_attrs=_COMMENT_COLUMNS,
+            response_attrs=_RESPONSE_COLUMNS):
+    """Returns the full List of comments and corresponding responses."""
+    all_responses = []
+    max_eval_count, max_bc_count = review_comments.max_responses
+
+    for comment in review_comments.comments:
+        temp = []
+        temp += comment.to_list(_COMMENT_COLUMNS)
+        for evaluation in comment.evaluations:
+            temp += evaluation.to_list(_RESPONSE_COLUMNS)
+        diff_eval = max_eval_count - comment.evaluations_count
+        for i in range(diff_eval):
+            temp += ['']*len(_RESPONSE_COLUMNS)
+        for backcheck in comment.backchecks:
+            temp += backcheck.to_list(_RESPONSE_COLUMNS)
+        diff_bc = max_bc_count - comment.backchecks_count
+        for j in range(diff_bc):
+            temp += ['']*len(_RESPONSE_COLUMNS)
+        all_responses.append(temp)
+    
+    return all_responses
+
+
+def expand_response_headers(review_comments: ReviewComments, 
+                            expansion_type='chronological',
+                            attrs=_RESPONSE_COLUMNS):
+    max_evals, max_bcs = review_comments.max_responses
+    header = []
+    if expansion_type.lower() != 'chronological':
+        for i in range(max_evals):
+            for key in attrs.keys():
+                header.append(f'Eval {i + 1} {key}')
+        for j in range(max_bcs):
+            for key in attrs.keys():
+                header.append(f'BCheck {j + 1} {key}')
+    else:
+        for k in range(max_evals + max_bcs):
+            for key in attrs.keys():
+                header.append(f'Resp {k + 1} {key}')
+    return (header, expansion_type)
+
+
+
 #endregion
 
 #region Classes for reconstructing Dr Checks XML elements
