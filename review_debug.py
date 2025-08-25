@@ -1,4 +1,4 @@
-from drchecks_reviews import Review
+from drchecks_reviews import Review, _RESPONSE_COLUMNS
 import pandas as pd
 import utils
 
@@ -44,6 +44,24 @@ comment = review.review_comments.comments[1]
 #endregion
 
 #region Testing Response Counts and Listing
+fields_counts = len(_RESPONSE_COLUMNS)
+# print(fields_counts)
 
+# Print out the fields to test and see how it works
+
+def print_response_fields(resp, attrs=_RESPONSE_COLUMNS):
+    for value, key in zip(resp, attrs.keys()):
+        print(utils._BOLD + utils._BLUE + key + utils._RESET, value)
+
+# test_resp = comment.evaluations[0].to_list(_RESPONSE_COLUMNS)
+# print_response_fields(test_resp)
+
+for evaluation in comment.evaluations:
+    print_response_fields(evaluation.to_list())
+    print()
+
+for backcheck in comment.backchecks:
+    print_response_fields(backcheck.to_list())
+    print()
 
 #endregion

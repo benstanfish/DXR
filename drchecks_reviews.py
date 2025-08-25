@@ -40,6 +40,7 @@ _RESPONSE_VALUES = {
     'check and resolve': 4
 }
 
+#region Module level helper methods
 def get_root(path):
     """Returns 'ProjNet' element as root for Dr Checks XML report files. Other XML files return None."""
     try:
@@ -90,6 +91,9 @@ def clean_text(text):
     """Method to strip new-line entities from XML string."""
     return text.replace('<br />', '\n')
 
+#endregion
+
+#region Classes for reconstructing whole Dr Checks XML reviews
 
 class ProjectInfo():
     """Returns a list of all project identification data in a Dr Checks review."""
@@ -220,6 +224,9 @@ class Review():
                       review_comments=review_comments,
                       root=root)
 
+#endregion
+
+#region Classes for reconstructing Dr Checks XML elements
 
 class Remark(ABC):
     """Parent class for Comment, Evaluation and Backcheck classes"""
@@ -491,7 +498,7 @@ class Evaluation(Remark):
             'id': self.id,
             'status': self.status,
             'text': self.text,
-            'has_attachment': self.status,
+            'has_attachment': self.has_attachment,
             'author': self.author,
             'date_created': str(self.date_created).replace('T', ' '),
             'remark_type': self.remark_type,
@@ -502,6 +509,8 @@ class Evaluation(Remark):
             'days_open': self.days_open
         }
 
+    def to_list(self, attrs=_RESPONSE_COLUMNS):
+        return super().to_list(attrs)
 
 class Backcheck(Remark):
     """Returns a Backcheck object containing information from a Dr Checks 'backcheck' element."""
@@ -545,7 +554,7 @@ class Backcheck(Remark):
             'id': self.id,
             'status': self.status,
             'text': self.text,
-            'has_attachment': self.status,
+            'has_attachment': self.has_attachment,
             'author': self.author,
             'date_created': str(self.date_created).replace('T', ' '),
             'remark_type': self.remark_type,
@@ -553,4 +562,8 @@ class Backcheck(Remark):
             'evaluation_id': self.evaulation_id,
             'days_open': self.days_open
         }
-    
+
+    def to_list(self, attrs=_RESPONSE_COLUMNS):
+        return super().to_list(attrs)
+
+#endregion
