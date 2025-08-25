@@ -153,7 +153,7 @@ class ReviewComments():
         return len(self.comments)
 
     @property
-    def max_evaulations(self):
+    def max_evaluations(self):
         temp_count = 0
         for comment in self.comments:
             if comment.evaluations_count > temp_count:
@@ -170,7 +170,7 @@ class ReviewComments():
 
     @property
     def max_responses(self):
-        return (self.max_evaulations, 
+        return (self.max_evaluations, 
                 self.max_backchecks)
 
     @property
@@ -396,7 +396,7 @@ class Comment(Remark):
         return len(self.evaluations) + len(self.backchecks)
     
     @property
-    def response_counts(self):
+    def total_responses(self):
         """Returns tuple with Evaluation totals and Backchecks totals"""
         return (len(self.evaluations), len(self.backchecks))
 
@@ -511,6 +511,7 @@ class Evaluation(Remark):
 
     def to_list(self, attrs=_RESPONSE_COLUMNS):
         return super().to_list(attrs)
+
 
 class Backcheck(Remark):
     """Returns a Backcheck object containing information from a Dr Checks 'backcheck' element."""
