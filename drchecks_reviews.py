@@ -185,7 +185,7 @@ class ReviewComments():
     
     @property
     def total_responses_count(self):
-        return self.evaluations_count + self.backchecks_count
+        return self.evaluations_count + self.__format_backchecks_count
 
     @property
     def to_list(self, attrs=_COMMENT_COLUMNS):
@@ -252,7 +252,7 @@ class Remark(ABC):
     def dump(self) -> dict:
         pass
 
-    def to_list(self, attrs):
+    def to_list(self, attrs=_COMMENT_COLUMNS):
         props = self.dump
         if isinstance(attrs, list):
             return [props[item] if item in props else '' for item in attrs]
@@ -384,9 +384,15 @@ class Comment(Remark):
         return len(self.backchecks)
     
     @property
-    def response_count(self):
+    def total_response_count(self):
+        """Returns sum total of all Evaluations and Backchecks"""
         return len(self.evaluations) + len(self.backchecks)
     
+    @property
+    def response_counts(self):
+        """Returns tuple with Evaluation totals and Backchecks totals"""
+        return (len(self.evaluations), len(self.backchecks))
+
     @property
     def list_reponses(self):
         """Returns list of Responses in type order: first Evaluations then Backchecks."""
