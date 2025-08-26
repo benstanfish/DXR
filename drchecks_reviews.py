@@ -210,6 +210,79 @@ class ReviewComments():
     def column_names(self, attrs=_COMMENT_COLUMNS):
         return [key for key in attrs.keys()]
 
+    def get_all_comments_and_responses(self, 
+                                       expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
+                                       comment_attrs=_COMMENT_COLUMNS,
+                                       response_attrs=_RESPONSE_COLUMNS):
+        """Returns the full List of comments and corresponding responses."""
+        all_responses = []
+        max_eval_count, max_bc_count = self.max_responses
+
+        for comment in self.comments:
+            temp = []
+            temp += comment.to_list(comment_attrs)
+
+            if expansion_type == 'chronological':
+                resp_list = comment.list_responses_chronological
+                resp_count = comment.total_response_count
+                diff_eval = (max_eval_count + max_bc_count) - resp_count
+                for resp in resp_list:
+                    temp += resp.to_list(response_attrs)
+                for i in range(diff_eval):
+                    temp += ['']*len(response_attrs)
+                all_responses.append(temp)
+            else:
+                for evaluation in comment.evaluations:
+                    temp += evaluation.to_list(response_attrs)
+                diff_eval = max_eval_count - comment.evaluations_count
+                for i in range(diff_eval):
+                    temp += ['']*len(response_attrs)
+                for backcheck in comment.backchecks:
+                    temp += backcheck.to_list(response_attrs)
+                diff_bc = max_bc_count - comment.backchecks_count
+                for j in range(diff_bc):
+                    temp += ['']*len(response_attrs)
+                all_responses.append(temp)
+        return all_responses
+
+    def _expand_response_headers(self, 
+                                expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
+                                attrs=_RESPONSE_COLUMNS):
+        max_evals, max_bcs = self.max_responses
+        header = []
+        if expansion_type.lower() != 'chronological':
+            for i in range(max_evals):
+                for key in attrs.keys():
+                    header.append(f'Eval {i + 1} {key}')
+            for j in range(max_bcs):
+                for key in attrs.keys():
+                    header.append(f'BCheck {j + 1} {key}')
+        else:
+            for k in range(max_evals + max_bcs):
+                for key in attrs.keys():
+                    header.append(f'Resp {k + 1} {key}')
+        return (header, expansion_type)
+
+    def get_all_comments_and_response_headers(self,
+                                            comment_attrs=_COMMENT_COLUMNS,
+                                            expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
+                                            attrs=_RESPONSE_COLUMNS):
+        header_names = []
+        header_names += [key for key in comment_attrs.keys()]
+        max_evals, max_bcs = self.max_responses
+        if expansion_type.lower() != 'chronological':
+            for i in range(max_evals):
+                for key in attrs.keys():
+                    header_names.append(f'Eval {i + 1} {key}')
+            for j in range(max_bcs):
+                for key in attrs.keys():
+                    header_names.append(f'BCheck {j + 1} {key}')
+        else:
+            for k in range(max_evals + max_bcs):
+                for key in attrs.keys():
+                    header_names.append(f'Resp {k + 1} {key}')
+        return header_names
+
 
 class Review():
     """Returns a Review object containing project info and review comments objects."""
@@ -233,80 +306,6 @@ class Review():
                       root=root)
 
 
-def get_all_comments_and_responses(review_comments: ReviewComments, 
-                                   expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
-                                   comment_attrs=_COMMENT_COLUMNS,
-                                   response_attrs=_RESPONSE_COLUMNS):
-    """Returns the full List of comments and corresponding responses."""
-    all_responses = []
-    max_eval_count, max_bc_count = review_comments.max_responses
-
-    for comment in review_comments.comments:
-        temp = []
-        temp += comment.to_list(comment_attrs)
-
-        if expansion_type == 'chronological':
-            resp_list = comment.list_responses_chronological
-            resp_count = comment.total_response_count
-            diff_eval = (max_eval_count + max_bc_count) - resp_count
-            for resp in resp_list:
-                temp += resp.to_list(response_attrs)
-            for i in range(diff_eval):
-                temp += ['']*len(response_attrs)
-            all_responses.append(temp)
-        else:
-            for evaluation in comment.evaluations:
-                temp += evaluation.to_list(response_attrs)
-            diff_eval = max_eval_count - comment.evaluations_count
-            for i in range(diff_eval):
-                temp += ['']*len(response_attrs)
-            for backcheck in comment.backchecks:
-                temp += backcheck.to_list(response_attrs)
-            diff_bc = max_bc_count - comment.backchecks_count
-            for j in range(diff_bc):
-                temp += ['']*len(response_attrs)
-            all_responses.append(temp)
-    return all_responses
-
-
-def expand_response_headers(review_comments: ReviewComments, 
-                            expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
-                            attrs=_RESPONSE_COLUMNS):
-    max_evals, max_bcs = review_comments.max_responses
-    header = []
-    if expansion_type.lower() != 'chronological':
-        for i in range(max_evals):
-            for key in attrs.keys():
-                header.append(f'Eval {i + 1} {key}')
-        for j in range(max_bcs):
-            for key in attrs.keys():
-                header.append(f'BCheck {j + 1} {key}')
-    else:
-        for k in range(max_evals + max_bcs):
-            for key in attrs.keys():
-                header.append(f'Resp {k + 1} {key}')
-    return (header, expansion_type)
-
-
-def get_all_comments_and_response_headers(review_comments: ReviewComments,
-                                          comment_attrs=_COMMENT_COLUMNS,
-                                          expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
-                                          attrs=_RESPONSE_COLUMNS):
-    header_names = []
-    header_names += review_comments.column_names
-    max_evals, max_bcs = review_comments.max_responses
-    if expansion_type.lower() != 'chronological':
-        for i in range(max_evals):
-            for key in attrs.keys():
-                header_names.append(f'Eval {i + 1} {key}')
-        for j in range(max_bcs):
-            for key in attrs.keys():
-                header_names.append(f'BCheck {j + 1} {key}')
-    else:
-        for k in range(max_evals + max_bcs):
-            for key in attrs.keys():
-                header_names.append(f'Resp {k + 1} {key}')
-    return header_names
 
 #endregion
 
