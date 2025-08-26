@@ -234,25 +234,25 @@ def get_all(review_comments: ReviewComments,
 
     for comment in review_comments.comments:
         temp = []
-        temp += comment.to_list(_COMMENT_COLUMNS)
+        temp += comment.to_list(comment_attrs)
         for evaluation in comment.evaluations:
-            temp += evaluation.to_list(_RESPONSE_COLUMNS)
+            temp += evaluation.to_list(response_attrs)
         diff_eval = max_eval_count - comment.evaluations_count
         for i in range(diff_eval):
-            temp += ['']*len(_RESPONSE_COLUMNS)
+            temp += ['']*len(response_attrs)
         for backcheck in comment.backchecks:
-            temp += backcheck.to_list(_RESPONSE_COLUMNS)
+            temp += backcheck.to_list(response_attrs)
         diff_bc = max_bc_count - comment.backchecks_count
         for j in range(diff_bc):
-            temp += ['']*len(_RESPONSE_COLUMNS)
+            temp += ['']*len(response_attrs)
         all_responses.append(temp)
-    
     return all_responses
 
 
 def expand_response_headers(review_comments: ReviewComments, 
                             expansion_type='chronological',
                             attrs=_RESPONSE_COLUMNS):
+    expansion_type_options = ['chronological', 'type']
     max_evals, max_bcs = review_comments.max_responses
     header = []
     if expansion_type.lower() != 'chronological':
@@ -447,7 +447,7 @@ class Comment(Remark):
         return (len(self.evaluations), len(self.backchecks))
 
     @property
-    def list_reponses(self):
+    def list_reponses_type(self):
         """Returns list of Responses in type order: first Evaluations then Backchecks."""
         return self.evaluations + self.backchecks
 
@@ -458,38 +458,38 @@ class Comment(Remark):
         return list(merge(self.evaluations, self.backchecks, key=sort_key))
 
     @property
-    def highest_response(self):
+    def highest_response(self, resp_values=_RESPONSE_VALUES):
         all_responses = self.list_reponses
         resp_value = 0
         for resp in all_responses:
-            if _RESPONSE_VALUES[resp.status.lower()] > resp_value:
-                resp_value = _RESPONSE_VALUES[resp.status.lower()]
+            if resp_values[resp.status.lower()] > resp_value:
+                resp_value = resp_values[resp.status.lower()]
         resp_dict = {}
-        for key, value in _RESPONSE_VALUES.items():
+        for key, value in resp_values.items():
             resp_dict.update({value: key}) 
         return resp_dict[resp_value].title()
 
     @property
-    def highest_evaluation_response(self):
+    def highest_evaluation_response(self, resp_values=_RESPONSE_VALUES):
         all_responses = self.evaluations
         resp_value = 0
         for resp in all_responses:
-            if _RESPONSE_VALUES[resp.status.lower()] > resp_value:
-                resp_value = _RESPONSE_VALUES[resp.status.lower()]
+            if resp_values[resp.status.lower()] > resp_value:
+                resp_value = resp_values[resp.status.lower()]
         resp_dict = {}
-        for key, value in _RESPONSE_VALUES.items():
+        for key, value in resp_values.items():
             resp_dict.update({value: key}) 
         return resp_dict[resp_value].title()
 
     @property
-    def highest_backcheck_response(self):
+    def highest_backcheck_response(self, resp_values=_RESPONSE_VALUES):
         all_responses = self.backchecks
         resp_value = 0
         for resp in all_responses:
-            if _RESPONSE_VALUES[resp.status.lower()] > resp_value:
-                resp_value = _RESPONSE_VALUES[resp.status.lower()]
+            if resp_values[resp.status.lower()] > resp_value:
+                resp_value = resp_values[resp.status.lower()]
         resp_dict = {}
-        for key, value in _RESPONSE_VALUES.items():
+        for key, value in resp_values.items():
             resp_dict.update({value: key}) 
         return resp_dict[resp_value].title()
 
