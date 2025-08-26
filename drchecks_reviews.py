@@ -7,6 +7,12 @@ ProjNet DrChecks XML reports.
 from abc import ABC, abstractmethod
 from datetime import datetime
 from heapq import merge
+from typing import (
+    List,
+    Dict,
+    Tuple,
+    Literal
+)
 from defusedxml import ElementTree as ET
 
 
@@ -23,8 +29,10 @@ _COMMENT_COLUMNS = {
     'Critical': 'is_critical',
     'Class': 'classification',
     'Att': 'has_attachment',
-    'Days Open': 'days_open'
+    'Days Open': 'days_open',
+    'Highest Resp.': ''
 }
+_RESPONSE_EXPANSION_TYPES = Literal['chronological', 'type']
 _RESPONSE_COLUMNS = {
     'Status': 'status',
     'Author': 'author',
@@ -189,7 +197,7 @@ class ReviewComments():
     
     @property
     def total_responses_count(self):
-        return self.evaluations_count + self.__format_backchecks_count
+        return self.evaluations_count + self.backchecks_count
 
     @property
     def to_list(self, attrs=_COMMENT_COLUMNS):
@@ -225,9 +233,10 @@ class Review():
                       root=root)
 
 
-def get_all(review_comments: ReviewComments, 
-            comment_attrs=_COMMENT_COLUMNS,
-            response_attrs=_RESPONSE_COLUMNS):
+def get_all_comments_and_responses(review_comments: ReviewComments, 
+                                   expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
+                                   comment_attrs=_COMMENT_COLUMNS,
+                                   response_attrs=_RESPONSE_COLUMNS):
     """Returns the full List of comments and corresponding responses."""
     all_responses = []
     max_eval_count, max_bc_count = review_comments.max_responses
@@ -235,24 +244,34 @@ def get_all(review_comments: ReviewComments,
     for comment in review_comments.comments:
         temp = []
         temp += comment.to_list(comment_attrs)
-        for evaluation in comment.evaluations:
-            temp += evaluation.to_list(response_attrs)
-        diff_eval = max_eval_count - comment.evaluations_count
-        for i in range(diff_eval):
-            temp += ['']*len(response_attrs)
-        for backcheck in comment.backchecks:
-            temp += backcheck.to_list(response_attrs)
-        diff_bc = max_bc_count - comment.backchecks_count
-        for j in range(diff_bc):
-            temp += ['']*len(response_attrs)
-        all_responses.append(temp)
+
+        if expansion_type == 'chronological':
+            resp_list = comment.list_responses_chronological
+            resp_count = comment.total_response_count
+            diff_eval = (max_eval_count + max_bc_count) - resp_count
+            for resp in resp_list:
+                temp += resp.to_list(response_attrs)
+            for i in range(diff_eval):
+                temp += ['']*len(response_attrs)
+            all_responses.append(temp)
+        else:
+            for evaluation in comment.evaluations:
+                temp += evaluation.to_list(response_attrs)
+            diff_eval = max_eval_count - comment.evaluations_count
+            for i in range(diff_eval):
+                temp += ['']*len(response_attrs)
+            for backcheck in comment.backchecks:
+                temp += backcheck.to_list(response_attrs)
+            diff_bc = max_bc_count - comment.backchecks_count
+            for j in range(diff_bc):
+                temp += ['']*len(response_attrs)
+            all_responses.append(temp)
     return all_responses
 
 
 def expand_response_headers(review_comments: ReviewComments, 
-                            expansion_type='chronological',
+                            expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
                             attrs=_RESPONSE_COLUMNS):
-    expansion_type_options = ['chronological', 'type']
     max_evals, max_bcs = review_comments.max_responses
     header = []
     if expansion_type.lower() != 'chronological':
@@ -269,6 +288,25 @@ def expand_response_headers(review_comments: ReviewComments,
     return (header, expansion_type)
 
 
+def get_all_comments_and_response_headers(review_comments: ReviewComments,
+                                          comment_attrs=_COMMENT_COLUMNS,
+                                          expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
+                                          attrs=_RESPONSE_COLUMNS):
+    header_names = []
+    header_names += review_comments.column_names
+    max_evals, max_bcs = review_comments.max_responses
+    if expansion_type.lower() != 'chronological':
+        for i in range(max_evals):
+            for key in attrs.keys():
+                header_names.append(f'Eval {i + 1} {key}')
+        for j in range(max_bcs):
+            for key in attrs.keys():
+                header_names.append(f'BCheck {j + 1} {key}')
+    else:
+        for k in range(max_evals + max_bcs):
+            for key in attrs.keys():
+                header_names.append(f'Resp {k + 1} {key}')
+    return header_names
 
 #endregion
 
@@ -447,7 +485,7 @@ class Comment(Remark):
         return (len(self.evaluations), len(self.backchecks))
 
     @property
-    def list_reponses_type(self):
+    def list_reponses(self):
         """Returns list of Responses in type order: first Evaluations then Backchecks."""
         return self.evaluations + self.backchecks
 

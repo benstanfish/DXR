@@ -1,4 +1,11 @@
-from drchecks_reviews import Review, ReviewComments, _COMMENT_COLUMNS, _RESPONSE_COLUMNS, get_all, expand_response_headers
+from drchecks_reviews import (
+    Review, 
+    ReviewComments, 
+    _COMMENT_COLUMNS, 
+    _RESPONSE_COLUMNS, 
+    get_all_comments_and_responses,
+    get_all_comments_and_response_headers
+)
 import pandas as pd
 import utils
 
@@ -193,26 +200,26 @@ def print_response_fields(resp, attrs=_RESPONSE_COLUMNS):
     
 #     return all_responses
 
-all_responses = get_all(review.review_comments)
+# all_responses = get_all(review.review_comments)
 
-df_all = pd.DataFrame(all_responses)
-df_all.to_excel('all_output3.xlsx')
+# df_all = pd.DataFrame(all_responses)
+# df_all.to_excel('all_output3.xlsx')
 
 
 #endregion
 
 #region Expand Column Headers
 
-evals = 3
-bcs = 2
+# evals = 3
+# bcs = 2
 
 # for key in _RESPONSE_COLUMNS.keys():
 #     print(key, _RESPONSE_COLUMNS[key])
 
-header = []
-for i in range(evals):
-    for key in _RESPONSE_COLUMNS.keys():
-        header.append(f'Resp {key} {i + 1}')
+# header = []
+# for i in range(evals):
+#     for key in _RESPONSE_COLUMNS.keys():
+#         header.append(f'Resp {key} {i + 1}')
 
 # for item in header:
 #     print(item)
@@ -237,10 +244,23 @@ for i in range(evals):
 #                 header.append(f'Resp {k + 1} {key}')
 #     return (header, expansion_type)
 
-header_list = expand_response_headers(review_comments, 'type')
-print(header_list[1])
-for item in header_list[0]:
-    print(item)
+# header_list = expand_response_headers(review_comments, 'type')
+# print(header_list[1])
+# for item in header_list[0]:
+#     print(item)
+
+expansion_type = 'chronological'
+
+all_list = get_all_comments_and_responses(review_comments, 
+                                          expansion_type=expansion_type)
+header_list = get_all_comments_and_response_headers(review_comments,
+                                                    expansion_type=expansion_type)
+# for item in header_list:
+#     print(item)
+
+df = pd.DataFrame(all_list, columns=header_list)
+df.to_excel(f'all_output_{expansion_type}.xlsx', index=False)
+
 
 #endregion
 
