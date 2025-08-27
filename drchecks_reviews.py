@@ -131,6 +131,8 @@ def clean_text(text: str | None) -> str | None:
         return text.replace('<br />', '\n')
     return None
 
+
+
 #endregion
 
 #region Review, ProjectInfo and ReviewComments Classses
