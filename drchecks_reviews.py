@@ -5,22 +5,36 @@ ProjNet DrChecks XML reports.
 """
 
 from abc import ABC, abstractmethod
+from os.path import getctime
 from datetime import datetime
 from heapq import merge
 from typing import (
     List,
     Dict,
     Tuple,
-    Literal,
-    Optional
+    Literal
 )
 from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element
 from utils import deprecated
 
+"""The following constants are not intended for public access. They
+relate to the parsing and internal workings of this script."""
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
-_COMMENT_COLUMNS = {
+_RESPONSE_EXPANSION_TYPES = Literal['chronological', 'type']
+
+"""
+COMMENT_COLUMNS and RESPONSE_COLUMNS are dictionaries where the key
+is the name used in an Excel column, while the values are the property
+names of the respective Classes. If the value = '' it is because the
+it is not a property of the Comment or Response classes and is added
+by alternative processes. These are the default dictionaries, but
+alternatives can be provided in the arguments of the calling functions;
+it's recommended to provide different dictionaries, rather than overwrite
+these defaults.
+"""
+COMMENT_COLUMNS = {
     'ID': 'id',
     'Status': 'status',
     'Discipline': 'discipline',
@@ -34,8 +48,7 @@ _COMMENT_COLUMNS = {
     'Days Open': 'days_open',
     'Highest Resp.': ''
 }
-_RESPONSE_EXPANSION_TYPES = Literal['chronological', 'type']
-_RESPONSE_COLUMNS = {
+RESPONSE_COLUMNS = {
     'Status': 'status',
     'Author': 'author',
     'Email': 'email',
@@ -43,7 +56,14 @@ _RESPONSE_COLUMNS = {
     'Text': 'text',
     'Att': 'has_attachment'
 }
-_RESPONSE_VALUES = {
+"""
+RESPONSE_VALUES is a dictionary with the response strings from Dr Checks,
+and the values are the ranking. The larger the number, the more weight it
+is given in the highest_response() logical. This dictionary is the default,
+but alternative can be provided in the function's arguments. It's recommended
+to provide different dictionaries, rather than overwrite this default.
+"""
+RESPONSE_VALUES = {
     'concur': 1,
     'for information only': 2,
     'non-concur': 3,
@@ -111,45 +131,73 @@ def clean_text(text: str | None) -> str | None:
 
 #endregion
 
-#region Classes for reconstructing whole Dr Checks XML reviews
+#region Review, ProjectInfo and ReviewComments Classses
 
 class ProjectInfo:
     """Returns a list of all project identification data in a Dr Checks review."""
 
     def __init__(self, 
-                 project_id,
-                 control_number,
-                 project_name,
-                 review_id,
-                 review_name):
+                 project_id=None,
+                 control_number=None,
+                 project_name=None,
+                 review_id=None,
+                 review_name=None,
+                 xml_date=None,
+                 run_date=None):
         self.project_id = project_id
         self.control_number = control_number
         self.project_name = project_name
         self.review_id = review_id
         self.review_name = review_name
+        self.xml_date = xml_date
+        self.run_date = run_date
 
     @classmethod
-    def from_tree(cls, element):
+    def from_tree(cls, element, file_path=None):
         project_id = parse_single_tag('ProjectID', element)
         control_number = parse_single_tag('ProjectControlNbr', element)
         project_name = parse_single_tag('ProjectName', element)
         review_id = parse_single_tag('ReviewID', element)
         review_name = parse_single_tag('ReviewName', element)
+        if file_path is not None:
+            file_date = getctime(file_path)
+            xml_date = datetime.fromtimestamp(file_date).strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            xml_date = None
+        run_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         return ProjectInfo(project_id=project_id,
                            control_number=control_number,
                            project_name=project_name,
                            review_id=review_id,
-                           review_name=review_name)
+                           review_name=review_name,
+                           xml_date=xml_date,
+                           run_date=run_date)
    
     @property
-    def all_data(self) -> Dict:
+    def all_data_dict(self) -> Dict:
         return {
             'Project Name': self.project_name,
             'Project ID': self.project_id,
             'Control Number': self.control_number,
             'Review Name': self.review_name,
-            'Review ID': self.review_id
+            'Review ID': self.review_id,
+            'XML Date': self.xml_date,
+            'Run Date': self.run_date,
+            'Notes': ''
         }
+    
+    @deprecated(version='0.1.0', reason='No column names are needed.')
+    @property
+    def column_names(self) -> List:
+        return ['']
+
+    @property
+    def get_info(self) -> List:
+        """Returns a 2D list intended to be exported to Excel."""
+        info = []
+        for key in self.all_data_dict.keys():
+            info.append([key, self.all_data_dict[key]])
+        return info
 
 
 class ReviewComments:
@@ -210,20 +258,20 @@ class ReviewComments:
         return self.evaluations_count + self.backchecks_count
 
     @property
-    def to_list(self, attrs: Dict=_COMMENT_COLUMNS) -> List:
+    def to_list(self, attrs: Dict=COMMENT_COLUMNS) -> List:
         my_data = []
         for comment in self.comments:
             my_data.append(comment.to_list(attrs))
         return my_data
 
     @property
-    def column_names(self, attrs: Dict=_COMMENT_COLUMNS) -> List:
+    def column_names(self, attrs: Dict=COMMENT_COLUMNS) -> List:
         return [key for key in attrs.keys()]
 
     def get_all_comments_and_responses(self, 
                                        expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
-                                       comment_attrs: Dict=_COMMENT_COLUMNS,
-                                       response_attrs: Dict=_RESPONSE_COLUMNS) -> List:
+                                       comment_attrs: Dict=COMMENT_COLUMNS,
+                                       response_attrs: Dict=RESPONSE_COLUMNS) -> List:
         """Returns the full List of comments and corresponding responses."""
         all_responses = []
         max_eval_count, max_bc_count = self.max_responses
@@ -257,7 +305,7 @@ class ReviewComments:
 
     def _expand_response_headers(self, 
                                 expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
-                                attrs: Dict=_RESPONSE_COLUMNS) -> Tuple[List, str]:
+                                attrs: Dict=RESPONSE_COLUMNS) -> Tuple[List, str]:
         max_evals, max_bcs = self.max_responses
         header = []
         if expansion_type.lower() != 'chronological':
@@ -274,9 +322,9 @@ class ReviewComments:
         return (header, expansion_type)
 
     def get_all_comments_and_response_headers(self,
-                                            comment_attrs: Dict=_COMMENT_COLUMNS,
+                                            comment_attrs: Dict=COMMENT_COLUMNS,
                                             expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
-                                            attrs: Dict=_RESPONSE_COLUMNS) -> List:
+                                            attrs: Dict=RESPONSE_COLUMNS) -> List:
         # header_names = []
         header_names = [key for key in comment_attrs.keys()]
         max_evals, max_bcs = self.max_responses
@@ -300,26 +348,27 @@ class Review:
     def __init__(self,
                  project_info: ProjectInfo,
                  review_comments: ReviewComments,
-                 root=None):
+                 root=None,
+                 file_path=None):
         self.project_info = project_info
         self.review_comments = review_comments
         self.root = root
+        self.file_path = file_path
 
     @classmethod
     def from_file(cls, path):
         root = get_root(path) if not None else None
         if root:
-            project_info = ProjectInfo.from_tree(root[_PROJECT_INFO_INDEX]) if not None else None
+            project_info = ProjectInfo.from_tree(root[_PROJECT_INFO_INDEX], file_path=path) if not None else None
             review_comments = ReviewComments.from_tree(root[_COMMENTS_INDEX]) if not None else None
         return Review(project_info=project_info,
                       review_comments=review_comments,
-                      root=root)
-
-
+                      root=root,
+                      file_path=path)
 
 #endregion
 
-#region Classes for reconstructing Dr Checks XML elements
+#region Remarks, Comments, Evaluations and Backchecks Classes
 
 class Remark(ABC):
     """Parent class for Comment, Evaluation and Backcheck classes"""
@@ -352,7 +401,7 @@ class Remark(ABC):
     def dump(self) -> dict:
         pass
 
-    def to_list(self, attrs=_COMMENT_COLUMNS):
+    def to_list(self, attrs=COMMENT_COLUMNS):
         props = self.dump
         if isinstance(attrs, list):
             return [props[item] if item in props else '' for item in attrs]
@@ -361,7 +410,12 @@ class Remark(ABC):
                 return [props[attrs[key]] if attrs[key] in props else '' for key in attrs]
         else:
             return None
-        
+    
+    @property
+    def latest_response(self):
+        # TODO: Function the returns the latest of all the responses.
+        pass
+
     @property
     def days_open(self):
         # TODO: Need to add the logic to determine of the comment is closed or not
@@ -375,10 +429,7 @@ class Remark(ABC):
         # TODO: Add a function to determine if the Comment was closed at one point,
         # determine by looking at Backchecks, but then reopened by a reviewer.
         # Make sure overarching test to see if the comment is closed.
-        if str(self.status).lower() == 'closed':
-            return False
-        else:
-            pass
+        pass
         
 
 class Comment(Remark):
@@ -505,7 +556,7 @@ class Comment(Remark):
         return list(merge(self.evaluations, self.backchecks, key=sort_key))
 
     @property
-    def highest_response(self, resp_values=_RESPONSE_VALUES):
+    def highest_response(self, resp_values=RESPONSE_VALUES):
         all_responses = self.list_reponses
         resp_value = 0
         for resp in all_responses:
@@ -517,7 +568,7 @@ class Comment(Remark):
         return resp_dict[resp_value].title()
 
     @property
-    def highest_evaluation_response(self, resp_values=_RESPONSE_VALUES):
+    def highest_evaluation_response(self, resp_values=RESPONSE_VALUES):
         all_responses = self.evaluations
         resp_value = 0
         for resp in all_responses:
@@ -529,7 +580,7 @@ class Comment(Remark):
         return resp_dict[resp_value].title()
 
     @property
-    def highest_backcheck_response(self, resp_values=_RESPONSE_VALUES):
+    def highest_backcheck_response(self, resp_values=RESPONSE_VALUES):
         all_responses = self.backchecks
         resp_value = 0
         for resp in all_responses:
@@ -602,7 +653,7 @@ class Evaluation(Remark):
             'days_open': self.days_open
         }
 
-    def to_list(self, attrs=_RESPONSE_COLUMNS):
+    def to_list(self, attrs=RESPONSE_COLUMNS):
         return super().to_list(attrs)
 
 
@@ -657,7 +708,11 @@ class Backcheck(Remark):
             'days_open': self.days_open
         }
 
-    def to_list(self, attrs=_RESPONSE_COLUMNS):
+    def to_list(self, attrs=RESPONSE_COLUMNS):
         return super().to_list(attrs)
 
 #endregion
+
+
+
+
