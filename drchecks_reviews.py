@@ -11,10 +11,12 @@ from typing import (
     List,
     Dict,
     Tuple,
-    Literal
+    Literal,
+    Optional
 )
 from defusedxml import ElementTree as ET
-
+from xml.etree.ElementTree import Element
+from utils import deprecated
 
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
@@ -49,7 +51,7 @@ _RESPONSE_VALUES = {
 }
 
 #region Module level helper methods
-def get_root(path):
+def get_root(path: str) -> Element | None:
     """Returns 'ProjNet' element as root for Dr Checks XML report files. Other XML files return None."""
     try:
         root = ET.parse(path).getroot()
@@ -59,51 +61,59 @@ def get_root(path):
             return None
     except Exception as e:
         print(e)
+        return None
 
-
-def get_review_elements(root):
+def get_review_elements(root: Element) -> Tuple[Element | None, Element | None]:
     """Returns a tuple of the element nodes for project info and all comments"""
     return (root[_PROJECT_INFO_INDEX], root[_COMMENTS_INDEX])
 
-
-def _get_project_info_element(root):
+@deprecated(version='1.0.0', reason='Use get_review_elements() instead.')
+def _get_project_info_element(root: Element) -> Element | None:
     # This is a fallback method incase get_review fails
     try:
         return root[_PROJECT_INFO_INDEX]
     except Exception as e:
         print(e)
+        return None
 
-
-def _get_review_comments_element(root):
+@deprecated(version='1.0.0', reason='Use get_review_elements() instead.')
+def _get_review_comments_element(root: Element) -> Element | None:
     # This is a fallback method incase get_review fails
     try:
         return root[_COMMENTS_INDEX]
     except Exception as e:
         print(e)
+        return None
 
-
-def parse_single_tag(tag, element):
+def parse_single_tag(tag: str, element: Element) -> str | None:
     """Helper method to extract XML data for first child element node with tag of tag."""
-    return element.find(tag).text if element.find(tag) is not None else None
+    node = element.find(tag)
+    return node.text if node is not None else None
 
+def parse_date_node(tag: str, element: Element) -> str | None:
+    """Parses a date-like XML node and returns an isoformatted datetime string."""
+    node = element.find(tag)
+    if node is not None and node.text is not None:
+        return datetime.strptime(node.text, '%b %d %Y %I:%M %p').isoformat()
+    return None
 
-def parse_date_node(tag, element):
-    return datetime.strptime(element.find('createdOn').text, '%b %d %Y %I:%M %p').isoformat() if element.find('createdOn') is not None else None
+def date_to_excel(iso_date: str | None) -> datetime | None:
+    """Deformats a datetime date to an ISO formatted date time string."""
+    if iso_date is not None:
+        return datetime.fromisoformat(iso_date)
+    return None
 
-
-def date_to_excel(iso_date):
-    return datetime.fromisoformat(iso_date)
-
-
-def clean_text(text):
+def clean_text(text: str | None) -> str | None:
     """Method to strip new-line entities from XML string."""
-    return text.replace('<br />', '\n')
+    if text is not None:
+        return text.replace('<br />', '\n')
+    return None
 
 #endregion
 
 #region Classes for reconstructing whole Dr Checks XML reviews
 
-class ProjectInfo():
+class ProjectInfo:
     """Returns a list of all project identification data in a Dr Checks review."""
 
     def __init__(self, 
@@ -132,7 +142,7 @@ class ProjectInfo():
                            review_name=review_name)
    
     @property
-    def all_data(self):
+    def all_data(self) -> Dict:
         return {
             'Project Name': self.project_name,
             'Project ID': self.project_id,
@@ -142,7 +152,7 @@ class ProjectInfo():
         }
 
 
-class ReviewComments():
+class ReviewComments:
     """Returns list of all Comment objects in a Dr Checks review."""
 
     def __init__(self,
@@ -157,11 +167,11 @@ class ReviewComments():
         return ReviewComments(comments=comments)
     
     @property
-    def count(self):
+    def count(self) -> int:
         return len(self.comments)
 
     @property
-    def max_evaluations(self):
+    def max_evaluations(self) -> int:
         temp_count = 0
         for comment in self.comments:
             if comment.evaluations_count > temp_count:
@@ -169,7 +179,7 @@ class ReviewComments():
         return temp_count
 
     @property
-    def max_backchecks(self):
+    def max_backchecks(self) -> int:
         temp_count = 0
         for comment in self.comments:
             if comment.backchecks_count > temp_count:
@@ -177,43 +187,43 @@ class ReviewComments():
         return temp_count    
 
     @property
-    def max_responses(self):
+    def max_responses(self) -> Tuple[int, int]:
         return (self.max_evaluations, 
                 self.max_backchecks)
 
     @property
-    def evaluations_count(self):
+    def evaluations_count(self) -> int:
         temp_count = 0
         for comment in self.comments:
             temp_count += comment.evaluations_count
         return temp_count
 
     @property
-    def backchecks_count(self):
+    def backchecks_count(self) -> int:
         temp_count = 0
         for comment in self.comments:
             temp_count += comment.backchecks_count
         return temp_count
     
     @property
-    def total_responses_count(self):
+    def total_responses_count(self) -> int:
         return self.evaluations_count + self.backchecks_count
 
     @property
-    def to_list(self, attrs=_COMMENT_COLUMNS):
+    def to_list(self, attrs: Dict=_COMMENT_COLUMNS) -> List:
         my_data = []
         for comment in self.comments:
             my_data.append(comment.to_list(attrs))
         return my_data
 
     @property
-    def column_names(self, attrs=_COMMENT_COLUMNS):
+    def column_names(self, attrs: Dict=_COMMENT_COLUMNS) -> List:
         return [key for key in attrs.keys()]
 
     def get_all_comments_and_responses(self, 
                                        expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
-                                       comment_attrs=_COMMENT_COLUMNS,
-                                       response_attrs=_RESPONSE_COLUMNS):
+                                       comment_attrs: Dict=_COMMENT_COLUMNS,
+                                       response_attrs: Dict=_RESPONSE_COLUMNS) -> List:
         """Returns the full List of comments and corresponding responses."""
         all_responses = []
         max_eval_count, max_bc_count = self.max_responses
@@ -247,7 +257,7 @@ class ReviewComments():
 
     def _expand_response_headers(self, 
                                 expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
-                                attrs=_RESPONSE_COLUMNS):
+                                attrs: Dict=_RESPONSE_COLUMNS) -> Tuple[List, str]:
         max_evals, max_bcs = self.max_responses
         header = []
         if expansion_type.lower() != 'chronological':
@@ -264,11 +274,11 @@ class ReviewComments():
         return (header, expansion_type)
 
     def get_all_comments_and_response_headers(self,
-                                            comment_attrs=_COMMENT_COLUMNS,
+                                            comment_attrs: Dict=_COMMENT_COLUMNS,
                                             expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
-                                            attrs=_RESPONSE_COLUMNS):
-        header_names = []
-        header_names += [key for key in comment_attrs.keys()]
+                                            attrs: Dict=_RESPONSE_COLUMNS) -> List:
+        # header_names = []
+        header_names = [key for key in comment_attrs.keys()]
         max_evals, max_bcs = self.max_responses
         if expansion_type.lower() != 'chronological':
             for i in range(max_evals):
@@ -284,7 +294,7 @@ class ReviewComments():
         return header_names
 
 
-class Review():
+class Review:
     """Returns a Review object containing project info and review comments objects."""
 
     def __init__(self,
