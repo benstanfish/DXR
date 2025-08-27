@@ -23,6 +23,7 @@ relate to the parsing and internal workings of this script."""
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
 _RESPONSE_EXPANSION_TYPES = Literal['chronological', 'type']
+_TRUE_SYMBOLIC = '〇'
 
 """
 COMMENT_COLUMNS and RESPONSE_COLUMNS are dictionaries where the key
@@ -323,8 +324,8 @@ class ReviewComments:
 
     def get_all_comments_and_response_headers(self,
                                             comment_attrs: Dict=COMMENT_COLUMNS,
-                                            expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
-                                            attrs: Dict=RESPONSE_COLUMNS) -> List:
+                                            attrs: Dict=RESPONSE_COLUMNS,
+                                            expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological') -> List:
         # header_names = []
         header_names = [key for key in comment_attrs.keys()]
         max_evals, max_bcs = self.max_responses
@@ -479,7 +480,7 @@ class Comment(Remark):
         coordinating_discipline = parse_single_tag('CoordinatingDiscipline', element)     
         status = parse_single_tag('status', element)
         text = clean_text(parse_single_tag('commentText', element))
-        has_attachment = '〇' if parse_single_tag('attachment', element) is not None else None
+        has_attachment = _TRUE_SYMBOLIC if parse_single_tag('attachment', element) is not None else None
         author = parse_single_tag('createdBy', element)
         date_created = parse_date_node('createdOn', element)
         evaluations = [Evaluation.from_tree(eval) for eval in element.find('evaluations')] \
@@ -622,7 +623,7 @@ class Evaluation(Remark):
         impact_cost = parse_single_tag('impactCost', element)
         impact_time = parse_single_tag('impactTime', element)
         text = clean_text(parse_single_tag('evaluationText', element))
-        has_attachment = '〇' if parse_single_tag('attachment', element) is not None else None
+        has_attachment = _TRUE_SYMBOLIC if parse_single_tag('attachment', element) is not None else None
         author = parse_single_tag('createdBy', element)
         date_created = parse_date_node('createdOn', element)
         return Evaluation(id_=id_, 
@@ -681,7 +682,7 @@ class Backcheck(Remark):
         evaluation_id = parse_single_tag('evaluation', element)
         status = parse_single_tag('status', element)
         text = clean_text(parse_single_tag('backcheckText', element))
-        has_attachment = '〇' if parse_single_tag('attachment', element) is not None else None
+        has_attachment = _TRUE_SYMBOLIC if parse_single_tag('attachment', element) is not None else None
         author = parse_single_tag('createdBy', element)
         date_created = parse_date_node('createdOn', element)
         return Backcheck(id_=id_, 
