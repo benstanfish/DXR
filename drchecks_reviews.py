@@ -273,8 +273,8 @@ class ReviewComments:
     def get_all_comments_and_responses(self, 
                                        expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
                                        comment_attrs: Dict=COMMENT_COLUMNS,
-                                       response_attrs: Dict=RESPONSE_COLUMNS) -> List:
-        """Returns the full List of comments and corresponding responses."""
+                                       response_attrs: Dict=RESPONSE_COLUMNS) -> Tuple[List, int]:
+        """Returns the full List of comments and corresponding responses and the number of rows."""
         all_responses = []
         max_eval_count, max_bc_count = self.max_responses
 
@@ -303,7 +303,7 @@ class ReviewComments:
                 for j in range(diff_bc):
                     temp += ['']*len(response_attrs)
                 all_responses.append(temp)
-        return all_responses
+        return (all_responses, len(all_responses))
 
     def _expand_response_headers(self, 
                                 expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
@@ -326,8 +326,8 @@ class ReviewComments:
     def get_all_comments_and_response_headers(self,
                                             comment_attrs: Dict=COMMENT_COLUMNS,
                                             attrs: Dict=RESPONSE_COLUMNS,
-                                            expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological') -> List:
-        # header_names = []
+                                            expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological') -> Tuple[List, int]:
+        """Returns a list of all the column names (for use in Excel) and the column count."""
         header_names = [key for key in comment_attrs.keys()]
         max_evals, max_bcs = self.max_responses
         if expansion_type.lower() != 'chronological':
@@ -341,7 +341,7 @@ class ReviewComments:
             for k in range(max_evals + max_bcs):
                 for key in attrs.keys():
                     header_names.append(f'Resp {k + 1} {key}')
-        return header_names
+        return (header_names, len(header_names))
 
 
 class Review:
