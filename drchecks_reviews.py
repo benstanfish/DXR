@@ -47,7 +47,8 @@ COMMENT_COLUMNS = {
     'Class': 'classification',
     'Att': 'has_attachment',
     'Days Open': 'days_open',
-    'Highest Resp.': ''
+    'Ball in Court': 'ball_in_court',
+    'Highest Resp.': 'highest_response'
 }
 RESPONSE_COLUMNS = {
     'Status': 'status',
@@ -390,7 +391,7 @@ class Remark(ABC):
         self.remark_type = remark_type
 
     @property
-    def attributes_list(self):
+    def attributes_list(self) -> List:
         return [attr for attr in self.__dict__]
 
     @abstractmethod
@@ -399,32 +400,18 @@ class Remark(ABC):
     
     @property
     @abstractmethod
-    def dump(self) -> dict:
+    def dump(self) -> Dict:
         pass
 
-    def to_list(self, attrs=COMMENT_COLUMNS):
+    def to_list(self, attrs: Tuple | Dict=COMMENT_COLUMNS) -> List:
         props = self.dump
         if isinstance(attrs, list):
             return [props[item] if item in props else '' for item in attrs]
         if isinstance(attrs, dict):
             for key in attrs.keys():
                 return [props[attrs[key]] if attrs[key] in props else '' for key in attrs]
-        else:
-            return None
-    
-    @property
-    def latest_response(self):
-        # TODO: Function the returns the latest of all the responses.
-        pass
-
-    @property
-    def days_open(self):
-        # TODO: Need to add the logic to determine of the comment is closed or not
-        # and to calculate when it was closed.
-        current_date = datetime.now()
-        time_diff = current_date - datetime.fromisoformat(str(self.date_created))
-        return time_diff.days
-    
+        return []
+       
     @property
     def is_reopened(self):
         # TODO: Add a function to determine if the Comment was closed at one point,
@@ -523,41 +510,42 @@ class Comment(Remark):
             'discipline': self.discipline,
             'coordinating_discipline': self.coordinating_discipline,
             'days_open': self.days_open,
+            'ball_in_court': self.ball_in_court,
+            'highest_response': self.highest_response(RESPONSE_VALUES),
             'evaluations': self.evaluations,
             'backchecks': self.backchecks
         }
     
     @property
-    def evaluations_count(self):
+    def evaluations_count(self) -> int:
         return len(self.evaluations)
 
     @property
-    def backchecks_count(self):
+    def backchecks_count(self) -> int:
         return len(self.backchecks)
     
     @property
-    def total_response_count(self):
+    def total_response_count(self) -> int:
         """Returns sum total of all Evaluations and Backchecks"""
         return len(self.evaluations) + len(self.backchecks)
     
     @property
-    def total_responses(self):
+    def total_responses(self) -> Tuple[int, int]:
         """Returns tuple with Evaluation totals and Backchecks totals"""
         return (len(self.evaluations), len(self.backchecks))
 
     @property
-    def list_reponses(self):
+    def list_reponses(self) -> List:
         """Returns list of Responses in type order: first Evaluations then Backchecks."""
         return self.evaluations + self.backchecks
 
     @property
-    def list_responses_chronological(self):
+    def list_responses_chronological(self) -> List:
         """Returns list of Responses in chronological order, regardless of Evaluation or Backcheck type."""
         sort_key = lambda Remark: Remark.date_created
         return list(merge(self.evaluations, self.backchecks, key=sort_key))
 
-    @property
-    def highest_response(self, resp_values=RESPONSE_VALUES):
+    def highest_response(self, resp_values: Dict=RESPONSE_VALUES) -> str:
         all_responses = self.list_reponses
         resp_value = 0
         for resp in all_responses:
@@ -566,10 +554,11 @@ class Comment(Remark):
         resp_dict = {}
         for key, value in resp_values.items():
             resp_dict.update({value: key}) 
+        if resp_value == 0:
+            return ''
         return resp_dict[resp_value].title()
 
-    @property
-    def highest_evaluation_response(self, resp_values=RESPONSE_VALUES):
+    def highest_evaluation_response(self, resp_values: Dict=RESPONSE_VALUES) -> str:
         all_responses = self.evaluations
         resp_value = 0
         for resp in all_responses:
@@ -578,10 +567,11 @@ class Comment(Remark):
         resp_dict = {}
         for key, value in resp_values.items():
             resp_dict.update({value: key}) 
+        if resp_value == 0:
+            return ''
         return resp_dict[resp_value].title()
 
-    @property
-    def highest_backcheck_response(self, resp_values=RESPONSE_VALUES):
+    def highest_backcheck_response(self, resp_values: Dict=RESPONSE_VALUES) -> str:
         all_responses = self.backchecks
         resp_value = 0
         for resp in all_responses:
@@ -590,8 +580,46 @@ class Comment(Remark):
         resp_dict = {}
         for key, value in resp_values.items():
             resp_dict.update({value: key}) 
+        if resp_value == 0:
+            return ''
         return resp_dict[resp_value].title()
 
+    @property
+    def latest_response(self) -> Remark | None:
+        sort_key = lambda Remark: Remark.date_created
+        responses =  list(merge(self.evaluations, self.backchecks, key=sort_key))
+        if len(responses) != 0:
+            return responses[-1]
+        return None
+
+    @property
+    def ball_in_court(self) -> str:
+        """Returns the Commentor or Evaluator depending on whose turn it is to response."""
+        if self.total_response_count > 0 and self.latest_response is not None:
+            resp_type = self.latest_response.remark_type
+            resp_text = self.latest_response.text
+            if resp_text == 'Closed without comment.':
+                return 'Closed'
+            elif resp_type == 'backcheck':
+                return 'Evaluator'
+                # return self.evaluations[0].author or 'Evaluator'
+            elif resp_type == 'evaluation':
+                return 'Commentor'
+                # return self.author or 'Commentor'
+            else:
+                return ''
+        return 'Evaluator'
+
+    @property
+    def days_open(self) -> int:
+        """Calculates the number of days a comment is (was) open (if already closed)."""
+        current_date = datetime.now()
+        if self.status and self.status.lower() == 'closed' and self.backchecks_count > 0:
+            latest_backcheck = self.backchecks[-1]
+            time_diff = current_date - datetime.fromisoformat(str(latest_backcheck.date_created))
+        else:
+            time_diff = current_date - datetime.fromisoformat(str(self.date_created))
+        return time_diff.days
 
 class Evaluation(Remark):
     """Returns an Evaulation object containing information from a Dr Checks 'evaluation' element."""
@@ -638,7 +666,7 @@ class Evaluation(Remark):
                         date_created=date_created)
 
     @property
-    def dump(self):
+    def dump(self) -> Dict:
         return {
             'id': self.id,
             'status': self.status,
@@ -650,11 +678,10 @@ class Evaluation(Remark):
             'parent_id': self.parent_id,
             'impact_scope': self.impact_scope,
             'impact_cost': self.impact_cost,
-            'impact_time': self.impact_time,
-            'days_open': self.days_open
+            'impact_time': self.impact_time
         }
 
-    def to_list(self, attrs=RESPONSE_COLUMNS):
+    def to_list(self, attrs: Dict=RESPONSE_COLUMNS) -> List:
         return super().to_list(attrs)
 
 
@@ -695,7 +722,7 @@ class Backcheck(Remark):
                         date_created=date_created)
     
     @property
-    def dump(self):
+    def dump(self) -> Dict:
         return {
             'id': self.id,
             'status': self.status,
@@ -705,11 +732,10 @@ class Backcheck(Remark):
             'date_created': str(self.date_created).replace('T', ' '),
             'remark_type': self.remark_type,
             'parent_id': self.parent_id,
-            'evaluation_id': self.evaulation_id,
-            'days_open': self.days_open
+            'evaluation_id': self.evaulation_id
         }
 
-    def to_list(self, attrs=RESPONSE_COLUMNS):
+    def to_list(self, attrs: Dict=RESPONSE_COLUMNS) -> List:
         return super().to_list(attrs)
 
 #endregion
