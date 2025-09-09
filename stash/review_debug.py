@@ -1,4 +1,4 @@
-from DXBuild.DXRemarks import Review
+from DXBuild.DXReviewComponents import Review
 import DXutils
 from DXutils import _NL as NL
 import pandas as pd

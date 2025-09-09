@@ -1,4 +1,4 @@
-from DXBuild.DXRemarks import (
+from DXBuild.DXReviewComponents import (
     Review, 
     ReviewComments, 
     _COMMENT_COLUMNS, 

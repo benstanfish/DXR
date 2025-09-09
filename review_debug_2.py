@@ -1,4 +1,4 @@
-from DXBuild.DXRemarks import Review
+from DXBuild.DXReviewComponents import Review
 from DXBuild.DXTools import timestamp, list_dimensions
 import pandas as pd
 import numpy as np
@@ -38,7 +38,7 @@ header_list, columns = review_comments.get_all_comments_and_response_headers(exp
 # np_list = np.array(header_list)
 # print(np_list.shape)
 
-def transpose_data(data_list: List) -> List:
+def transpose_list(data_list: List) -> List:
     rows, columns = list_dimensions(data_list)
     return [[[j][i] for j in range(rows)] for i in range(columns)]
 
@@ -79,11 +79,11 @@ def copy_to_range(data_list: List,
 
 xlsx_path = f'export_test_{timestamp()}.xlsx'
 
-wb = Workbook()
-ws = wb.active
+workbook = Workbook()
+worksheet = workbook.active
 
 HEADER_CELL = 'A2'
-DATABODY_CELL = ws[HEADER_CELL].offset(1, 0).coordinate
+DATABODY_CELL = worksheet[HEADER_CELL].offset(1, 0).coordinate
 
 # print(get_list_range(all_list, 'I11', to_transposed=True, return_R1C1=False))
 # print(get_list_range(all_list, 'I11', to_transposed=True, return_R1C1=True))
@@ -92,8 +92,8 @@ anchor_row, anchor_column = coordinate_to_tuple(HEADER_CELL)
 rows, columns = list_dimensions(all_list)
 
 
-copy_to_range(header_list, worksheet=ws, anchor_cell=HEADER_CELL)
-copy_to_range(all_list, worksheet=ws, anchor_cell=DATABODY_CELL)
+copy_to_range(header_list, worksheet=worksheet, anchor_cell=HEADER_CELL)
+copy_to_range(all_list, worksheet=worksheet, anchor_cell=DATABODY_CELL)
 
 # table_range = CellRange(min_row=anchor_row,
 #                         min_col=anchor_column,
@@ -115,4 +115,4 @@ copy_to_range(all_list, worksheet=ws, anchor_cell=DATABODY_CELL)
 # if ws is not None:
 #     ws.add_table(table)
 
-wb.save(xlsx_path)
+workbook.save(xlsx_path)

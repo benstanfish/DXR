@@ -4,7 +4,7 @@ including the styling elements.
 """
 
 from openpyxl import Workbook
-from DXBuild.DXRemarks import timestamp
+from DXBuild.DXTools import timestamp
 
 file_path = f'excel_test_{timestamp}.xlsx'
 

@@ -1,4 +1,4 @@
-from .DXRemarks import (
+from .DXReviewComponents import (
     Review,
     ProjectInfo,
     ReviewComments,
