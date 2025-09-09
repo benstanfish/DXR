@@ -10,7 +10,7 @@ from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.worksheet import Worksheet
 
-xml_path = './test/test.xml'
+xml_path = './dev/test/data.xml'
 review = Review.from_file(xml_path)
 project_info = review.project_info
 review_comments = review.review_comments
