@@ -1,24 +1,26 @@
 
-class SelectFileDialog():
+from PyQt6.Widgets import 
+
+class SelectFileDialog:
     pass
 
-class SelectFolderDialog():
+class SelectFolderDialog:
     pass
 
-class SaveDialog():
+class SaveDialog:
     pass
 
-class AlertDialog():
+class AlertDialog:
     pass
 
-class InfoDialog():
+class InfoDialog:
     pass
 
-class SuccessDialog():
+class SuccessDialog:
     pass
 
-class AboutDialog():
+class AboutDialog:
     pass
 
-class TroubleDialog():
+class TroubleDialog:
     pass

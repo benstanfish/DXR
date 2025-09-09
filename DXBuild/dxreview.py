@@ -11,8 +11,8 @@ from heapq import merge
 from typing import List, Dict, Tuple, Literal
 from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element
-from DXBuild.DXTools import timestamp, list_dimensions
-from DXBuild.DXDeprecated import deprecated
+from dxbuild.dxtools import timestamp, list_dimensions
+from dxbuild.dxdeprecated import deprecated
 
 """The following constants are not intended for public access. They
 relate to the parsing and internal workings of this script."""

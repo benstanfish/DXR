@@ -1,2 +1,1 @@
-# DrXPyview
-Python based version of Dr Check Review
+# DXR (Dr Checks Review Tools)

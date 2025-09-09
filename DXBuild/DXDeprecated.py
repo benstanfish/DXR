@@ -1,9 +1,4 @@
 import warnings, functools
-from datetime import datetime
-from typing import(
-    List,
-    Tuple
-)
 
 def deprecated(version: str = "", reason: str = ""):
     """Decorator used to mark methods or classes that have been deprecated."""
