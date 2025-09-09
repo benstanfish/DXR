@@ -1,5 +1,5 @@
-from DXBuild.DXReviewComponents import Review
-from DXBuild.DXTools import timestamp, list_dimensions
+from dxbuild.dxreview import Review
+from dxbuild.dxtools import timestamp, list_dimensions
 import pandas as pd
 import numpy as np
 from typing import List, Tuple

@@ -1,5 +1,5 @@
-from .DXStartup import SplashScreen
-from .DXDialogs import (
+from .dxstart import SplashScreen
+from .dxdialogs import (
     SelectFileDialog,
     SelectFolderDialog,
     SaveDialog,

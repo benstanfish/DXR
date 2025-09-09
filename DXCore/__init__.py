@@ -1,4 +1,4 @@
-from .DXAlign import Horizontal, Vertical
-from .DXBorder import Weight, Border
-from .DXColor import WebColor
-from .DXFlags import Status, Classification, Sensitive
+from .dxalign import Horizontal, Vertical
+from .dxlines import Weight, Border
+from .dxcolor import WebColor
+from .dxflags import Status, Classification, Sensitive

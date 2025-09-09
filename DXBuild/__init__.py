@@ -1,4 +1,4 @@
-from .DXReviewComponents import (
+from .dxreview import (
     Review,
     ProjectInfo,
     ReviewComments,
@@ -6,8 +6,8 @@ from .DXReviewComponents import (
     Evaluation,
     Backcheck
 )
-from .DXInquiryComponents import *
-from .DXTools import timestamp, list_dimensions
+from .dxinquiry import *
+from .dxtools import timestamp, list_dimensions
 
 # Deprecation
-from .DXDeprecated import deprecated
+from .dxdeprecated import deprecated
