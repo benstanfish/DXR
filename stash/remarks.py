@@ -10,7 +10,7 @@ ProjNet DrChecks XML reports.
 from abc import ABC, abstractmethod
 from datetime import datetime
 from heapq import merge
-from utils import parse_helper
+from DXutils import parse_helper
 from stash.settings import COMMENT_PARAMS
 from blocks import Remark, Comment
 

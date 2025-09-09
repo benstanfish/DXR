@@ -1,5 +1,5 @@
-from drchecks_reviews import Review
-from utils import timestamp, list_dimensions
+from DXBuild.DXRemarks import Review
+from DXBuild.DXTools import timestamp, list_dimensions
 import pandas as pd
 import numpy as np
 from typing import List, Tuple
@@ -10,7 +10,7 @@ from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.worksheet import Worksheet
 
-xml_path = 'test.xml'
+xml_path = './test/test.xml'
 review = Review.from_file(xml_path)
 project_info = review.project_info
 review_comments = review.review_comments
@@ -82,18 +82,18 @@ xlsx_path = f'export_test_{timestamp()}.xlsx'
 wb = Workbook()
 ws = wb.active
 
+HEADER_CELL = 'A2'
+DATABODY_CELL = ws[HEADER_CELL].offset(1, 0).coordinate
 
-HEADER_CELL = 'H11'
-DATABODY_CELL = 'I11'
-
-print(get_list_range(all_list, 'I11', to_transposed=True, return_R1C1=False))
-print(get_list_range(all_list, 'I11', to_transposed=True, return_R1C1=True))
+# print(get_list_range(all_list, 'I11', to_transposed=True, return_R1C1=False))
+# print(get_list_range(all_list, 'I11', to_transposed=True, return_R1C1=True))
 
 anchor_row, anchor_column = coordinate_to_tuple(HEADER_CELL)
 rows, columns = list_dimensions(all_list)
 
-copy_to_range(transpose_data(header_list), worksheet=ws, anchor_cell=HEADER_CELL)
-# copy_to_range(all_list, worksheet=ws, anchor_cell='I11', is_transposed=True)
+
+copy_to_range(header_list, worksheet=ws, anchor_cell=HEADER_CELL)
+copy_to_range(all_list, worksheet=ws, anchor_cell=DATABODY_CELL)
 
 # table_range = CellRange(min_row=anchor_row,
 #                         min_col=anchor_column,

@@ -1,6 +1,6 @@
-from drchecks_reviews import Review
-import utils
-from utils import _NL as NL
+from DXBuild.DXRemarks import Review
+import DXutils
+from DXutils import _NL as NL
 import pandas as pd
 
 xml_path = 'test.xml'

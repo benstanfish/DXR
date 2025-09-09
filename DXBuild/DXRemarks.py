@@ -8,15 +8,11 @@ from abc import ABC, abstractmethod
 from os.path import getctime
 from datetime import datetime
 from heapq import merge
-from typing import (
-    List,
-    Dict,
-    Tuple,
-    Literal
-)
+from typing import List, Dict, Tuple, Literal
 from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element
-from utils import deprecated
+from DXBuild.DXTools import timestamp, list_dimensions
+from DXBuild.DXDeprecated import deprecated
 
 """The following constants are not intended for public access. They
 relate to the parsing and internal workings of this script."""
@@ -130,8 +126,6 @@ def clean_text(text: str | None) -> str | None:
     if text is not None:
         return text.replace('<br />', '\n')
     return None
-
-
 
 #endregion
 

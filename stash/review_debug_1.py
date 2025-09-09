@@ -1,4 +1,4 @@
-from drchecks_reviews import (
+from DXBuild.DXRemarks import (
     Review, 
     ReviewComments, 
     _COMMENT_COLUMNS, 
@@ -7,7 +7,7 @@ from drchecks_reviews import (
     get_all_comments_and_response_headers
 )
 import pandas as pd
-import utils
+import DXutils
 
 xml_path = 'test.xml'
 review = Review.from_file(xml_path)
@@ -59,7 +59,7 @@ fields_counts = len(_RESPONSE_COLUMNS)
 
 def print_response_fields(resp, attrs=_RESPONSE_COLUMNS):
     for value, key in zip(resp, attrs.keys()):
-        print(utils._BOLD + utils._BLUE + key + utils._RESET, value)
+        print(DXutils._BOLD + DXutils._BLUE + key + DXutils._RESET, value)
 
 # test_resp = comment.evaluations[0].to_list(_RESPONSE_COLUMNS)
 # print_response_fields(test_resp)
