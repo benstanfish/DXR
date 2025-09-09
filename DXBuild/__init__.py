@@ -6,6 +6,7 @@ from .DXReviewComponents import (
     Evaluation,
     Backcheck
 )
+from .DXInquiryComponents import *
 from .DXTools import timestamp, list_dimensions
 
 # Deprecation
