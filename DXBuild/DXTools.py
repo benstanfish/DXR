@@ -1,5 +1,10 @@
+# Copyright (c) 2018-2025 Ben Fisher
+
 from datetime import datetime
 from typing import List, Tuple
+
+from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 
 def timestamp(format_string: str=r'%Y%m%d_%H%M%S') -> str:
     """Returns a timestamp, default format: YYYYMMDD_HHMMSS"""
@@ -11,3 +16,17 @@ def list_dimensions(a_list: List) -> Tuple[int, int]:
         return (len(a_list), len(a_list[0]))
     else: 
         return (1, len(a_list))
+    
+def copy_to_range(data_list: List, 
+                  worksheet: Worksheet | None, 
+                  anchor_cell: str='A1'):
+    if worksheet is not None:
+        anchor_row, anchor_column = coordinate_to_tuple(anchor_cell)
+        rows, columns = list_dimensions(data_list)
+        if rows == 1:
+            for j in range(columns):
+                worksheet.cell(row=anchor_row, column=anchor_column + j).value = data_list[j]
+        else:
+            for i in range(rows):
+                for j in range(columns):
+                    worksheet.cell(row=anchor_row + i, column=anchor_column + j).value = data_list[i][j]

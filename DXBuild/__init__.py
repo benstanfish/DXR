@@ -4,10 +4,9 @@ from .dxreview import (
     ReviewComments,
     Comment,
     Evaluation,
-    Backcheck
+    Backcheck,
+    UserNotes
 )
 from .dxinquiry import *
 from .dxtools import timestamp, list_dimensions
-
-# Deprecation
 from .dxdeprecated import deprecated

@@ -16,49 +16,8 @@ project_info = review.project_info
 review_comments = review.review_comments
 
 expansion_type = 'type'
-all_list, rows = review_comments.get_all_comments_and_responses(expansion_type=expansion_type)
-header_list, columns = review_comments.get_all_comments_and_response_headers(expansion_type=expansion_type)
-
-# df = pd.DataFrame(all_list, columns=header_list)
-# df.to_excel(f'all_output_{expansion_type}_{timestamp()}.xlsx', index=False)
-
-
-# df2 = pd.DataFrame(project_info.get_info)
-# print(df2)
-
-# a_comment = review_comments.comments[1]
-# print(a_comment.latest_response.remark_type)
-# print(a_comment.ball_in_court)
-
-# for comment in review_comments.comments:
-#     print(comment.id, comment.ball_in_court)
-
-# print(rows, columns)
-
-# np_list = np.array(header_list)
-# print(np_list.shape)
-
-def transpose_list(data_list: List) -> List:
-    rows, columns = list_dimensions(data_list)
-    return [[[j][i] for j in range(rows)] for i in range(columns)]
-
-def get_list_range(data_list: List, 
-                   anchor_cell: str='A1', 
-                   to_transposed: bool=False, 
-                   return_R1C1: bool=False) -> str | Tuple[int, int, int, int]:
-    # TODO: This function is broken...
-    anchor_row, anchor_column = coordinate_to_tuple(anchor_cell)
-    rows, columns = list_dimensions(data_list)
-    # columns -= 1
-    if to_transposed:
-        rows, columns = columns, rows
-    if return_R1C1:
-        return (anchor_row, anchor_column, anchor_row + rows, anchor_column + columns)
-    # Calculate the bottom-right cell
-    end_row = anchor_row + rows
-    end_col = anchor_column + columns
-    end_cell = f"{get_column_letter(end_col)}{end_row}"
-    return f"{anchor_cell}:{end_cell}"
+all_list, rows = review_comments.everything_to_list(expansion_type=expansion_type)
+header_list, columns = review_comments.get_all_headers(expansion_type=expansion_type)
 
 
 def copy_to_range(data_list: List, 
@@ -77,7 +36,7 @@ def copy_to_range(data_list: List,
 
 
 
-xlsx_path = f'export_test_{timestamp()}.xlsx'
+xlsx_path = f'./dev/test/out/export_test_{timestamp()}.xlsx'
 
 workbook = Workbook()
 worksheet = workbook.active

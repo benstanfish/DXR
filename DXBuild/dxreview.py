@@ -11,8 +11,9 @@ from heapq import merge
 from typing import List, Dict, Tuple, Literal
 from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element
-from dxbuild.dxtools import timestamp, list_dimensions
 from dxbuild.dxdeprecated import deprecated
+from openpyxl.worksheet.cell_range import CellRange
+from openpyxl.utils.cell import coordinate_to_tuple
 
 """The following constants are not intended for public access. They
 relate to the parsing and internal workings of this script."""
@@ -31,6 +32,7 @@ alternatives can be provided in the arguments of the calling functions;
 it's recommended to provide different dictionaries, rather than overwrite
 these defaults.
 """
+
 COMMENT_COLUMNS = {
     'ID': 'id',
     'Status': 'status',
@@ -38,12 +40,17 @@ COMMENT_COLUMNS = {
     'Author': 'author',
     'Email': 'email',
     'Date': 'date_created',
+    'Source': '',
+    'Reference': '',
+    'Sheet': '',
+    'Spec': '',
+    'Section': '',
     'Comment': 'text',
     'Critical': 'is_critical',
     'Class': 'classification',
     'Att': 'has_attachment',
     'Days Open': 'days_open',
-    'Ball in Court': 'ball_in_court',
+    # 'Ball in Court': 'ball_in_court',
     'Highest Resp.': 'highest_response'
 }
 RESPONSE_COLUMNS = {
@@ -54,6 +61,14 @@ RESPONSE_COLUMNS = {
     'Text': 'text',
     'Att': 'has_attachment'
 }
+USER_NOTES_COLUMNS = ['No.', 
+                      'Notes', 
+                      'Action Items', 
+                      'Action Assignee', 
+                      'Proposed Response', 
+                      'Proposed State', 
+                      'State']
+
 """
 RESPONSE_VALUES is a dictionary with the response strings from Dr Checks,
 and the values are the ranking. The larger the number, the more weight it
@@ -68,7 +83,6 @@ RESPONSE_VALUES = {
     'check and resolve': 4
 }
 
-#region Module level helper methods
 def get_root(path: str) -> Element | None:
     """Returns 'ProjNet' element as root for Dr Checks XML report files. Other XML files return None."""
     try:
@@ -127,9 +141,6 @@ def clean_text(text: str | None) -> str | None:
         return text.replace('<br />', '\n')
     return None
 
-#endregion
-
-#region Review, ProjectInfo and ReviewComments Classses
 
 class ProjectInfo:
     """Returns a list of all project identification data in a Dr Checks review."""
@@ -197,6 +208,32 @@ class ProjectInfo:
             info.append([key, self.all_data_dict[key]])
         return info
 
+    @property
+    def get_count(self) -> int:
+        return len(self.get_info)
+
+    def get_range(self, anchor_cell: str='A1') -> CellRange:
+        row, column = coordinate_to_tuple(anchor_cell)
+        return CellRange(min_row=row,
+                         max_row=row + self.get_count - 1,
+                         min_col=column,
+                         max_col=column + 1)
+
+    def get_key_range(self, anchor_cell: str='A1') -> CellRange:
+        row, column = coordinate_to_tuple(anchor_cell)
+        return CellRange(min_row=row,
+                         max_row=row + self.get_count - 1,
+                         min_col=column,
+                         max_col=column)
+    
+
+    def get_value_range(self, anchor_cell: str='A1') -> CellRange:
+        row, column = coordinate_to_tuple(anchor_cell)
+        return CellRange(min_row=row,
+                         max_row=row + self.get_count - 1,
+                         min_col=column + 1,
+                         max_col=column + 1)
+
 
 class ReviewComments:
     """Returns list of all Comment objects in a Dr Checks review."""
@@ -252,11 +289,11 @@ class ReviewComments:
         return temp_count
     
     @property
-    def total_responses_count(self) -> int:
+    def responses_count(self) -> int:
         return self.evaluations_count + self.backchecks_count
 
     @property
-    def to_list(self, attrs: Dict=COMMENT_COLUMNS) -> List:
+    def comments_to_list(self, attrs: Dict=COMMENT_COLUMNS) -> List:
         my_data = []
         for comment in self.comments:
             my_data.append(comment.to_list(attrs))
@@ -266,10 +303,18 @@ class ReviewComments:
     def column_names(self, attrs: Dict=COMMENT_COLUMNS) -> List:
         return [key for key in attrs.keys()]
 
-    def get_all_comments_and_responses(self, 
-                                       expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
-                                       comment_attrs: Dict=COMMENT_COLUMNS,
-                                       response_attrs: Dict=RESPONSE_COLUMNS) -> Tuple[List, int]:
+    @property
+    def comment_columns_count(self, attrs: Dict=COMMENT_COLUMNS) -> int:
+        return len([key for key in attrs.keys()])   
+
+    @property
+    def response_columns_count(self, attrs: Dict=RESPONSE_COLUMNS) -> int:
+        return len([key for key in attrs.keys()] * (self.max_evaluations + self.max_backchecks))
+
+    def everything_to_list(self, 
+                            expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
+                            comment_attrs: Dict=COMMENT_COLUMNS,
+                            response_attrs: Dict=RESPONSE_COLUMNS) -> Tuple[List, int]:
         """Returns the full List of comments and corresponding responses and the number of rows."""
         all_responses = []
         max_eval_count, max_bc_count = self.max_responses
@@ -285,7 +330,7 @@ class ReviewComments:
                 for resp in resp_list:
                     temp += resp.to_list(response_attrs)
                 for i in range(diff_eval):
-                    temp += ['']*len(response_attrs)
+                    temp += [''] * len(response_attrs)
                 all_responses.append(temp)
             else:
                 for evaluation in comment.evaluations:
@@ -297,7 +342,7 @@ class ReviewComments:
                     temp += backcheck.to_list(response_attrs)
                 diff_bc = max_bc_count - comment.backchecks_count
                 for j in range(diff_bc):
-                    temp += ['']*len(response_attrs)
+                    temp += [''] * len(response_attrs)
                 all_responses.append(temp)
         return (all_responses, len(all_responses))
 
@@ -319,10 +364,10 @@ class ReviewComments:
                     header.append(f'Resp {k + 1} {key}')
         return (header, expansion_type)
 
-    def get_all_comments_and_response_headers(self,
-                                            comment_attrs: Dict=COMMENT_COLUMNS,
-                                            attrs: Dict=RESPONSE_COLUMNS,
-                                            expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological') -> Tuple[List, int]:
+    def get_all_headers(self,
+                        comment_attrs: Dict=COMMENT_COLUMNS,
+                        attrs: Dict=RESPONSE_COLUMNS,
+                        expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological') -> Tuple[List, int]:
         """Returns a list of all the column names (for use in Excel) and the column count."""
         header_names = [key for key in comment_attrs.keys()]
         max_evals, max_bcs = self.max_responses
@@ -339,6 +384,45 @@ class ReviewComments:
                     header_names.append(f'Resp {k + 1} {key}')
         return (header_names, len(header_names))
 
+    def get_comment_header_range(self, anchor_cell) -> CellRange:
+        row, column = coordinate_to_tuple(anchor_cell)
+        return CellRange(min_row=row,
+                         max_row=row,
+                         min_col=column,
+                         max_col=column + self.comment_columns_count - 1)
+
+    def get_comment_body_range(self, anchor_cell, use_table_anchor:bool=True) -> CellRange:
+        row, column = coordinate_to_tuple(anchor_cell)
+        offset_rows, offset_columns = 0, 0
+        if use_table_anchor:
+            offset_rows = 1
+            offset_columns = 0
+        return CellRange(min_row=row + offset_rows,
+                         max_row=row + offset_rows + self.count - 1,
+                         min_col=column + offset_columns,
+                         max_col=column + offset_columns + self.comment_columns_count - 1)
+
+    def get_response_header_range(self, anchor_cell, use_table_anchor:bool=True) -> CellRange:
+        row, column = coordinate_to_tuple(anchor_cell)
+        offset_rows, offset_columns = 0, 0
+        if use_table_anchor:
+            offset_rows = 0
+            offset_columns = self.comment_columns_count
+        return CellRange(min_row=row + offset_rows,
+                        max_row=row + offset_rows,
+                        min_col=column + offset_columns,
+                        max_col=column + offset_columns + self.response_columns_count - 1)
+
+    def get_response_body_range(self, anchor_cell, use_table_anchor:bool=True) -> CellRange:
+        row, column = coordinate_to_tuple(anchor_cell)
+        offset_rows, offset_columns = 0, 0
+        if use_table_anchor:
+            offset_rows = 1
+            offset_columns = self.comment_columns_count
+        return CellRange(min_row=row + offset_rows,
+                        max_row=row + offset_rows + self.count - 1,
+                        min_col=column + offset_columns,
+                        max_col=column + offset_columns + self.response_columns_count - 1)
 
 class Review:
     """Returns a Review object containing project info and review comments objects."""
@@ -352,6 +436,7 @@ class Review:
         self.review_comments = review_comments
         self.root = root
         self.file_path = file_path
+        self.user_notes = UserNotes()
 
     @classmethod
     def from_file(cls, path):
@@ -364,9 +449,6 @@ class Review:
                       root=root,
                       file_path=path)
 
-#endregion
-
-#region Remarks, Comments, Evaluations and Backchecks Classes
 
 class Remark(ABC):
     """Parent class for Comment, Evaluation and Backcheck classes"""
@@ -734,8 +816,16 @@ class Backcheck(Remark):
     def to_list(self, attrs: Dict=RESPONSE_COLUMNS) -> List:
         return super().to_list(attrs)
 
-#endregion
 
+class UserNotes():
+    def __init__(self):
+        self.headers = [header for header in USER_NOTES_COLUMNS]
 
-
+    @property
+    def get_info(self) -> List[str]:
+        return self.headers
+    
+    @property
+    def count(self) -> int:
+        return len(self.headers)
 
