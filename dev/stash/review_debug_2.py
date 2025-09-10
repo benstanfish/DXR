@@ -16,7 +16,7 @@ project_info = review.project_info
 review_comments = review.review_comments
 
 expansion_type = 'type'
-all_list, rows = review_comments.everything_to_list(expansion_type=expansion_type)
+all_list, rows = review_comments.to_list(expansion_type=expansion_type)
 header_list, columns = review_comments.get_all_headers(expansion_type=expansion_type)
 
 

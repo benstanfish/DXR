@@ -311,10 +311,10 @@ class ReviewComments:
     def response_columns_count(self, attrs: Dict=RESPONSE_COLUMNS) -> int:
         return len([key for key in attrs.keys()] * (self.max_evaluations + self.max_backchecks))
 
-    def everything_to_list(self, 
-                            expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
-                            comment_attrs: Dict=COMMENT_COLUMNS,
-                            response_attrs: Dict=RESPONSE_COLUMNS) -> Tuple[List, int]:
+    def to_list(self, 
+                expansion_type: _RESPONSE_EXPANSION_TYPES='chronological',
+                comment_attrs: Dict=COMMENT_COLUMNS,
+                response_attrs: Dict=RESPONSE_COLUMNS) -> Tuple[List, int]:
         """Returns the full List of comments and corresponding responses and the number of rows."""
         all_responses = []
         max_eval_count, max_bc_count = self.max_responses

@@ -37,8 +37,8 @@ user_notes = review.user_notes
 xlsx_path = f'./dev/test/out/export_test_{timestamp()}.xlsx'
 
 
-expansion_type = 'type'
-all_list, comment_region_rows = review_comments.everything_to_list(expansion_type=expansion_type)
+expansion_type = 'chronological'
+all_list, comment_region_rows = review_comments.to_list(expansion_type=expansion_type)
 header_list, comment_region_columns = review_comments.get_all_headers(expansion_type=expansion_type)
 
 TABLE_ANCHOR = 'H11'
