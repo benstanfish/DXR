@@ -3,7 +3,7 @@ from typing import List, Tuple, Dict, Any, Literal
 from PyQt6.QtWidgets import QFileDialog, QMessageBox
 from PyQt6.QtGui import QIcon
 
-_DIALOG_TYPES = Literal['critical', 'warning', 'info', 'question', 'none']
+_DIALOG_TYPES = Literal['critical', 'warning', 'info', 'question', 'no_icon']
 
 class SelectFileDialog(QFileDialog):
 
@@ -48,7 +48,7 @@ class InfoDialog(QMessageBox):
             self.setIcon(QMessageBox.Icon.Information)
         elif type=='question':
             self.setIcon(QMessageBox.Icon.Question)
-        elif type=='none':
+        else:
             self.setIcon(QMessageBox.Icon.NoIcon)
         self.exec()
 
@@ -66,12 +66,7 @@ class _TestApplication():
     from PyQt6.QtWidgets import QApplication
     test_app = QApplication([])
 
-    select_dialog = SelectFileDialog()
-    paths = select_dialog.get_files(caption='Please select report XML files')
-    print(paths)
-
-    # alert = AlertDialog()
-    # info_dialog = InfoDialog()
-    # info_dialog.show(type='none')
+    dialog = InfoDialog()
+    dialog.show(type='no_icon')
 
     test_app.quit()
