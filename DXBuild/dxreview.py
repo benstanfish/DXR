@@ -141,7 +141,6 @@ def clean_text(text: str | None) -> str | None:
         return text.replace('<br />', '\n')
     return None
 
-
 class ProjectInfo:
     """Returns a list of all project identification data in a Dr Checks review."""
 

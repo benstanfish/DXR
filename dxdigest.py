@@ -9,15 +9,12 @@ from dxbuild.dxtools import timestamp, list_dimensions, copy_to_range
 from dxconfig.settings import *
 from dxcore.dxcolor import WebColor
 
-import openpyxl
 from openpyxl import Workbook
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet.cell_range import CellRange
-from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
+from openpyxl.utils.cell import coordinate_to_tuple
 from openpyxl.worksheet.table import Table, TableStyleInfo
-from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles import DEFAULT_FONT, Font
-from openpyxl.styles.differential import DifferentialStyle
 
 
 xml_path = './dev/test/data.xml'
@@ -46,10 +43,10 @@ header_list, comment_region_columns = review_comments.get_all_headers(expansion_
 
 TABLE_ANCHOR = 'H11'
 
-print(review_comments.get_comment_header_range(TABLE_ANCHOR).coord)
-print(review_comments.get_comment_body_range(TABLE_ANCHOR).coord)
-print(review_comments.get_response_header_range(TABLE_ANCHOR).coord)
-print(review_comments.get_response_body_range(TABLE_ANCHOR).coord)
+# print(review_comments.get_comment_header_range(TABLE_ANCHOR).coord)
+# print(review_comments.get_comment_body_range(TABLE_ANCHOR).coord)
+# print(review_comments.get_response_header_range(TABLE_ANCHOR).coord)
+# print(review_comments.get_response_body_range(TABLE_ANCHOR).coord)
 
 
 
@@ -108,16 +105,16 @@ copy_to_range(all_list, worksheet=sht, anchor_cell=COMMENTS_BODY_CELL.coordinate
 a_range = sht[str(project_info.get_key_range('H1'))]
 for row in a_range:
     for cell in row:
-        cell.font = Font('Aptos', size=11, color=WebColor.darkslategray.replace('#',''), bold=True)
+        cell.font = Font('Aptos', size=11, color=WebColor.DARKSLATEBLUE.replace('#',''), bold=True)
 
 # dxf_info_keys = DifferentialStyle(font=Font(name='Courier New', size=12, color=WebColor.tomato.replace('#','')))
 # for cell in sht[PROJECT_INFO_RANGE.coord]:
 #     cell. = Font('Courier New', size=12, color=WebColor.tomato.replace('#',''))
 
-# table_range = CellRange(min_row=anchor_row,
-#                         min_col=anchor_column,
-#                         max_row=anchor_row+columns - 1,
-#                         max_col=anchor_column+rows)
+table_range = CellRange(min_row=11,
+                        min_col=1,
+                        max_row=11+125,
+                        max_col=47)
 
 # print(table_range.coord)
 
@@ -127,12 +124,12 @@ for row in a_range:
 #                              showLastColumn=False,
 #                              showColumnStripes=False)
 
-# table = Table(displayName='Comments',
-#               ref=table_range.coord)
+table = Table(displayName='Comments',
+              ref=table_range.coord)
 
 # table.tableStyleInfo = table_style
-# if ws is not None:
-#     ws.add_table(table)
+if sht is not None:
+    sht.add_table(table)
 
 # wb.close()
 wb.save(xlsx_path)
