@@ -1,9 +1,9 @@
-from enum import Enum
+from enum import StrEnum
 
-class Color(Enum):
+class Color(StrEnum):
     pass
 
-class WebColor(Enum):
+class WebColor(StrEnum):
     """Enumerations for the 140 webcolors as hexidecimal strings."""
     mediumvioletred = '#c71585'
     deeppink = '#ff1493'

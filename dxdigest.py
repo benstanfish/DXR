@@ -7,6 +7,7 @@ from typing import List, Tuple
 from dxbuild.dxreview import Review
 from dxbuild.dxtools import timestamp, list_dimensions, copy_to_range
 from dxconfig.settings import *
+from dxcore.dxcolor import WebColor
 
 import openpyxl
 from openpyxl import Workbook
@@ -15,6 +16,8 @@ from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.styles import DEFAULT_FONT, Font
+from openpyxl.styles.differential import DifferentialStyle
 
 
 xml_path = './dev/test/data.xml'
@@ -57,73 +60,79 @@ print(review_comments.get_response_body_range(TABLE_ANCHOR).coord)
 
 
 
-# openpyxl.styles.DEFAULT_FONT.__init__(name='Aptos', size=10)
-
-
-
-
-# # wb = Workbook()
-# # sht = wb.active
+DEFAULT_FONT.__init__(name='Aptos', size=10)
+wb = Workbook()
+sht = wb.active
 # test_range = CellRange(min_row=1, max_row=1, min_col=1, max_col=3)
-# # test_cell = Cell(sht, row=1, column=1)
-# # print(test_cell.coordinate)
+# test_cell = Cell(sht, row=1, column=1)
+# print(test_cell.coordinate)
 # print(test_range.coord, test_range.bounds[0])
 
 
-# project_info_end_row = project_info.get_count
-# user_note_region_end_column = user_notes.count
-# header_row = project_info_end_row + PROJECT_INFO_VERTICAL_OFFSET
-# USER_NOTE_CELL = Cell(worksheet=sht,  row=header_row, column=1)
-# PROJECT_INFO_CELL = Cell(worksheet=sht, row=1, column=user_note_region_end_column + 1)
-# COMMENTS_HEADER_CELL = Cell(worksheet=sht, row=header_row, column=user_note_region_end_column + 1)
-# COMMENTS_BODY_CELL = COMMENTS_HEADER_CELL.offset(1, 0)
-# USER_NOTE_HEADER_RANGE = CellRange(min_col=1, 
-#                                    max_col=user_note_region_end_column,
-#                                    min_row=header_row, 
-#                                    max_row=header_row)
-# PROJECT_INFO_RANGE = CellRange(min_col=user_note_region_end_column + 1, 
-#                                max_col=user_note_region_end_column + 2,
-#                                min_row=1, 
-#                                max_row=project_info_end_row)
-# # print(review_comments.comment_column_count)
-# # print(review_comments.evaluations_count + review_comments.backchecks_count)
-# comment_table_header_end_column = user_note_region_end_column + 1 + comment_region_columns
-# COMMENTS_HEADER_RANGE = CellRange(min_col=user_note_region_end_column + 1,
-#                                   max_col=comment_table_header_end_column,
-#                                   min_row=header_row,
-#                                   max_row=header_row)
+project_info_end_row = project_info.get_count
+user_note_region_end_column = user_notes.count
+header_row = project_info_end_row + PROJECT_INFO_VERTICAL_OFFSET
+USER_NOTE_CELL = Cell(worksheet=sht,  row=header_row, column=1)
+PROJECT_INFO_CELL = Cell(worksheet=sht, row=1, column=user_note_region_end_column + 1)
+COMMENTS_HEADER_CELL = Cell(worksheet=sht, row=header_row, column=user_note_region_end_column + 1)
+COMMENTS_BODY_CELL = COMMENTS_HEADER_CELL.offset(1, 0)
+USER_NOTE_HEADER_RANGE = CellRange(min_col=1, 
+                                   max_col=user_note_region_end_column,
+                                   min_row=header_row, 
+                                   max_row=header_row)
+PROJECT_INFO_RANGE = CellRange(min_col=user_note_region_end_column + 1, 
+                               max_col=user_note_region_end_column + 2,
+                               min_row=1, 
+                               max_row=project_info_end_row)
+# print(review_comments.comment_column_count)
+# print(review_comments.evaluations_count + review_comments.backchecks_count)
+comment_table_header_end_column = user_note_region_end_column + 1 + comment_region_columns
+COMMENTS_HEADER_RANGE = CellRange(min_col=user_note_region_end_column + 1,
+                                  max_col=comment_table_header_end_column,
+                                  min_row=header_row,
+                                  max_row=header_row)
 
 # print(f'USER_NOTE_HEADER_RANGE: {USER_NOTE_HEADER_RANGE.coord}')
 # print(f'PROJECT_INFO_RANGE: {PROJECT_INFO_RANGE.coord}')
 # print(f'COMMENTS_HEADER_RANGE: {COMMENTS_HEADER_RANGE.coord}')
 
-# anchor_row, anchor_column = coordinate_to_tuple(COMMENTS_HEADER_CELL.coordinate)
-# rows, columns = list_dimensions(all_list)
+anchor_row, anchor_column = coordinate_to_tuple(COMMENTS_HEADER_CELL.coordinate)
+rows, columns = list_dimensions(all_list)
 
-# copy_to_range(user_notes.get_info, worksheet=sht, anchor_cell=USER_NOTE_CELL.coordinate)
-# copy_to_range(project_info.get_info, worksheet=sht, anchor_cell=PROJECT_INFO_CELL.coordinate)
-# copy_to_range(header_list, worksheet=sht, anchor_cell=COMMENTS_HEADER_CELL.coordinate)
-# copy_to_range(all_list, worksheet=sht, anchor_cell=COMMENTS_BODY_CELL.coordinate)
+copy_to_range(user_notes.get_info, worksheet=sht, anchor_cell=USER_NOTE_CELL.coordinate)
+copy_to_range(project_info.get_info, worksheet=sht, anchor_cell=PROJECT_INFO_CELL.coordinate)
+copy_to_range(header_list, worksheet=sht, anchor_cell=COMMENTS_HEADER_CELL.coordinate)
+copy_to_range(all_list, worksheet=sht, anchor_cell=COMMENTS_BODY_CELL.coordinate)
 
-# # table_range = CellRange(min_row=anchor_row,
-# #                         min_col=anchor_column,
-# #                         max_row=anchor_row+columns - 1,
-# #                         max_col=anchor_column+rows)
 
-# # print(table_range.coord)
+a_range = sht[str(project_info.get_key_range('H1'))]
+for row in a_range:
+    for cell in row:
+        cell.font = Font('Aptos', size=11, color=WebColor.darkslategray.replace('#',''), bold=True)
 
-# # table_style = TableStyleInfo(name="TableStyleMedium9", 
-# #                              showRowStripes=False, 
-# #                              showFirstColumn=False, 
-# #                              showLastColumn=False,
-# #                              showColumnStripes=False)
+# dxf_info_keys = DifferentialStyle(font=Font(name='Courier New', size=12, color=WebColor.tomato.replace('#','')))
+# for cell in sht[PROJECT_INFO_RANGE.coord]:
+#     cell. = Font('Courier New', size=12, color=WebColor.tomato.replace('#',''))
 
-# # table = Table(displayName='Comments',
-# #               ref=table_range.coord)
+# table_range = CellRange(min_row=anchor_row,
+#                         min_col=anchor_column,
+#                         max_row=anchor_row+columns - 1,
+#                         max_col=anchor_column+rows)
 
-# # table.tableStyleInfo = table_style
-# # if ws is not None:
-# #     ws.add_table(table)
+# print(table_range.coord)
+
+# table_style = TableStyleInfo(name="TableStyleMedium9", 
+#                              showRowStripes=False, 
+#                              showFirstColumn=False, 
+#                              showLastColumn=False,
+#                              showColumnStripes=False)
+
+# table = Table(displayName='Comments',
+#               ref=table_range.coord)
+
+# table.tableStyleInfo = table_style
+# if ws is not None:
+#     ws.add_table(table)
 
 # wb.close()
-# wb.save(xlsx_path)
+wb.save(xlsx_path)
