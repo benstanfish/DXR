@@ -5,6 +5,7 @@ from openpyxl import Workbook
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.table import Table
+from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.styles import DEFAULT_FONT
 
 
@@ -24,11 +25,12 @@ user_notes_data = user_notes.to_list()
 project_info_data = project_info.to_list()
 all_comments_data = all_comments.to_list()
 
+VERTICAL_OFFSET = 3
+HEADER_ROW = VERTICAL_OFFSET + project_info.size[0]
 if ws:
-    VERTICAL_OFFSET = 3
-    USER_DATA_CELL = Cell(worksheet=ws, row=VERTICAL_OFFSET + project_info.size[0], column=1)
+    USER_DATA_CELL = Cell(worksheet=ws, row=HEADER_ROW, column=1)
     PROJECT_INFO_CELL = Cell(worksheet=ws, row=1, column=user_notes.size[1] + 1)
-    ALL_COMMENTS_CELL = Cell(worksheet=ws, row=VERTICAL_OFFSET + project_info.size[0], column=user_notes.size[1] + 1)
+    ALL_COMMENTS_CELL = Cell(worksheet=ws, row=HEADER_ROW, column=user_notes.size[1] + 1)
 
 # Dump Data to Excel
 copy_to_range(user_notes_data, worksheet=ws, anchor_cell=USER_DATA_CELL.coordinate)
@@ -47,11 +49,14 @@ table = Table(displayName='Comments', ref=TABLE_REGION.coord)
 if ws is not None:
     ws.add_table(table)
 
-
-
-
-
-
+    status_dv = DataValidation(type='list', 
+                               formula1='"Concur, For Information Only, Non-Concur, Check and Resolve"', 
+                               allow_blank=True)
+    STATUS_CELL = Cell(worksheet=ws, row=HEADER_ROW +1, column=24)
+    ws.add_data_validation(status_dv)
+    status_vector = CellRange('G12:G125')
+    status_dv.add(status_vector)
+    print(status_vector in status_dv)
 
 wb.save(f'./dev/test/out/test_{timestamp()}.xlsx')
 
