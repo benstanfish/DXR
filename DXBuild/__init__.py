@@ -7,6 +7,5 @@ from .dxreview import (
     Backcheck,
     UserNotes
 )
-from .dxinquiry import *
 from .dxtools import timestamp, list_dimensions
 from .dxdeprecated import deprecated
