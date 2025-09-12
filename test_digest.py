@@ -4,8 +4,9 @@ from dxbuild.dxtools import copy_to_range, timestamp
 from openpyxl import Workbook
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet.cell_range import CellRange
-from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.worksheet.table import Table
 from openpyxl.styles import DEFAULT_FONT
+
 
 xml_path = './dev/test/data.xml'
 
@@ -18,16 +19,16 @@ DEFAULT_FONT.__init__(name='Aptos', size=11)
 wb = Workbook()
 ws = wb.active
 
-
 # Determine Anchor Cell
 user_notes_data = user_notes.to_list()
 project_info_data = project_info.to_list()
 all_comments_data = all_comments.to_list()
 
-VERTICAL_OFFSET = 3
-USER_DATA_CELL = Cell(worksheet=ws, row=VERTICAL_OFFSET + project_info.size[0], column=1)
-PROJECT_INFO_CELL = Cell(worksheet=ws, row=1, column=user_notes.size[1] + 1)
-ALL_COMMENTS_CELL = Cell(worksheet=ws, row=VERTICAL_OFFSET + project_info.size[0], column=user_notes.size[1] + 1)
+if ws:
+    VERTICAL_OFFSET = 3
+    USER_DATA_CELL = Cell(worksheet=ws, row=VERTICAL_OFFSET + project_info.size[0], column=1)
+    PROJECT_INFO_CELL = Cell(worksheet=ws, row=1, column=user_notes.size[1] + 1)
+    ALL_COMMENTS_CELL = Cell(worksheet=ws, row=VERTICAL_OFFSET + project_info.size[0], column=user_notes.size[1] + 1)
 
 # Dump Data to Excel
 copy_to_range(user_notes_data, worksheet=ws, anchor_cell=USER_DATA_CELL.coordinate)
@@ -41,8 +42,7 @@ TABLE_REGION = CellRange(min_row=USER_DATA_CELL.row,
                              max_col=user_notes.size[1] + all_comments.size[1],
                              title='comments')
 
-table = Table(displayName='Comments',
-              ref=TABLE_REGION.coord)
+table = Table(displayName='Comments', ref=TABLE_REGION.coord)
 
 if ws is not None:
     ws.add_table(table)

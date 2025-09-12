@@ -1,3 +1,5 @@
+# Copyright (c) 2018-2025 Ben Fisher
+
 """ 
 This module defines the abstract and concrete class used for deserializing
 conversation building blocks (Comements, Evaluations and Backchecks) from 
@@ -11,9 +13,6 @@ from heapq import merge
 from typing import List, Dict, Tuple, Literal
 from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element
-from dxbuild.dxdeprecated import deprecated
-from openpyxl.worksheet.cell_range import CellRange
-from openpyxl.utils.cell import coordinate_to_tuple
 
 """The following constants are not intended for public access. They
 relate to the parsing and internal workings of this script."""
@@ -194,11 +193,6 @@ class ProjectInfo:
             'Notes': ''
         }
     
-    # @deprecated(version='0.1.0', reason='No column names are needed.')
-    # @property
-    # def column_names(self) -> List:
-    #     return ['']
-
     def to_list(self) -> List:
         """Returns a 2D list intended to be exported to Excel."""
         info = []
@@ -213,28 +207,6 @@ class ProjectInfo:
     @property
     def size(self) -> Tuple[int, int]:
         return (self.count, 2)
-
-    # def get_range(self, anchor_cell: str='A1') -> CellRange:
-    #     row, column = coordinate_to_tuple(anchor_cell)
-    #     return CellRange(min_row=row,
-    #                      max_row=row + self.count - 1,
-    #                      min_col=column,
-    #                      max_col=column + 1)
-
-    # def get_key_range(self, anchor_cell: str='A1') -> CellRange:
-    #     row, column = coordinate_to_tuple(anchor_cell)
-    #     return CellRange(min_row=row,
-    #                      max_row=row + self.count - 1,
-    #                      min_col=column,
-    #                      max_col=column)
-    
-
-    # def get_value_range(self, anchor_cell: str='A1') -> CellRange:
-    #     row, column = coordinate_to_tuple(anchor_cell)
-    #     return CellRange(min_row=row,
-    #                      max_row=row + self.count - 1,
-    #                      min_col=column + 1,
-    #                      max_col=column + 1)
 
 
 class ReviewComments:
@@ -317,24 +289,6 @@ class ReviewComments:
     def all_column_count(self):
         return self.comment_columns_count + self.response_columns_count
 
-    # def expand_response_headers(self, 
-    #                             expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological',
-    #                             attrs: Dict=RESPONSE_COLUMNS) -> list:
-    #     max_evals, max_bcs = self.max_responses
-    #     headers = []
-    #     if expansion_type.lower() != 'chronological':
-    #         for i in range(max_evals):
-    #             for key in attrs.keys():
-    #                 headers.append(f'Eval {i + 1} {key}')
-    #         for j in range(max_bcs):
-    #             for key in attrs.keys():
-    #                 headers.append(f'BCheck {j + 1} {key}')
-    #     else:
-    #         for k in range(max_evals + max_bcs):
-    #             for key in attrs.keys():
-    #                 headers.append(f'Resp {k + 1} {key}')
-    #     return headers
-
     def _get_all_headers(self,
                         comment_attrs: Dict=COMMENT_COLUMNS,
                         response_attrs: Dict=RESPONSE_COLUMNS,
@@ -394,46 +348,6 @@ class ReviewComments:
     @property
     def size(self) -> Tuple[int, int]:
         return (self.count, self.all_column_count)
-
-    # def get_comment_header_range(self, anchor_cell) -> CellRange:
-    #     row, column = coordinate_to_tuple(anchor_cell)
-    #     return CellRange(min_row=row,
-    #                      max_row=row,
-    #                      min_col=column,
-    #                      max_col=column + self.comment_columns_count - 1)
-
-    # def get_comment_body_range(self, anchor_cell, use_table_anchor:bool=True) -> CellRange:
-    #     row, column = coordinate_to_tuple(anchor_cell)
-    #     offset_rows, offset_columns = 0, 0
-    #     if use_table_anchor:
-    #         offset_rows = 1
-    #         offset_columns = 0
-    #     return CellRange(min_row=row + offset_rows,
-    #                      max_row=row + offset_rows + self.count - 1,
-    #                      min_col=column + offset_columns,
-    #                      max_col=column + offset_columns + self.comment_columns_count - 1)
-
-    # def get_response_header_range(self, anchor_cell, use_table_anchor:bool=True) -> CellRange:
-    #     row, column = coordinate_to_tuple(anchor_cell)
-    #     offset_rows, offset_columns = 0, 0
-    #     if use_table_anchor:
-    #         offset_rows = 0
-    #         offset_columns = self.comment_columns_count
-    #     return CellRange(min_row=row + offset_rows,
-    #                     max_row=row + offset_rows,
-    #                     min_col=column + offset_columns,
-    #                     max_col=column + offset_columns + self.response_columns_count - 1)
-
-    # def get_response_body_range(self, anchor_cell, use_table_anchor:bool=True) -> CellRange:
-    #     row, column = coordinate_to_tuple(anchor_cell)
-    #     offset_rows, offset_columns = 0, 0
-    #     if use_table_anchor:
-    #         offset_rows = 1
-    #         offset_columns = self.comment_columns_count
-    #     return CellRange(min_row=row + offset_rows,
-    #                     max_row=row + offset_rows + self.count - 1,
-    #                     min_col=column + offset_columns,
-    #                     max_col=column + offset_columns + self.response_columns_count - 1)
 
 
 class UserNotes():
@@ -517,14 +431,8 @@ class Remark(ABC):
             for key in attrs.keys():
                 return [props[attrs[key]] if attrs[key] in props else '' for key in attrs]
         return []
-       
-    @property
-    def is_reopened(self):
-        # TODO: Add a function to determine if the Comment was closed at one point,
-        # determine by looking at Backchecks, but then reopened by a reviewer.
-        # Make sure overarching test to see if the comment is closed.
-        pass
-        
+
+
 
 class Comment(Remark):
     """Returns a Comment object containing all the data from a Dr Checks 'comment' element; 
