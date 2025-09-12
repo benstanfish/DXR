@@ -17,7 +17,7 @@ review_comments = review.review_comments
 
 expansion_type = 'type'
 all_list, rows = review_comments.to_list(expansion_type=expansion_type)
-header_list, columns = review_comments.get_all_headers(expansion_type=expansion_type)
+header_list, columns = review_comments._get_all_headers(expansion_type=expansion_type)
 
 
 def copy_to_range(data_list: List, 

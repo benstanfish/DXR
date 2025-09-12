@@ -1,6 +1,12 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
 from dxbuild import Review
+import dxbuild
+import dxconfig
+import dxcore
+import dxgui
+import dxtools
+
 import _constants as constants
 
 __author__ = constants.__author__
