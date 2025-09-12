@@ -1,7 +1,26 @@
 from enum import StrEnum
 
-class Color(StrEnum):
-    pass
+class DXColor(StrEnum):
+    WHITE = 'ffffff'
+    BLACK = '000000'
+
+    RED = '#FF4500'
+    YELLOW = '#FFD700'
+    GREEN = '#3CB371'
+    BLUE = '#1E90FF'
+    GRAY = '#A9A9A9'
+
+    RED_TEXT = '#FF6347'
+    YELLOW_TEXT = '#B8860B'
+    GREEN_TEXT = '#548235'
+    BLUE_TEXT = '#0070C0'
+    LIGHT_GRAY_TEXT = '#C0C0C0'
+
+    LIGHT_RED_BG = '#FFE4E1'
+    LIGHT_YELLOW_BG = '#FFFACD'
+    LIGHT_GREEN_BG = '#E2EFDA'
+    LIGHT_BLUE_BG = '#DDEBF7'
+    LIGHT_GRAY_BG = '#F5F5F5'
 
 class WebColor(StrEnum):
     """Enumerations for the 140 webcolors as hexidecimal strings."""

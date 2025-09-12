@@ -1,11 +1,13 @@
 
 from dxbuild.dxreview import Review
 from dxbuild.dxtools import copy_to_range, timestamp
+from dxcore.dxcondition import *
 from openpyxl import Workbook
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.table import Table
 from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.formatting.rule import Rule
 from openpyxl.styles import DEFAULT_FONT
 
 
@@ -56,7 +58,18 @@ if ws is not None:
     ws.add_data_validation(status_dv)
     status_vector = CellRange('G12:G125')
     status_dv.add(status_vector)
-    print(status_vector in status_dv)
+    # print(status_vector in status_dv)
+
+    cnr_rule = Rule(type='expression', dxf=highest_red_dx, formula=['=LOWER($X12)="check and resolve"'])
+    nc_rule = Rule(type='expression', dxf=highest_yellow_dx, formula=['=LOWER($X12)="non-concur"'])
+    fio_rule = Rule(type='expression', dxf=highest_green_dx, formula=['=LOWER($X12)="for information only"'])
+    con_rule = Rule(type='expression', dxf=highest_blue_dx, formula=['=LOWER($X12)="concur"'])
+    
+    ws.conditional_formatting.add(range_string='X12:X125', cfRule=cnr_rule)
+    ws.conditional_formatting.add(range_string='X12:X125', cfRule=nc_rule)
+    ws.conditional_formatting.add(range_string='X12:X125', cfRule=fio_rule)
+    ws.conditional_formatting.add(range_string='X12:X125', cfRule=con_rule)
+
 
 wb.save(f'./dev/test/out/test_{timestamp()}.xlsx')
 
