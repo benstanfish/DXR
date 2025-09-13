@@ -119,7 +119,16 @@ def range_values_to_dict(
         worksheet: Worksheet, 
         cell_range: CellRange
     ) -> Dict:
-    """Returns a dictionary of the range values as keys and the order as an index."""
+    """
+    Returns a dictionary of the range values as keys and the order as an index.
+    
+    Note: the purpose of this function is to work towards the python equivalent of
+    ListObject.ListColumn(columnValue).Index -> which gives the index, i.e. column number
+    of the list column by the name = columnValue. Note, the index is not the absolute
+    column number, but the number starting from the first column. To get the absolute
+    number, you would need to add the distance from the table first column to the 
+    worksheet first column.
+    """
     temp = range_values_to_list(worksheet, cell_range)
     temp_dict = {}
     for i, value in enumerate(temp):
