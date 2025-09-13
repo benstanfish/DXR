@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
@@ -9,15 +9,15 @@ from openpyxl.worksheet.cell_range import CellRange
 
 
 def timestamp(
-    format_string: str=r'%Y%m%d_%H%M%S'
-) -> str:
+        format_string: str=r'%Y%m%d_%H%M%S'
+    ) -> str:
     """Returns a timestamp, default format: YYYYMMDD_HHMMSS"""
     return datetime.now().strftime(format_string)
 
 
 def list_dimensions(
-    input_list: List
-) -> Tuple[int, int]:
+        input_list: List
+    ) -> Tuple[int, int]:
     """Returns a Tuple of (Row, Column) count, assuming 1D or 2D Lists."""
     if isinstance(input_list[0], list):
         rows = len(input_list)
@@ -29,10 +29,10 @@ def list_dimensions(
     
 
 def copy_to_range(
-    data_list: List, 
-    worksheet: Worksheet | None, 
-    anchor_cell: str='A1'
-) -> None:
+        data_list: List, 
+        worksheet: Worksheet | None, 
+        anchor_cell: str='A1'
+    ) -> None:
     """Copy a 1D or 2D list to worksheet via Openpyxl."""
     if worksheet is not None:
         anchor_row, anchor_column = coordinate_to_tuple(anchor_cell)
@@ -46,15 +46,15 @@ def copy_to_range(
                     worksheet.cell(row=anchor_row + i, column=anchor_column + j).value = data_list[i][j]
 
 def range_string_from_bounds(
-    min_col: int, 
-    max_col: int,
-    min_row: int, 
-    max_row: int, 
-    min_col_abs: bool=False,
-    max_col_abs: bool=False,
-    min_row_abs: bool=False,
-    max_row_abs: bool=False
-) -> str:
+        min_col: int, 
+        max_col: int,
+        min_row: int, 
+        max_row: int, 
+        min_col_abs: bool=False,
+        max_col_abs: bool=False,
+        min_row_abs: bool=False,
+        max_row_abs: bool=False
+    ) -> str:
     """Return range string from row, column bounds. Allows for partwise absolute referencing."""
     start_col_letter = get_column_letter(min_col)
     end_col_letter = get_column_letter(max_col)
@@ -66,8 +66,8 @@ def range_string_from_bounds(
 
 
 def bounds_from_range_string(
-    range: str | CellRange
-) -> tuple:
+        range: str | CellRange
+    ) -> tuple:
     """Returns the tuple of row, column min, max bounds from a CellRange or range-like string."""
     if isinstance(range, CellRange):
         return (range.min_col, range.max_col, range.min_row, range.max_row)
@@ -86,9 +86,9 @@ def bounds_from_range_string(
 
 
 def autoincrement_name(
-    base_name: str, 
-    search_list: List
-) -> str:
+        base_name: str, 
+        search_list: List
+    ) -> str:
     """Returns the base_name with next largest integer suffixed if name already exists in search_list."""
     base_name_length = len(base_name)
     temp = []
@@ -106,3 +106,23 @@ def autoincrement_name(
         return base_name + str(max_number + 1)
     # If no collisions, the base name is returned.
     return base_name
+
+
+def range_values_to_list(
+        worksheet: Worksheet, 
+        cell_range: CellRange
+    ) -> List:
+    """Returns a list of the values in the provide cell range of the worksheet."""
+    return [cell.value for cell in [cell for cell in worksheet[cell_range.coord]][0]]
+
+def range_values_to_dict(
+        worksheet: Worksheet, 
+        cell_range: CellRange
+    ) -> Dict:
+    """Returns a dictionary of the range values as keys and the order as an index."""
+    temp = range_values_to_list(worksheet, cell_range)
+    temp_dict = {}
+    for i, value in enumerate(temp):
+        if value.lower() not in temp_dict:
+            temp_dict[value.lower()] = i + 1
+    return temp_dict

@@ -1,6 +1,6 @@
 
 from dxbuild.dxreview import Review
-from dxbuild.dxtools import copy_to_range, timestamp, bounds_from_range_string
+from dxbuild.dxtools import copy_to_range, timestamp, bounds_from_range_string, range_values_to_dict
 from dxcore.dxcondition import *
 
 from openpyxl import Workbook
@@ -97,10 +97,15 @@ if ws is not None:
     #       cell_rng.min_row, cell_rng.max_row)
 
     table_range = table.ref
-    _, max_col, header_row, max_row = bounds_from_range_string(table_range)
+    min_col, max_col, header_row, max_row = bounds_from_range_string(table_range)
     min_row = header_row + 1
-    print(min_row, max_row)
-    print(max_col)
+    # print(min_row, max_row)
+    # print(max_col)
+
+    table_header_row = CellRange(min_col=min_col, max_col=max_col, min_row=header_row, max_row=header_row)
+    column_dict = range_values_to_dict(ws, cell_range=table_header_row)
+    print(column_dict['Status'.lower()])
+
 
 
 
