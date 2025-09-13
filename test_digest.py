@@ -11,6 +11,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import Rule
 from openpyxl.styles import DEFAULT_FONT
 
+_NO_WRITE = True
 
 xml_path = './dev/test/data.xml'
 
@@ -104,13 +105,16 @@ if ws is not None:
 
     table_header_row = CellRange(min_col=min_col, max_col=max_col, min_row=header_row, max_row=header_row)
     column_dict = range_values_to_dict(ws, cell_range=table_header_row)
-    print(column_dict['Status'.lower()])
+    print(column_dict)
 
 
 
-
-wb.close()
-# wb.save(f'./dev/test/out/test_{timestamp()}.xlsx')
+if _NO_WRITE:
+    wb.close()
+else:
+    save_name = f'./dev/test/out/test_{timestamp()}.xlsx'
+    wb.save(save_name)
+    print(f'{save_name} has been saved.')
 
 
 
