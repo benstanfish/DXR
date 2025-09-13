@@ -171,16 +171,27 @@ def table_header_dict(
         worksheet: Worksheet, 
         cell_range: CellRange
     ) -> Dict:
+    """_summary_
+
+    :param range_string: _description_
+    :type range_string: str
+    :param check_for_string: _description_
+    :type check_for_string: str
+    :param ws: _description_
+    :type ws: Worksheet
+    :param dxf: _description_
+    :type dxf: DifferentialStyle
     """
-    Returns a dictionary of the range values as keys and the order as an index.
+    # """
+    # Returns a dictionary of the range values as keys and the order as an index.
     
-    Note: the purpose of this function is to work towards the python equivalent of
-    ListObject.ListColumn(columnValue).Index -> which gives the index, i.e. column number
-    of the list column by the name = columnValue. Note, the index is not the absolute
-    column number, but the number starting from the first column. To get the absolute
-    number, you would need to add the distance from the table first column to the 
-    worksheet first column.
-    """
+    # Note: the purpose of this function is to work towards the python equivalent of
+    # ListObject.ListColumn(columnValue).Index -> which gives the index, i.e. column number
+    # of the list column by the name = columnValue. Note, the index is not the absolute
+    # column number, but the number starting from the first column. To get the absolute
+    # number, you would need to add the distance from the table first column to the 
+    # worksheet first column.
+    # """
     temp = table_header_list(worksheet, cell_range)
     temp_dict = {}
     for i, value in enumerate(temp):
@@ -195,13 +206,16 @@ def conditionally_format_column(
         ws: Worksheet, 
         dxf: DifferentialStyle
     ) -> None:
-    """Function that creates conditional format rule and applies it to a table column.
+    """_summary_
 
-    Args:
-        range_string (str): "A1:B10" representation of a range.
-        check_for_string (str): _description_
-        ws (Worksheet): Openpyxl Worksheet object
-        dxf (DifferentialStyle): Openpyxl DifferentialStyle object
+    :param range_string: _description_
+    :type range_string: str
+    :param check_for_string: _description_
+    :type check_for_string: str
+    :param ws: _description_
+    :type ws: Worksheet
+    :param dxf: _description_
+    :type dxf: DifferentialStyle
     """
     start_cell, end_cell = start_end_cells_from_range(range_string)
     if start_cell:
