@@ -58,7 +58,7 @@ def range_string_from_bounds(
 def bounds_from_range_string(
     range_string: str 
 ) -> tuple[int, int, int, int]:
-    pass
+    #split at ':'
     return (1, 1, 1, 1)
 
 
