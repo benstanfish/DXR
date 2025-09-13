@@ -90,10 +90,17 @@ if ws is not None:
     # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=fio_rule)
     # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=con_rule)
 
+    highest_response_address = 'X12:X125'
+    conditionally_format_column(highest_response_address, 'check and resolve', ws, red_dx)
+    conditionally_format_column(highest_response_address, 'non-concur', ws, yellow_dx)
+    conditionally_format_column(highest_response_address, 'for information only', ws, green_dx)
+    conditionally_format_column(highest_response_address, 'concur', ws, blue_dx)
 
-    conditionally_format_column('X12:X125', 'check and resolve', ws, red_dx)
-
-
+    status = 'Y12:Y125'
+    conditionally_format_column(status, 'check and resolve', ws, light_red_dx)
+    conditionally_format_column(status, 'non-concur', ws, light_yellow_dx)
+    conditionally_format_column(status, 'for information only', ws, light_green_dx)
+    conditionally_format_column(status, 'concur', ws, light_blue_dx)    
 
     for row in ws.iter_rows(min_row=12, max_row=125, min_col=13, max_col=13):
             for cell in row:

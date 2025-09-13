@@ -1,7 +1,8 @@
 from enum import IntEnum
 
 class Horizontal(IntEnum):
-    """Enum mask for XlHAlign"""
+    """Enumeration mask with Excel's xLHAlign enum names and values."""
+    #Enum mask for XlHAlign
     Center = -4108
     Center_Distributed = 7
     Distributed = -4117
@@ -12,7 +13,8 @@ class Horizontal(IntEnum):
     Right = -4152
 
 class Vertical(IntEnum):
-    """Enum mask for XlVAlign"""
+    """Enumeration mask with Excel's xLVAlign enum names and values."""
+    #Enum mask for XlVAlign
     Bottom = -4107
     Center = -4108
     Middle = Center

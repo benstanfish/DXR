@@ -205,8 +205,8 @@ def conditionally_format_column(
     """
     start_cell, end_cell = start_end_cells_from_range(range_string)
     if start_cell:
-        formula_string = [f'=LOWER({abs_rel_address(range_string=range_string, type='column')})="{check_for_string}"']
+        formula_string = [f'=LOWER({abs_rel_address(range_string=start_cell, type='column')})="{check_for_string}"']
         cf_rule = Rule(type='expression', 
                         dxf=dxf, 
                         formula=formula_string)
-        ws.conditional_formatting.add(range_string=abs_rel_address(range_string, 'column'), cfRule=cf_rule)
+        ws.conditional_formatting.add(range_string=range_string, cfRule=cf_rule)

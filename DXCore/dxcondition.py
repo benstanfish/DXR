@@ -2,54 +2,54 @@
 
 from openpyxl.styles import Font, PatternFill, Border, Side
 from openpyxl.styles.differential import DifferentialStyle
-from .dxcolor import DXColor
+from .dxcolor import DXColor, WebColor
 
 red_dx = DifferentialStyle(
     font=Font(name='Aptos Narrow', size=11, bold=True, color=DXColor.WHITE), 
-    fill=PatternFill(start_color=DXColor.RED.replace('#',''), end_color=DXColor.RED.replace('#',''))
+    fill=PatternFill(start_color=DXColor.RED, end_color=DXColor.RED)
 )
 
 yellow_dx = DifferentialStyle(
-    font=Font(name='Aptos Narrow', size=11, bold=True, color=DXColor.BLACK), 
-    fill=PatternFill(start_color=DXColor.YELLOW.replace('#',''), end_color=DXColor.YELLOW.replace('#',''))
+    font=Font(name='Aptos Narrow', size=11, bold=False, color=DXColor.BLACK), 
+    fill=PatternFill(start_color=DXColor.YELLOW, end_color=DXColor.YELLOW)
 )
 
 green_dx = DifferentialStyle(
-    font=Font(name='Aptos Narrow', size=11, bold=True, color=DXColor.WHITE), 
-    fill=PatternFill(start_color=DXColor.GREEN.replace('#',''), end_color=DXColor.GREEN.replace('#',''))
+    font=Font(name='Aptos Narrow', size=11, bold=False, color=DXColor.WHITE), 
+    fill=PatternFill(start_color=DXColor.GREEN, end_color=DXColor.GREEN)
 )
 
 blue_dx = DifferentialStyle(
-    font=Font(name='Aptos Narrow', size=11, bold=True, color=DXColor.WHITE), 
-    fill=PatternFill(start_color=DXColor.BLUE.replace('#',''), end_color=DXColor.BLUE.replace('#',''))
+    font=Font(name='Aptos Narrow', size=11, bold=False, color=DXColor.WHITE), 
+    fill=PatternFill(start_color=DXColor.BLUE, end_color=DXColor.BLUE)
 )
 
 gray_dx = DifferentialStyle(
-    font=Font(name='Aptos Narrow', size=11, bold=True, color=DXColor.WHITE), 
-    fill=PatternFill(start_color=DXColor.GRAY.replace('#',''), end_color=DXColor.GRAY.replace('#',''))
+    font=Font(name='Aptos Narrow', size=11, bold=False, color=DXColor.WHITE), 
+    fill=PatternFill(start_color=DXColor.GRAY, end_color=DXColor.GRAY)
 )
 
 light_red_dx = DifferentialStyle(
-    font=Font(name='Aptos Narrow', size=11, bold=True, color=DXColor.RED_TEXT.replace('#','')), 
-    fill=PatternFill(start_color=DXColor.LIGHT_RED_BG.replace('#',''), end_color=DXColor.LIGHT_RED_BG.replace('#','')),
-    border=Border(left=Side(border_style='thin', color=DXColor.RED_TEXT.replace('#','')))
+    font=Font(name='Aptos Narrow', size=11, bold=True, color=DXColor.RED_TEXT), 
+    fill=PatternFill(start_color=DXColor.LIGHT_RED_BG, end_color=DXColor.LIGHT_RED_BG),
+    border=Border(left=Side(border_style='thin', color=DXColor.RED_TEXT))
 )
 
 light_yellow_dx = DifferentialStyle(
-    font=Font(name='Aptos Narrow', size=11, bold=True, color=DXColor.YELLOW_TEXT.replace('#','')), 
-    fill=PatternFill(start_color=DXColor.LIGHT_YELLOW_BG.replace('#',''), end_color=DXColor.LIGHT_YELLOW_BG.replace('#','')),
-    border=Border(left=Side(border_style='thin', color=DXColor.YELLOW_TEXT.replace('#','')))
+    font=Font(name='Aptos Narrow', size=11, bold=True, color=DXColor.YELLOW_TEXT), 
+    fill=PatternFill(start_color=DXColor.LIGHT_YELLOW_BG, end_color=DXColor.LIGHT_YELLOW_BG),
+    border=Border(left=Side(border_style='thin', color=DXColor.YELLOW_TEXT))
 )
 
 light_green_dx = DifferentialStyle(
-    font=Font(name='Aptos Narrow', size=11, bold=False, color=DXColor.GREEN_TEXT.replace('#','')), 
-    fill=PatternFill(start_color=DXColor.LIGHT_GREEN_BG.replace('#',''), end_color=DXColor.LIGHT_GREEN_BG.replace('#','')),
-    border=Border(left=Side(border_style='thin', color=DXColor.GREEN_TEXT.replace('#','')))
+    font=Font(name='Aptos Narrow', size=11, bold=False, color=DXColor.GREEN_TEXT), 
+    fill=PatternFill(start_color=DXColor.LIGHT_GREEN_BG, end_color=DXColor.LIGHT_GREEN_BG),
+    border=Border(left=Side(border_style='thin', color=DXColor.GREEN_TEXT))
 )
 
 light_blue_dx = DifferentialStyle(
-    font=Font(name='Aptos Narrow', size=11, bold=False, color=DXColor.BLUE_TEXT.replace('#','')), 
-    fill=PatternFill(start_color=DXColor.LIGHT_BLUE_BG.replace('#',''), end_color=DXColor.LIGHT_BLUE_BG.replace('#','')),
-    border=Border(left=Side(border_style='thin', color=DXColor.BLUE_TEXT.replace('#','')))
+    font=Font(name='Aptos Narrow', size=11, bold=False, color=DXColor.BLUE_TEXT), 
+    fill=PatternFill(start_color=DXColor.LIGHT_BLUE_BG, end_color=DXColor.LIGHT_BLUE_BG),
+    border=Border(left=Side(border_style='thin', color=DXColor.BLUE_TEXT))
 )
 
