@@ -1,7 +1,8 @@
 
 from dxbuild.dxreview import Review
-from dxbuild.dxtools import copy_to_range, timestamp
+from dxbuild.dxtools import copy_to_range, timestamp, bounds_from_range_string
 from dxcore.dxcondition import *
+
 from openpyxl import Workbook
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet.cell_range import CellRange
@@ -90,16 +91,21 @@ if ws is not None:
     tables = ws.tables
     table_data = tables.items()
     rng = table_data[0][1]
+    # print(f'Table range is {rng}')
     cell_rng = CellRange(rng)
-    print(cell_rng.min_col, cell_rng.max_col,
-          cell_rng.min_row, cell_rng.max_row)
+    # print(cell_rng.min_col, cell_rng.max_col,
+    #       cell_rng.min_row, cell_rng.max_row)
 
-    
+    table_range = table.ref
+    _, max_col, header_row, max_row = bounds_from_range_string(table_range)
+    min_row = header_row + 1
+    print(min_row, max_row)
+    print(max_col)
 
 
 
-
-wb.save(f'./dev/test/out/test_{timestamp()}.xlsx')
+wb.close()
+# wb.save(f'./dev/test/out/test_{timestamp()}.xlsx')
 
 
 
