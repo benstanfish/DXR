@@ -82,15 +82,22 @@ if ws is not None:
     ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=fio_rule)
     ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=con_rule)
 
-
-
-
-
-
-
     for row in ws.iter_rows(min_row=12, max_row=125, min_col=13, max_col=13):
             for cell in row:
                 cell.number_format = 'm/d/yy'
+
+
+    tables = ws.tables
+    table_data = tables.items()
+    rng = table_data[0][1]
+    cell_rng = CellRange(rng)
+    print(cell_rng.min_col, cell_rng.max_col,
+          cell_rng.min_row, cell_rng.max_row)
+
+    
+
+
+
 
 wb.save(f'./dev/test/out/test_{timestamp()}.xlsx')
 
