@@ -1,6 +1,12 @@
 
 from dxbuild.dxreview import Review
-from dxbuild.dxtools import copy_to_range, timestamp, bounds_from_range_string, range_values_to_dict
+from dxbuild.dxtools import (
+     copy_to_range, 
+     timestamp, 
+     bounds_from_range_string, 
+     table_header_dict, 
+     start_end_cells_from_range,
+     conditionally_format_column)
 from dxcore.dxcondition import *
 
 from openpyxl import Workbook
@@ -11,7 +17,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import Rule
 from openpyxl.styles import DEFAULT_FONT
 
-_NO_WRITE = True
+_NO_WRITE = False
 
 xml_path = './dev/test/data.xml'
 
@@ -64,25 +70,30 @@ if ws is not None:
     status_dv.add(status_vector)
     # print(status_vector in status_dv)
 
-    high_cnr_rule = Rule(type='expression', dxf=red_dx, formula=['=LOWER($X12)="check and resolve"'])
-    high_nc_rule = Rule(type='expression', dxf=yellow_dx, formula=['=LOWER($X12)="non-concur"'])
-    high_fio_rule = Rule(type='expression', dxf=green_dx, formula=['=LOWER($X12)="for information only"'])
-    high_con_rule = Rule(type='expression', dxf=blue_dx, formula=['=LOWER($X12)="concur"'])
+    # high_cnr_rule = Rule(type='expression', dxf=red_dx, formula=['=LOWER($X12)="check and resolve"'])
+    # high_nc_rule = Rule(type='expression', dxf=yellow_dx, formula=['=LOWER($X12)="non-concur"'])
+    # high_fio_rule = Rule(type='expression', dxf=green_dx, formula=['=LOWER($X12)="for information only"'])
+    # high_con_rule = Rule(type='expression', dxf=blue_dx, formula=['=LOWER($X12)="concur"'])
     
-    ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_cnr_rule)
-    ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_nc_rule)
-    ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_fio_rule)
-    ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_con_rule)
+    # ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_cnr_rule)
+    # ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_nc_rule)
+    # ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_fio_rule)
+    # ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_con_rule)
 
-    cnr_rule = Rule(type='expression', dxf=light_red_dx, formula=['=LOWER($Y12)="check and resolve"'])
-    nc_rule = Rule(type='expression', dxf=light_yellow_dx, formula=['=LOWER($Y12)="non-concur"'])
-    fio_rule = Rule(type='expression', dxf=light_green_dx, formula=['=LOWER($Y12)="for information only"'])
-    con_rule = Rule(type='expression', dxf=light_blue_dx, formula=['=LOWER($Y12)="concur"'])
+    # cnr_rule = Rule(type='expression', dxf=light_red_dx, formula=['=LOWER($Y12)="check and resolve"'])
+    # nc_rule = Rule(type='expression', dxf=light_yellow_dx, formula=['=LOWER($Y12)="non-concur"'])
+    # fio_rule = Rule(type='expression', dxf=light_green_dx, formula=['=LOWER($Y12)="for information only"'])
+    # con_rule = Rule(type='expression', dxf=light_blue_dx, formula=['=LOWER($Y12)="concur"'])
     
-    ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=cnr_rule)
-    ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=nc_rule)
-    ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=fio_rule)
-    ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=con_rule)
+    # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=cnr_rule)
+    # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=nc_rule)
+    # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=fio_rule)
+    # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=con_rule)
+
+
+    conditionally_format_column('X12:X125', 'check and resolve', ws, red_dx)
+
+
 
     for row in ws.iter_rows(min_row=12, max_row=125, min_col=13, max_col=13):
             for cell in row:
@@ -94,6 +105,10 @@ if ws is not None:
     rng = table_data[0][1]
     # print(f'Table range is {rng}')
     cell_rng = CellRange(rng)
+
+    st_cell, en_cell = start_end_cells_from_range(cell_rng)
+    # print(st_cell, en_cell)
+
     # print(cell_rng.min_col, cell_rng.max_col,
     #       cell_rng.min_row, cell_rng.max_row)
 
@@ -104,8 +119,8 @@ if ws is not None:
     # print(max_col)
 
     table_header_row = CellRange(min_col=min_col, max_col=max_col, min_row=header_row, max_row=header_row)
-    column_dict = range_values_to_dict(ws, cell_range=table_header_row)
-    print(column_dict)
+    column_dict = table_header_dict(ws, cell_range=table_header_row)
+    # print(column_dict)
 
 
 

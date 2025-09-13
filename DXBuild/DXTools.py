@@ -1,9 +1,11 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
 from datetime import datetime
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Literal
 
 from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.styles.differential import DifferentialStyle
+from openpyxl.formatting.rule import Rule
 from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.cell_range import CellRange
 
@@ -45,6 +47,7 @@ def copy_to_range(
                 for j in range(columns):
                     worksheet.cell(row=anchor_row + i, column=anchor_column + j).value = data_list[i][j]
 
+
 def range_string_from_bounds(
         min_col: int, 
         max_col: int,
@@ -85,6 +88,54 @@ def bounds_from_range_string(
     return ()
 
 
+def start_end_cells_from_range(
+        range_string: str | CellRange
+    ) -> List:
+    """Returns a list of the first and last cells in a range as strings."""
+    if isinstance(range_string, CellRange):
+        return [f'{get_column_letter(range_string.min_col)}{range_string.min_row}',
+                f'{get_column_letter(range_string.max_col)}{range_string.max_row}']
+    elif isinstance(range_string, str):
+        # Test to see if the passed string is 'range-like'
+        import re
+        range_pattern = r'\b([a-zA-Z]{1,3}\d{1,7})(:[a-zA-Z]{1,3}\d{1,7}){0,1}\b'
+        matches = re.findall(pattern=range_pattern, string=range_string)
+        if matches:
+            # This is the case where the string appears to be 'range-like'
+            # convert to a CellRange and extract the bounds
+            temp = CellRange(range_string)
+            return [f'{get_column_letter(temp.min_col)}{temp.min_row}',
+                    f'{get_column_letter(temp.max_col)}{temp.max_row}']
+    # If code continues to this point, the input was invalid and an empty tuple is returned.
+    return []
+
+
+abs_rel_type = Literal['column', 'row', 'both', 'none']
+def abs_rel_address(
+        range_string: str, 
+        type:abs_rel_type='none'
+    ) -> str:
+    """Returns range-like string with absolute or relative """
+    temp = range_string.replace('$','')
+
+    import re
+    range_like = r'\b([a-zA-Z]{1,3})(\d{1,7})\b'
+    match = re.match(pattern=range_like, string=temp)
+    if match:
+        whole_match = match.group(0)    # The whole match
+        letters = match.group(1)        # Group 1 of the match
+        numbers = match.group(2)        # Group 2 of the match
+        if type == 'both':
+            return '$' + letters + '$' + numbers
+        elif type == 'column':
+            return '$' + letters + numbers
+        elif type == 'row':
+            return letters + '$' + numbers
+        else:
+            return whole_match
+    return ''
+    
+
 def autoincrement_name(
         base_name: str, 
         search_list: List
@@ -108,14 +159,15 @@ def autoincrement_name(
     return base_name
 
 
-def range_values_to_list(
+def table_header_list(
         worksheet: Worksheet, 
         cell_range: CellRange
     ) -> List:
     """Returns a list of the values in the provide cell range of the worksheet."""
     return [cell.value for cell in [cell for cell in worksheet[cell_range.coord]][0]]
 
-def range_values_to_dict(
+
+def table_header_dict(
         worksheet: Worksheet, 
         cell_range: CellRange
     ) -> Dict:
@@ -129,9 +181,32 @@ def range_values_to_dict(
     number, you would need to add the distance from the table first column to the 
     worksheet first column.
     """
-    temp = range_values_to_list(worksheet, cell_range)
+    temp = table_header_list(worksheet, cell_range)
     temp_dict = {}
     for i, value in enumerate(temp):
         if value.lower() not in temp_dict:
             temp_dict[value.lower()] = i + 1
     return temp_dict
+
+
+def conditionally_format_column(
+        range_string: str, 
+        check_for_string: str, 
+        ws: Worksheet, 
+        dxf: DifferentialStyle
+    ) -> None:
+    """Function that creates conditional format rule and applies it to a table column.
+
+    Args:
+        range_string (str): "A1:B10" representation of a range.
+        check_for_string (str): _description_
+        ws (Worksheet): Openpyxl Worksheet object
+        dxf (DifferentialStyle): Openpyxl DifferentialStyle object
+    """
+    start_cell, end_cell = start_end_cells_from_range(range_string)
+    if start_cell:
+        formula_string = [f'=LOWER({abs_rel_address(range_string=range_string, type='column')})="{check_for_string}"']
+        cf_rule = Rule(type='expression', 
+                        dxf=dxf, 
+                        formula=formula_string)
+        ws.conditional_formatting.add(range_string=abs_rel_address(range_string, 'column'), cfRule=cf_rule)
