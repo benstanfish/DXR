@@ -17,7 +17,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import Rule
 from openpyxl.styles import DEFAULT_FONT
 
-_NO_WRITE = False
+_NO_WRITE = True
 
 xml_path = './dev/test/data.xml'
 
@@ -61,6 +61,7 @@ table = Table(displayName='Comments', ref=TABLE_REGION.coord)
 if ws is not None:
     ws.add_table(table)
 
+    #TODO: Create a wrapper function for creating and apply data validation
     status_dv = DataValidation(type='list', 
                                formula1='"Concur, For Information Only, Non-Concur, Check and Resolve"', 
                                allow_blank=True)
@@ -68,6 +69,8 @@ if ws is not None:
     ws.add_data_validation(status_dv)
     status_vector = CellRange('G12:G125')
     status_dv.add(status_vector)
+    
+    
     # print(status_vector in status_dv)
 
     # high_cnr_rule = Rule(type='expression', dxf=red_dx, formula=['=LOWER($X12)="check and resolve"'])

@@ -10,10 +10,22 @@ from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.cell_range import CellRange
 
 
+
+
+#TODO: Need to split the DrChecks Review formatting tools from the basic range operations tools (different modules)
+
+
 def timestamp(
         format_string: str=r'%Y%m%d_%H%M%S'
     ) -> str:
-    """Returns a timestamp, default format: YYYYMMDD_HHMMSS"""
+    """Returns a formatted timestamp of the current time.
+
+    :param format_string: format string provided in accordance with https://docs.python.org/3/library/datetime.html#format-codes, defaults to r'%Y%m%d_%H%M%S'
+    :type format_string: str, optional
+    :return: current time as a timestamp string.
+    :rtype: str
+    """
+    # """Returns a timestamp, default format: YYYYMMDD_HHMMSS"""
     return datetime.now().strftime(format_string)
 
 
@@ -117,12 +129,11 @@ def abs_rel_address(
     ) -> str:
     """Returns range-like string with absolute or relative """
     temp = range_string.replace('$','')
-
     import re
     range_like = r'\b([a-zA-Z]{1,3})(\d{1,7})\b'
     match = re.match(pattern=range_like, string=temp)
     if match:
-        whole_match = match.group(0)    # The whole match
+        whole_match = match.group(0)    # The whole match (not used?)
         letters = match.group(1)        # Group 1 of the match
         numbers = match.group(2)        # Group 2 of the match
         if type == 'both':
@@ -140,7 +151,16 @@ def autoincrement_name(
         base_name: str, 
         search_list: List
     ) -> str:
-    """Returns the base_name with next largest integer suffixed if name already exists in search_list."""
+    """_summary_
+
+    :param base_name: _description_
+    :type base_name: str
+    :param search_list: _description_
+    :type search_list: List
+    :return: _description_
+    :rtype: str
+    """
+    # """Returns the base_name with next largest integer suffixed if name already exists in search_list."""
     base_name_length = len(base_name)
     temp = []
     for thing in search_list:
@@ -163,7 +183,16 @@ def table_header_list(
         worksheet: Worksheet, 
         cell_range: CellRange
     ) -> List:
-    """Returns a list of the values in the provide cell range of the worksheet."""
+    """_summary_
+
+    :param worksheet: _description_
+    :type worksheet: Worksheet
+    :param cell_range: _description_
+    :type cell_range: CellRange
+    :return: _description_
+    :rtype: List
+    """
+    # """Returns a list of the values in the provide cell range of the worksheet."""
     return [cell.value for cell in [cell for cell in worksheet[cell_range.coord]][0]]
 
 
@@ -173,14 +202,12 @@ def table_header_dict(
     ) -> Dict:
     """_summary_
 
-    :param range_string: _description_
-    :type range_string: str
-    :param check_for_string: _description_
-    :type check_for_string: str
-    :param ws: _description_
-    :type ws: Worksheet
-    :param dxf: _description_
-    :type dxf: DifferentialStyle
+    :param worksheet: _description_
+    :type worksheet: Worksheet
+    :param cell_range: _description_
+    :type cell_range: CellRange
+    :return: _description_
+    :rtype: Dict
     """
     # """
     # Returns a dictionary of the range values as keys and the order as an index.
@@ -198,6 +225,19 @@ def table_header_dict(
         if value.lower() not in temp_dict:
             temp_dict[value.lower()] = i + 1
     return temp_dict
+
+
+def table_column_letter(table_column_index: int, offset_columns: int) -> str:
+    """_summary_
+
+    :param table_column_index: _description_
+    :type table_column_index: int
+    :param offset_columns: _description_
+    :type offset_columns: int
+    :return: _description_
+    :rtype: str
+    """
+    return get_column_letter(table_column_index + offset_columns)
 
 
 def conditionally_format_column(
