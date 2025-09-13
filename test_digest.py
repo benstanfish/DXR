@@ -48,6 +48,8 @@ TABLE_REGION = CellRange(min_row=USER_DATA_CELL.row,
 
 table = Table(displayName='Comments', ref=TABLE_REGION.coord)
 
+
+
 if ws is not None:
     ws.add_table(table)
 
@@ -60,16 +62,35 @@ if ws is not None:
     status_dv.add(status_vector)
     # print(status_vector in status_dv)
 
-    cnr_rule = Rule(type='expression', dxf=highest_red_dx, formula=['=LOWER($X12)="check and resolve"'])
-    nc_rule = Rule(type='expression', dxf=highest_yellow_dx, formula=['=LOWER($X12)="non-concur"'])
-    fio_rule = Rule(type='expression', dxf=highest_green_dx, formula=['=LOWER($X12)="for information only"'])
-    con_rule = Rule(type='expression', dxf=highest_blue_dx, formula=['=LOWER($X12)="concur"'])
+    high_cnr_rule = Rule(type='expression', dxf=red_dx, formula=['=LOWER($X12)="check and resolve"'])
+    high_nc_rule = Rule(type='expression', dxf=yellow_dx, formula=['=LOWER($X12)="non-concur"'])
+    high_fio_rule = Rule(type='expression', dxf=green_dx, formula=['=LOWER($X12)="for information only"'])
+    high_con_rule = Rule(type='expression', dxf=blue_dx, formula=['=LOWER($X12)="concur"'])
     
-    ws.conditional_formatting.add(range_string='X12:X125', cfRule=cnr_rule)
-    ws.conditional_formatting.add(range_string='X12:X125', cfRule=nc_rule)
-    ws.conditional_formatting.add(range_string='X12:X125', cfRule=fio_rule)
-    ws.conditional_formatting.add(range_string='X12:X125', cfRule=con_rule)
+    ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_cnr_rule)
+    ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_nc_rule)
+    ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_fio_rule)
+    ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_con_rule)
 
+    cnr_rule = Rule(type='expression', dxf=light_red_dx, formula=['=LOWER($Y12)="check and resolve"'])
+    nc_rule = Rule(type='expression', dxf=light_yellow_dx, formula=['=LOWER($Y12)="non-concur"'])
+    fio_rule = Rule(type='expression', dxf=light_green_dx, formula=['=LOWER($Y12)="for information only"'])
+    con_rule = Rule(type='expression', dxf=light_blue_dx, formula=['=LOWER($Y12)="concur"'])
+    
+    ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=cnr_rule)
+    ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=nc_rule)
+    ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=fio_rule)
+    ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=con_rule)
+
+
+
+
+
+
+
+    for row in ws.iter_rows(min_row=12, max_row=125, min_col=13, max_col=13):
+            for cell in row:
+                cell.number_format = 'm/d/yy'
 
 wb.save(f'./dev/test/out/test_{timestamp()}.xlsx')
 

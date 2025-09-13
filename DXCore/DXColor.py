@@ -1,3 +1,5 @@
+# Copyright (c) 2018-2025 Ben Fisher
+
 from enum import StrEnum
 
 class DXColor(StrEnum):
