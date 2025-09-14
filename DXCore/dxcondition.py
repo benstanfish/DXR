@@ -53,3 +53,8 @@ light_blue_dx = DifferentialStyle(
     border=Border(left=Side(border_style='thin', color=DXColor.BLUE_TEXT))
 )
 
+light_gray_dx = DifferentialStyle(
+    font=Font(name='Aptos Narrow', size=11, bold=False, color=DXColor.LIGHT_GRAY_TEXT), 
+    fill=PatternFill(start_color=DXColor.LIGHT_GRAY_BG, end_color=DXColor.LIGHT_GRAY_BG),
+)
+

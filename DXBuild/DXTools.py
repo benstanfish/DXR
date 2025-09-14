@@ -7,6 +7,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.formatting.rule import Rule
 from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
+from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.cell_range import CellRange
 
 
@@ -178,89 +179,110 @@ def autoincrement_name(
     # If no collisions, the base name is returned.
     return base_name
 
-
-def table_header_list(
-        worksheet: Worksheet, 
-        cell_range: CellRange
-    ) -> List:
-    """_summary_
-
-    :param worksheet: _description_
-    :type worksheet: Worksheet
-    :param cell_range: _description_
-    :type cell_range: CellRange
-    :return: _description_
-    :rtype: List
-    """
-    # """Returns a list of the values in the provide cell range of the worksheet."""
-    return [cell.value for cell in [cell for cell in worksheet[cell_range.coord]][0]]
-
-
-def table_header_dict(
-        worksheet: Worksheet, 
-        cell_range: CellRange
-    ) -> Dict:
-    """_summary_
-
-    :param worksheet: _description_
-    :type worksheet: Worksheet
-    :param cell_range: _description_
-    :type cell_range: CellRange
-    :return: _description_
-    :rtype: Dict
-    """
-    # """
-    # Returns a dictionary of the range values as keys and the order as an index.
-    
-    # Note: the purpose of this function is to work towards the python equivalent of
-    # ListObject.ListColumn(columnValue).Index -> which gives the index, i.e. column number
-    # of the list column by the name = columnValue. Note, the index is not the absolute
-    # column number, but the number starting from the first column. To get the absolute
-    # number, you would need to add the distance from the table first column to the 
-    # worksheet first column.
-    # """
-    temp = table_header_list(worksheet, cell_range)
-    temp_dict = {}
-    for i, value in enumerate(temp):
-        if value.lower() not in temp_dict:
-            temp_dict[value.lower()] = i + 1
-    return temp_dict
-
-
-def table_column_letter(table_column_index: int, offset_columns: int) -> str:
-    """_summary_
-
-    :param table_column_index: _description_
-    :type table_column_index: int
-    :param offset_columns: _description_
-    :type offset_columns: int
-    :return: _description_
-    :rtype: str
-    """
-    return get_column_letter(table_column_index + offset_columns)
-
-
-def conditionally_format_column(
-        range_string: str, 
-        check_for_string: str, 
-        ws: Worksheet, 
-        dxf: DifferentialStyle
+def add_data_validation_to_column(
+    options_string: str,
+    cell_range_list: List[str], 
+    worksheet: Worksheet
     ) -> None:
     """_summary_
 
-    :param range_string: _description_
-    :type range_string: str
-    :param check_for_string: _description_
-    :type check_for_string: str
-    :param ws: _description_
-    :type ws: Worksheet
-    :param dxf: _description_
-    :type dxf: DifferentialStyle
+    :param options_string: _description_
+    :type options_string: str
+    :param worksheet: _description_
+    :type worksheet: Worksheet
+    :param allow_blank: _description_, defaults to True
+    :type allow_blank: bool, optional
     """
-    start_cell, end_cell = start_end_cells_from_range(range_string)
+    dv = DataValidation(type='list', 
+                        formula1=f'"{options_string}"', 
+                        allow_blank=True)
+    worksheet.add_data_validation(dv)
+    for cell_range in cell_range_list:
+        dv.add(CellRange(cell_range))
+
+
+def conditionally_format_range(
+        check_range_string: str, 
+        check_for_string: str, 
+        ws: Worksheet, 
+        dxf: DifferentialStyle,
+        apply_to_range_string: str='',
+        stop_if_true:bool = False
+    ) -> None:
+    start_cell, end_cell = start_end_cells_from_range(check_range_string)
     if start_cell:
-        formula_string = [f'=LOWER({abs_rel_address(range_string=start_cell, type='column')})="{check_for_string}"']
+        formula_string = [f'=LOWER({abs_rel_address(range_string=start_cell, 
+                          type='column')})="{check_for_string}"']
         cf_rule = Rule(type='expression', 
                         dxf=dxf, 
-                        formula=formula_string)
-        ws.conditional_formatting.add(range_string=range_string, cfRule=cf_rule)
+                        formula=formula_string, 
+                        stopIfTrue=stop_if_true)
+        if apply_to_range_string:
+            ws.conditional_formatting.add(range_string=apply_to_range_string, cfRule=cf_rule)
+        else:
+            ws.conditional_formatting.add(range_string=check_range_string, cfRule=cf_rule)
+
+
+def get_table_info(worksheet: Worksheet) -> Dict:
+    """Returns a dictionary containing the header row number and first and last rows of the databody range of the first listobject in the supplied Worksheet.
+
+    :param worksheet: _description_
+    :type worksheet: Worksheet
+    :return: _description_
+    :rtype: List[int]
+    """
+    table_data = worksheet.tables.items()
+    min_col, max_col, min_row, max_row = bounds_from_range_string(table_data[0][1])
+    header_cell_range = CellRange(min_col=min_col, max_col=max_col, min_row=min_row, max_row=min_row)
+    header_names = [header.value for header in worksheet[header_cell_range.coord][0]]
+    return {'header_row': min_row, 'first_row': min_row + 1, 'last_row': max_row, 'headers': header_names}
+
+
+def list_column_range(column_index_or_letter: str | int, table_info_dict: dict) -> str:
+    """Returns the range address for the databodyrange of a given column.
+
+    :param column_index_or_letter: _description_
+    :type column_index_or_letter: str | int
+    :param table_row_info: _description_
+    :type table_row_info: dict
+    :return: _description_
+    :rtype: str
+    """
+    header_row, first_row, last_row = table_info_dict['header_row'], table_info_dict['first_row'], table_info_dict['last_row']
+    column_letter = ''
+    if isinstance(column_index_or_letter, int):
+        column_letter = get_column_letter(column_index_or_letter)
+    if isinstance(column_index_or_letter, str):
+        column_letter = column_index_or_letter.upper()
+    return f'{column_letter}{first_row}:{column_letter}{last_row}'
+
+
+def get_columns_by_name(search_text: str, table_info_dict: Dict) -> List[str]:
+    """Returns a list of the worksheet column letters for each column in a table that includes the search text.
+
+    :param search_text: _description_
+    :type search_text: str
+    :param table_info_dict: _description_
+    :type table_info_dict: Dict
+    :return: _description_
+    :rtype: List[str]
+    """
+    list_columns =table_info_dict['headers']
+    temp = []
+    for header_no, header in enumerate(list_columns):
+        if search_text in header.lower():
+            temp.append(get_column_letter(header_no + 1))
+    return temp
+
+
+def build_column_vectors(column_list: list[str], table_info_dict: Dict) -> List[str]:
+    """Returns a list of column ranges for a table rows (ignoring the header row).
+
+    :param column_list: _description_
+    :type column_list: list[str]
+    :param table_info_dict: _description_
+    :type table_info_dict: Dict
+    :return: _description_
+    :rtype: List[str]
+    """
+    return [list_column_range(column, table_info_dict) for column in column_list]

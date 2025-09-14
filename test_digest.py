@@ -1,12 +1,6 @@
 
 from dxbuild.dxreview import Review
-from dxbuild.dxtools import (
-     copy_to_range, 
-     timestamp, 
-     bounds_from_range_string, 
-     table_header_dict, 
-     start_end_cells_from_range,
-     conditionally_format_column)
+import dxbuild.dxtools as dxtools
 from dxcore.dxcondition import *
 
 from openpyxl import Workbook
@@ -17,7 +11,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import Rule
 from openpyxl.styles import DEFAULT_FONT
 
-_NO_WRITE = True
+_NO_WRITE = False
 
 xml_path = './dev/test/data.xml'
 
@@ -43,101 +37,76 @@ if ws:
     ALL_COMMENTS_CELL = Cell(worksheet=ws, row=HEADER_ROW, column=user_notes.size[1] + 1)
 
 # Dump Data to Excel
-copy_to_range(user_notes_data, worksheet=ws, anchor_cell=USER_DATA_CELL.coordinate)
-copy_to_range(project_info_data, worksheet=ws, anchor_cell=PROJECT_INFO_CELL.coordinate)
-copy_to_range(all_comments_data, worksheet=ws, anchor_cell=ALL_COMMENTS_CELL.coordinate)
+dxtools.copy_to_range(user_notes_data, worksheet=ws, anchor_cell=USER_DATA_CELL.coordinate)
+dxtools.copy_to_range(project_info_data, worksheet=ws, anchor_cell=PROJECT_INFO_CELL.coordinate)
+dxtools.copy_to_range(all_comments_data, worksheet=ws, anchor_cell=ALL_COMMENTS_CELL.coordinate)
 
 # Create ListObject, but don't assign a TableStyle since we can only used native options
 TABLE_REGION = CellRange(min_row=USER_DATA_CELL.row,
-                             max_row=USER_DATA_CELL.row + all_comments.count,
-                             min_col=USER_DATA_CELL.column,
-                             max_col=user_notes.size[1] + all_comments.size[1],
-                             title='comments')
+                         max_row=USER_DATA_CELL.row + all_comments.count,
+                         min_col=USER_DATA_CELL.column,
+                         max_col=user_notes.size[1] + all_comments.size[1],
+                         title='comments')
 
 table = Table(displayName='Comments', ref=TABLE_REGION.coord)
 
-
-
 if ws is not None:
     ws.add_table(table)
+    table_info = dxtools.get_table_info(ws)
 
-    #TODO: Create a wrapper function for creating and apply data validation
-    status_dv = DataValidation(type='list', 
-                               formula1='"Concur, For Information Only, Non-Concur, Check and Resolve"', 
-                               allow_blank=True)
-    STATUS_CELL = Cell(worksheet=ws, row=HEADER_ROW +1, column=24)
-    ws.add_data_validation(status_dv)
-    status_vector = CellRange('G12:G125')
-    status_dv.add(status_vector)
+    open_closed_options = 'Open, Closed'
+    status_options = 'Concur, For Information Only, Non-Concur, Check and Resolve'
+    
+    status_column_letters = dxtools.get_columns_by_name('status', table_info)
+    status_columns = dxtools.build_column_vectors(status_column_letters, table_info) # Treat the first occurance separately
+    dxtools.add_data_validation_to_column(status_options, status_columns[1:], ws)
+    
+    first_status_column = dxtools.add_data_validation_to_column(open_closed_options, status_columns[:1], ws)
+    dxtools.conditionally_format_range(status_columns[0], 'closed', ws, light_gray_dx, 'H12:BB125', stop_if_true=True)
+        
+    for column in status_columns[1:]:
+        dxtools.conditionally_format_range(column, 'check and resolve', ws, light_red_dx)
+        dxtools.conditionally_format_range(column, 'non-concur', ws, light_yellow_dx)
+        dxtools.conditionally_format_range(column, 'for information only', ws, light_green_dx)
+        dxtools.conditionally_format_range(column, 'concur', ws, light_blue_dx)  
+    
+    highest_reponse_letters = dxtools.get_columns_by_name('highest resp', table_info)
+    highest_response_columns = dxtools.build_column_vectors(highest_reponse_letters, table_info)[0]
+    dxtools.add_data_validation_to_column(status_options, [highest_response_columns], ws)
+    dxtools.conditionally_format_range(highest_response_columns, 'check and resolve', ws, red_dx)
+    dxtools.conditionally_format_range(highest_response_columns, 'non-concur', ws, yellow_dx)
+    dxtools.conditionally_format_range(highest_response_columns, 'for information only', ws, green_dx)
+    dxtools.conditionally_format_range(highest_response_columns, 'concur', ws, blue_dx)
+
+
+    critical_options = 'Yes, No'
+    critical_column_letters = dxtools.get_columns_by_name('critical', table_info)
+    critical_column = dxtools.build_column_vectors(critical_column_letters, table_info)
+    dxtools.add_data_validation_to_column(critical_options, critical_column, ws)
+    dxtools.conditionally_format_range(critical_column[0], 'yes', ws, red_dx)    
+    
+    class_options = 'CUI, Unclassified, Public'
+    class_column_letters = dxtools.get_columns_by_name('class', table_info)
+    class_column = dxtools.build_column_vectors(class_column_letters, table_info)
+    dxtools.add_data_validation_to_column(class_options, class_column, ws)
+    dxtools.conditionally_format_range(class_column[0], 'cui', ws, red_dx)   
+    dxtools.conditionally_format_range(class_column[0], 'unclassified', ws, yellow_dx)
     
     
-    # print(status_vector in status_dv)
-
-    # high_cnr_rule = Rule(type='expression', dxf=red_dx, formula=['=LOWER($X12)="check and resolve"'])
-    # high_nc_rule = Rule(type='expression', dxf=yellow_dx, formula=['=LOWER($X12)="non-concur"'])
-    # high_fio_rule = Rule(type='expression', dxf=green_dx, formula=['=LOWER($X12)="for information only"'])
-    # high_con_rule = Rule(type='expression', dxf=blue_dx, formula=['=LOWER($X12)="concur"'])
     
-    # ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_cnr_rule)
-    # ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_nc_rule)
-    # ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_fio_rule)
-    # ws.conditional_formatting.add(range_string='X12:X125', cfRule=high_con_rule)
-
-    # cnr_rule = Rule(type='expression', dxf=light_red_dx, formula=['=LOWER($Y12)="check and resolve"'])
-    # nc_rule = Rule(type='expression', dxf=light_yellow_dx, formula=['=LOWER($Y12)="non-concur"'])
-    # fio_rule = Rule(type='expression', dxf=light_green_dx, formula=['=LOWER($Y12)="for information only"'])
-    # con_rule = Rule(type='expression', dxf=light_blue_dx, formula=['=LOWER($Y12)="concur"'])
     
-    # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=cnr_rule)
-    # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=nc_rule)
-    # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=fio_rule)
-    # ws.conditional_formatting.add(range_string='Y12:Y125', cfRule=con_rule)
+    
+    
 
-    highest_response_address = 'X12:X125'
-    conditionally_format_column(highest_response_address, 'check and resolve', ws, red_dx)
-    conditionally_format_column(highest_response_address, 'non-concur', ws, yellow_dx)
-    conditionally_format_column(highest_response_address, 'for information only', ws, green_dx)
-    conditionally_format_column(highest_response_address, 'concur', ws, blue_dx)
-
-    status = 'Y12:Y125'
-    conditionally_format_column(status, 'check and resolve', ws, light_red_dx)
-    conditionally_format_column(status, 'non-concur', ws, light_yellow_dx)
-    conditionally_format_column(status, 'for information only', ws, light_green_dx)
-    conditionally_format_column(status, 'concur', ws, light_blue_dx)    
-
+    #TODO: Write function to change the number format for a given column vector
     for row in ws.iter_rows(min_row=12, max_row=125, min_col=13, max_col=13):
             for cell in row:
                 cell.number_format = 'm/d/yy'
 
-
-    tables = ws.tables
-    table_data = tables.items()
-    rng = table_data[0][1]
-    # print(f'Table range is {rng}')
-    cell_rng = CellRange(rng)
-
-    st_cell, en_cell = start_end_cells_from_range(cell_rng)
-    # print(st_cell, en_cell)
-
-    # print(cell_rng.min_col, cell_rng.max_col,
-    #       cell_rng.min_row, cell_rng.max_row)
-
-    table_range = table.ref
-    min_col, max_col, header_row, max_row = bounds_from_range_string(table_range)
-    min_row = header_row + 1
-    # print(min_row, max_row)
-    # print(max_col)
-
-    table_header_row = CellRange(min_col=min_col, max_col=max_col, min_row=header_row, max_row=header_row)
-    column_dict = table_header_dict(ws, cell_range=table_header_row)
-    # print(column_dict)
-
-
-
 if _NO_WRITE:
     wb.close()
 else:
-    save_name = f'./dev/test/out/test_{timestamp()}.xlsx'
+    save_name = f'./dev/test/out/test_{dxtools.timestamp()}.xlsx'
     wb.save(save_name)
     print(f'{save_name} has been saved.')
 
