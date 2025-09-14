@@ -97,6 +97,7 @@ if ws is not None:
     dxtools.conditionally_format_range(class_column[0], 'unclassified', ws, yellow_dx)
     
     
+    
     #TODO: Work through the logic of setting the user column widths.
     
     for i, col_width in enumerate(dxsettings.COMMENT_COLUMN_WIDTHS):
