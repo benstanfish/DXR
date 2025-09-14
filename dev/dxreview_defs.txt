@@ -1,0 +1,76 @@
+This file contains signatures extracted from dxreview.py
+========================================================
+
+def get_root
+def parse_single_tag
+def parse_date_node
+def date_to_excel
+def clean_text
+class ProjectInfo
+    def __init__
+    def from_tree
+    def all_data_dict
+    def to_list
+    def count
+    def size
+class ReviewComments
+    def __init__
+    def from_tree
+    def count
+    def max_evaluations
+    def max_backchecks
+    def max_responses
+    def evaluations_count
+    def backchecks_count
+    def responses_count
+    def comments_to_list
+    def column_names
+    def comment_columns_count
+    def response_columns_count
+    def all_column_count
+    def _get_all_headers
+    def to_list
+    def size
+class UserNotes
+    def __init__
+    def to_list
+    def size
+    def count
+class Review
+    def __init__
+    def from_file
+class Remark
+    def __init__
+    def attributes_list
+    def from_tree
+    def dump
+    def to_list
+class Comment
+    def __init__
+        super().__init__
+    def from_tree
+    def dump
+    def evaluations_count
+    def backchecks_count
+    def total_response_count
+    def total_responses
+    def list_responses
+    def list_responses_chronological
+    def highest_response
+    def highest_evaluation_response
+    def highest_backcheck_response
+    def latest_response
+    def ball_in_court
+    def days_open
+class Evaluation
+    def __init__
+        super().__init__
+    def from_tree
+    def dump
+    def to_list
+class Backcheck
+    def __init__
+        super().__init__
+    def from_tree
+    def dump
+    def to_list

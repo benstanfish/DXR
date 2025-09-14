@@ -561,7 +561,7 @@ class Comment(Remark):
         return (len(self.evaluations), len(self.backchecks))
 
     @property
-    def list_reponses(self) -> List:
+    def list_responses(self) -> List:
         """Returns list of Responses in type order: first Evaluations then Backchecks."""
         return self.evaluations + self.backchecks
 
@@ -572,7 +572,7 @@ class Comment(Remark):
         return list(merge(self.evaluations, self.backchecks, key=sort_key))
 
     def highest_response(self, resp_values: Dict=RESPONSE_VALUES) -> str:
-        all_responses = self.list_reponses
+        all_responses = self.list_responses
         resp_value = 0
         for resp in all_responses:
             if resp_values[resp.status.lower()] > resp_value:
