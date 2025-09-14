@@ -2,13 +2,16 @@
 from dxbuild.dxreview import Review
 import dxbuild.dxtools as dxtools
 from dxcore.dxcondition import *
+import dxconfig.settings as dxsettings
 
 from openpyxl import Workbook
 from openpyxl.cell.cell import Cell
+from openpyxl.utils.cell import get_column_letter
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.table import Table
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import Rule
+from openpyxl.styles.alignment import Alignment
 from openpyxl.styles import DEFAULT_FONT
 
 _NO_WRITE = False
@@ -20,7 +23,7 @@ project_info = review.project_info
 all_comments = review.review_comments
 user_notes = review.user_notes
 
-DEFAULT_FONT.__init__(name='Aptos', size=11)
+DEFAULT_FONT.__init__(name='Aptos', size=10)
 wb = Workbook()
 ws = wb.active
 
@@ -52,6 +55,7 @@ table = Table(displayName='Comments', ref=TABLE_REGION.coord)
 
 if ws is not None:
     ws.add_table(table)
+    ws.sheet_view.showGridLines = False
     table_info = dxtools.get_table_info(ws)
 
     open_closed_options = 'Open, Closed'
@@ -93,15 +97,23 @@ if ws is not None:
     dxtools.conditionally_format_range(class_column[0], 'unclassified', ws, yellow_dx)
     
     
+    #TODO: Work through the logic of setting the user column widths.
     
+    for i, col_width in enumerate(dxsettings.COMMENT_COLUMN_WIDTHS):
+        ws.column_dimensions[get_column_letter(i + 8)].width = col_width
     
-    
-    
+    #TODO: Work through the logic of setting widths for the Response columns
+    # for i, col_width in enumerate(dxsettings.RESPONSE_COLUMN_WIDTHS):
+    #     ws.column_dimensions[get_column_letter(i + 8)].width = col_width
 
     #TODO: Write function to change the number format for a given column vector
     for row in ws.iter_rows(min_row=12, max_row=125, min_col=13, max_col=13):
             for cell in row:
                 cell.number_format = 'm/d/yy'
+                
+    # ws.column_dimensions['S'].width = 70
+    for cell in ws['S']:
+        cell.alignment = Alignment(wrap_text=True)
 
 if _NO_WRITE:
     wb.close()
