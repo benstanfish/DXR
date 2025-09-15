@@ -1,3 +1,4 @@
+from datetime import datetime
 
 from dxbuild.dxreview import Review
 import dxbuild.dxtools as dxtools
@@ -7,6 +8,7 @@ import dxconfig.settings as dxsettings
 from openpyxl import Workbook
 from openpyxl.cell.cell import Cell
 from openpyxl.utils.cell import get_column_letter
+from openpyxl.worksheet.errors import IgnoredError
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.table import Table
 from openpyxl.worksheet.datavalidation import DataValidation
@@ -53,10 +55,21 @@ TABLE_REGION = CellRange(min_row=USER_DATA_CELL.row,
 
 table = Table(displayName='Comments', ref=TABLE_REGION.coord)
 
+
+
 if ws is not None:
     ws.add_table(table)
     ws.sheet_view.showGridLines = False
     table_info = dxtools.get_table_info(ws)
+
+    top_left_alignment = Alignment(horizontal='left', vertical='top')
+    used_range = ws.calculate_dimension()
+    for row in ws[used_range]:
+        for cell in row:
+            if isinstance(cell.value, datetime):
+                cell.number_format = 'm/d/yy'
+            cell.alignment = top_left_alignment
+
 
     open_closed_options = 'Open, Closed'
     status_options = 'Concur, For Information Only, Non-Concur, Check and Resolve'
@@ -108,13 +121,17 @@ if ws is not None:
     #     ws.column_dimensions[get_column_letter(i + 8)].width = col_width
 
     #TODO: Write function to change the number format for a given column vector
-    for row in ws.iter_rows(min_row=12, max_row=125, min_col=13, max_col=13):
-            for cell in row:
-                cell.number_format = 'm/d/yy'
+    # for row in ws.iter_rows(min_row=12, max_row=125, min_col=13, max_col=13):
+    #         for cell in row:
+    #             cell.number_format = 'm/d/yy'
                 
     # ws.column_dimensions['S'].width = 70
     for cell in ws['S']:
-        cell.alignment = Alignment(wrap_text=True)
+        cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
+
+    # ignore_number_as_text = IgnoredError(numberStoredAsText=True)
+
+
 
 if _NO_WRITE:
     wb.close()

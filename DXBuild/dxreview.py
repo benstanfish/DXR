@@ -200,8 +200,8 @@ class ProjectInfo:
             'Control Number': self.control_number,
             'Review Name': self.review_name,
             'Review ID': self.review_id,
-            'XML Date': self.xml_date,
-            'Run Date': self.run_date,
+            'XML Date': date_to_excel(self.xml_date),
+            'Run Date': date_to_excel(self.run_date),
             'Notes': ''
         }
     
@@ -391,6 +391,7 @@ class Review:
         self.root = root
         self.file_path = file_path
         self.user_notes = UserNotes()
+        self.frames = []
 
     @classmethod
     def from_file(cls, path):
@@ -699,7 +700,8 @@ class Evaluation(Remark):
             'text': self.text,
             'has_attachment': self.has_attachment,
             'author': self.author,
-            'date_created': str(self.date_created).replace('T', ' '),
+            'date_created': date_to_excel(self.date_created),
+            # 'date_created': str(self.date_created).replace('T', ' '),
             'remark_type': self.remark_type,
             'parent_id': self.parent_id,
             'impact_scope': self.impact_scope,
@@ -755,7 +757,7 @@ class Backcheck(Remark):
             'text': self.text,
             'has_attachment': self.has_attachment,
             'author': self.author,
-            'date_created': str(self.date_created).replace('T', ' '),
+            'date_created': date_to_excel(self.date_created),
             'remark_type': self.remark_type,
             'parent_id': self.parent_id,
             'evaluation_id': self.evaulation_id
