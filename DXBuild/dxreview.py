@@ -176,7 +176,6 @@ class ProjectInfo:
         self.regions = {}
         self.set_regions()
         
-
     @classmethod
     def from_tree(cls, element, file_path=None):
         project_id = parse_single_tag('ProjectID', element)
@@ -234,6 +233,7 @@ class ProjectInfo:
     def shift_regions(self, col_shift: int = 0, row_shift: int = 0) -> None:
         for region in self.regions:
             self.regions[region].shift(col_shift=col_shift, row_shift=row_shift)
+            
 
 class ReviewComments:
     """Returns list of all Comment objects in a Dr Checks review."""
@@ -376,6 +376,7 @@ class ReviewComments:
         return (self.count, self.all_column_count)
 
 
+
 class UserNotes():
     def __init__(self):
         self.headers = [header for header in USER_NOTES_COLUMNS]
@@ -394,11 +395,14 @@ class UserNotes():
     
     def set_regions(self, cell_range: CellRange) -> None:
         if cell_range:
-            self.regions['region'] = cell_range
+            self.regions['full_region'] = cell_range
             min_col, min_row, max_col, max_row = cell_range.min_col, cell_range.min_row, cell_range.max_col, cell_range.max_row            
             self.regions['header_region']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row, max_row=min_row)
             self.regions['header_body']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row + 1, max_row=max_row)
-
+    
+    def shift_regions(self, col_shift: int = 0, row_shift: int = 0) -> None:
+        for region in self.regions:
+            self.regions[region].shift(col_shift=col_shift, row_shift=row_shift)  
         
 
 class Review:
@@ -414,7 +418,7 @@ class Review:
         self.root = root
         self.file_path = file_path
         self.user_notes = UserNotes()
-        self.regions = []
+        self.regions = {}
 
     @classmethod
     def from_file(cls, path):
@@ -427,8 +431,8 @@ class Review:
                       root=root,
                       file_path=path)
 
-    def build_regions(self):
-        pass
+    def build_regions(self) -> Dict:
+        return {}
 
 
 
@@ -471,6 +475,7 @@ class Remark(ABC):
             for key in attrs.keys():
                 return [props[attrs[key]] if attrs[key] in props else '' for key in attrs]
         return []
+
 
 
 
@@ -529,21 +534,21 @@ class Comment(Remark):
         backchecks = [Backcheck.from_tree(bc) for bc in element.find('backchecks')] \
                     if element.find('backchecks') is not None else []
         return Comment(id_=id_,
-                    spec=spec,
-                    sheet=sheet,
-                    detail=detail,
-                    is_critical=is_critical,
-                    docref=docref,
-                    doctype=doctype,
-                    discipline=discipline,
-                    coordinating_discipline=coordinating_discipline,
-                    status=status,
-                    text=text,
-                    has_attachment=has_attachment,
-                    author=author,
-                    date_created=date_created,
-                    evaluations=evaluations,
-                    backchecks=backchecks)
+                       spec=spec,
+                       sheet=sheet,
+                       detail=detail,
+                       is_critical=is_critical,
+                       docref=docref,
+                       doctype=doctype,
+                       discipline=discipline,
+                       coordinating_discipline=coordinating_discipline,
+                       status=status,
+                       text=text,
+                       has_attachment=has_attachment,
+                       author=author,
+                       date_created=date_created,
+                       evaluations=evaluations,
+                       backchecks=backchecks)
 
     @property
     def dump(self):
@@ -675,6 +680,9 @@ class Comment(Remark):
             time_diff = current_date - datetime.fromisoformat(str(self.date_created))
         return time_diff.days
 
+
+
+
 class Evaluation(Remark):
     """Returns an Evaulation object containing information from a Dr Checks 'evaluation' element."""
 
@@ -728,7 +736,6 @@ class Evaluation(Remark):
             'has_attachment': self.has_attachment,
             'author': self.author,
             'date_created': date_to_excel(self.date_created),
-            # 'date_created': str(self.date_created).replace('T', ' '),
             'remark_type': self.remark_type,
             'parent_id': self.parent_id,
             'impact_scope': self.impact_scope,
@@ -738,6 +745,9 @@ class Evaluation(Remark):
 
     def to_list(self, attrs: Dict=RESPONSE_COLUMNS) -> List:
         return super().to_list(attrs)
+
+
+
 
 
 class Backcheck(Remark):

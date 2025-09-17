@@ -16,7 +16,7 @@ from openpyxl.formatting.rule import Rule
 from openpyxl.styles.alignment import Alignment
 from openpyxl.styles import DEFAULT_FONT
 
-_WRITE_FILE = False
+_WRITE_FILE = True
 
 xml_path = './dev/test/data.xml'
 
@@ -61,10 +61,6 @@ if ws is not None:
     ws.add_table(table)
     ws.sheet_view.showGridLines = False
     table_info = dxtools.get_table_info(ws)
-
-    print(review.project_info.regions['region'].coord)
-    print(review.project_info.shift_regions(col_shift=review.user_notes.count))
-    print(review.project_info.regions['region'].coord)
 
 
 
