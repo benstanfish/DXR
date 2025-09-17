@@ -10,9 +10,11 @@ from abc import ABC, abstractmethod
 from os.path import getctime
 from datetime import datetime
 from heapq import merge
-from typing import List, Dict, Tuple, Literal
+from typing import List, Dict, Tuple, Literal, Optional
 from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element
+
+from openpyxl.worksheet.cell_range import CellRange
 
 """The following constants are not intended for public access. They
 relate to the parsing and internal workings of this script."""
@@ -170,6 +172,10 @@ class ProjectInfo:
         self.review_name = review_name
         self.xml_date = xml_date
         self.run_date = run_date
+        self.vertical_offset = 2
+        self.regions = {}
+        self.set_regions()
+        
 
     @classmethod
     def from_tree(cls, element, file_path=None):
@@ -219,7 +225,15 @@ class ProjectInfo:
     @property
     def size(self) -> Tuple[int, int]:
         return (self.count, 2)
+    
+    def set_regions(self) -> None:
+        self.regions['region'] = CellRange(min_col=1, max_col=2, min_row=1, max_row=self.count + self.vertical_offset)
+        self.regions['keys_region'] = CellRange(min_col=1, max_col=1, min_row=1, max_row=self.count)
+        self.regions['values_region'] = CellRange(min_col=2, max_col=2, min_row=1, max_row=self.count)
 
+    def shift_regions(self, col_shift: int = 0, row_shift: int = 0) -> None:
+        for region in self.regions:
+            self.regions[region].shift(col_shift=col_shift, row_shift=row_shift)
 
 class ReviewComments:
     """Returns list of all Comment objects in a Dr Checks review."""
@@ -365,6 +379,7 @@ class ReviewComments:
 class UserNotes():
     def __init__(self):
         self.headers = [header for header in USER_NOTES_COLUMNS]
+        self.regions = {}
 
     def to_list(self) -> List[str]:
         return self.headers
@@ -377,6 +392,14 @@ class UserNotes():
     def count(self) -> int:
         return len(self.headers)
     
+    def set_regions(self, cell_range: CellRange) -> None:
+        if cell_range:
+            self.regions['region'] = cell_range
+            min_col, min_row, max_col, max_row = cell_range.min_col, cell_range.min_row, cell_range.max_col, cell_range.max_row            
+            self.regions['header_region']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row, max_row=min_row)
+            self.regions['header_body']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row + 1, max_row=max_row)
+
+        
 
 class Review:
     """Returns a Review object containing project info and review comments objects."""
@@ -391,7 +414,7 @@ class Review:
         self.root = root
         self.file_path = file_path
         self.user_notes = UserNotes()
-        self.frames = []
+        self.regions = []
 
     @classmethod
     def from_file(cls, path):
@@ -403,6 +426,10 @@ class Review:
                       review_comments=review_comments,
                       root=root,
                       file_path=path)
+
+    def build_regions(self):
+        pass
+
 
 
 class Remark(ABC):

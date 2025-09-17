@@ -16,7 +16,7 @@ from openpyxl.formatting.rule import Rule
 from openpyxl.styles.alignment import Alignment
 from openpyxl.styles import DEFAULT_FONT
 
-_NO_WRITE = False
+_WRITE_FILE = False
 
 xml_path = './dev/test/data.xml'
 
@@ -61,6 +61,12 @@ if ws is not None:
     ws.add_table(table)
     ws.sheet_view.showGridLines = False
     table_info = dxtools.get_table_info(ws)
+
+    print(review.project_info.regions['region'].coord)
+    print(review.project_info.shift_regions(col_shift=review.user_notes.count))
+    print(review.project_info.regions['region'].coord)
+
+
 
     top_left_alignment = Alignment(horizontal='left', vertical='top')
     used_range = ws.calculate_dimension()
@@ -133,13 +139,8 @@ if ws is not None:
 
 
 
-if _NO_WRITE:
-    wb.close()
-else:
+if _WRITE_FILE:
     save_name = f'./dev/test/out/test_{dxtools.timestamp()}.xlsx'
     wb.save(save_name)
     print(f'{save_name} has been saved.')
-
-
-
-
+wb.close()
