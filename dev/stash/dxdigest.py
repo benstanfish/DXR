@@ -3,7 +3,7 @@
 
 from typing import List, Tuple
 
-from dxbuild.dxreview import Review
+from dxbuild.reviews import Review
 from dxbuild.dxtools import timestamp, list_dimensions, copy_to_range
 from dxconfig.settings import *
 from dxcore.dxcolor import WebColor

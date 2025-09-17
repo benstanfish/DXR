@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dxbuild.dxreview import Review
+from dxbuild.reviews import Review
 import dxbuild.dxtools as dxtools
 from dxcore.dxcondition import *
 import dxconfig.settings as dxsettings

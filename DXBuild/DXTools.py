@@ -11,10 +11,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.cell_range import CellRange
 
 
-
-
 #TODO: Need to split the DrChecks Review formatting tools from the basic range operations tools (different modules)
-
 
 def timestamp(
         format_string: str=r'%Y%m%d_%H%M%S'
@@ -147,7 +144,6 @@ def abs_rel_address(
             return whole_match
     return ''
     
-
 def autoincrement_name(
         base_name: str, 
         search_list: List
@@ -179,6 +175,7 @@ def autoincrement_name(
     # If no collisions, the base name is returned.
     return base_name
 
+
 def add_data_validation_to_column(
     options_string: str,
     cell_range_list: List[str], 
@@ -199,7 +196,6 @@ def add_data_validation_to_column(
     worksheet.add_data_validation(dv)
     for cell_range in cell_range_list:
         dv.add(CellRange(cell_range))
-
 
 def conditionally_format_range(
         check_range_string: str, 

@@ -1,4 +1,4 @@
-from dxbuild.dxreview import Review
+from dxbuild.reviews import Review
 from dxbuild.dxtools import timestamp, list_dimensions
 import pandas as pd
 import numpy as np
