@@ -8,4 +8,4 @@ from .dxreview import (
     UserNotes
 )
 from .dxtools import *
-from .dxdeprecated import deprecated
+# from .dxdeprecated import deprecated
