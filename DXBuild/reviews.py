@@ -33,8 +33,8 @@ class ProjectInfo:
         self.xml_date = xml_date
         self.run_date = run_date
         self.vertical_offset = 2
-        self.regions = {}
-        self.set_regions()
+        self.frames = {}
+        self.set_frames()
         
     @classmethod
     def from_tree(cls, element, file_path=None):
@@ -66,8 +66,7 @@ class ProjectInfo:
             'Review Name': self.review_name,
             'Review ID': self.review_id,
             'XML Date': date_to_excel(self.xml_date),
-            'Run Date': date_to_excel(self.run_date),
-            'Notes': ''
+            'Run Date': date_to_excel(self.run_date)
         }
     
     def to_list(self) -> List:
@@ -85,14 +84,14 @@ class ProjectInfo:
     def size(self) -> Tuple[int, int]:
         return (self.count, 2)
     
-    def set_regions(self) -> None:
-        self.regions['region'] = CellRange(min_col=1, max_col=2, min_row=1, max_row=self.count + self.vertical_offset)
-        self.regions['keys_region'] = CellRange(min_col=1, max_col=1, min_row=1, max_row=self.count)
-        self.regions['values_region'] = CellRange(min_col=2, max_col=2, min_row=1, max_row=self.count)
+    def set_frames(self) -> None:
+        self.frames['outline'] = CellRange(min_col=1, max_col=2, min_row=1, max_row=self.count + self.vertical_offset)
+        self.frames['keys'] = CellRange(min_col=1, max_col=1, min_row=1, max_row=self.count)
+        self.frames['values'] = CellRange(min_col=2, max_col=2, min_row=1, max_row=self.count)
 
-    def shift_regions(self, col_shift: int = 0, row_shift: int = 0) -> None:
-        for region in self.regions:
-            self.regions[region].shift(col_shift=col_shift, row_shift=row_shift)
+    def shift_frames(self, col_shift: int = 0, row_shift: int = 0) -> None:
+        for region in self.frames:
+            self.frames[region].shift(col_shift=col_shift, row_shift=row_shift)
             
 
 class ReviewComments:
@@ -238,7 +237,7 @@ class ReviewComments:
 class UserNotes:
     def __init__(self):
         self.headers = [header for header in USER_NOTES_COLUMNS]
-        self.regions = {}
+        self.frames = {}
 
     def to_list(self) -> List[str]:
         return self.headers
@@ -251,17 +250,18 @@ class UserNotes:
     def count(self) -> int:
         return len(self.headers)
     
-    def set_regions(self, cell_range: CellRange) -> None:
+    def set_frames(self, cell_range: CellRange) -> None:
         if cell_range:
-            self.regions['full_region'] = cell_range
+            self.frames['outline'] = cell_range
             min_col, min_row, max_col, max_row = cell_range.min_col, cell_range.min_row, cell_range.max_col, cell_range.max_row            
-            self.regions['header_region']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row, max_row=min_row)
-            self.regions['header_body']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row + 1, max_row=max_row)
+            self.frames['header']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row, max_row=min_row)
+            self.frames['body']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row + 1, max_row=max_row)
     
-    def shift_regions(self, col_shift: int = 0, row_shift: int = 0) -> None:
-        for region in self.regions:
-            self.regions[region].shift(col_shift=col_shift, row_shift=row_shift)  
+    def shift_frames(self, col_shift: int = 0, row_shift: int = 0) -> None:
+        for region in self.frames:
+            self.frames[region].shift(col_shift=col_shift, row_shift=row_shift)  
         
+
 
 class Review:
     """Returns a Review object containing project info and review comments objects."""
@@ -276,7 +276,7 @@ class Review:
         self.root = root
         self.file_path = file_path
         self.user_notes = UserNotes()
-        self.regions = {}
+        self.frames = {}
 
     @classmethod
     def from_file(cls, path):
@@ -289,7 +289,7 @@ class Review:
                       root=root,
                       file_path=path)
 
-    def build_regions(self) -> Dict:
+    def build_frames(self) -> Dict:
         return {}
 
 

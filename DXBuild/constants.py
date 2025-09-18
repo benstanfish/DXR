@@ -6,6 +6,7 @@ from typing import Literal
 relate to the parsing and internal workings of this script."""
 _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
+_PROJECT_INFO_VERTICAL_OFFSET = 2
 _RESPONSE_EXPANSION_TYPES = Literal['chronological', 'type']
 _TRUE_SYMBOLIC = '〇'
 
@@ -70,4 +71,9 @@ RESPONSE_VALUES = {
     'for information only': 2,
     'non-concur': 3,
     'check and resolve': 4
+}
+
+FALLBACKS = {
+    'font_name': 'Aptos',
+    'font_size': 10
 }

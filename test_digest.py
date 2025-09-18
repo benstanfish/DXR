@@ -13,9 +13,9 @@ from openpyxl.styles import DEFAULT_FONT
 
 from dxbuild.reviews import Review
 import dxbuild.buildtools as buildtools
-from dxcore.dxcondition import *
+from dxcore.conditionalformats import *
 import dxconfig.settings as dxsettings
-
+from dxbuild.constants import FALLBACKS
 
 _WRITE_FILE = True
 
@@ -26,7 +26,7 @@ project_info = review.project_info
 all_comments = review.review_comments
 user_notes = review.user_notes
 
-DEFAULT_FONT.__init__(name='Aptos', size=10)
+DEFAULT_FONT.__init__(name=FALLBACKS['font_name'], size=FALLBACKS['font_size'])
 wb = Workbook()
 ws = wb.active
 
@@ -56,13 +56,10 @@ TABLE_REGION = CellRange(min_row=USER_DATA_CELL.row,
 
 table = Table(displayName='Comments', ref=TABLE_REGION.coord)
 
-
-
 if ws is not None:
     ws.add_table(table)
     ws.sheet_view.showGridLines = False
     table_info = buildtools.get_table_info(ws)
-
 
 
     top_left_alignment = Alignment(horizontal='left', vertical='top')
@@ -85,20 +82,19 @@ if ws is not None:
     buildtools.conditionally_format_range(status_columns[0], 'closed', ws, light_gray_dx, 'H12:BB125', stop_if_true=True)
         
     for column in status_columns[1:]:
-        buildtools.conditionally_format_range(column, 'check and resolve', ws, light_red_dx)
-        buildtools.conditionally_format_range(column, 'non-concur', ws, light_yellow_dx)
-        buildtools.conditionally_format_range(column, 'for information only', ws, light_green_dx)
-        buildtools.conditionally_format_range(column, 'concur', ws, light_blue_dx)  
+        buildtools.conditionally_format_range(column, 'check and resolve', ws, light_red_dx, x_if_empty=True)
+        buildtools.conditionally_format_range(column, 'non-concur', ws, light_yellow_dx, x_if_empty=True)
+        buildtools.conditionally_format_range(column, 'for information only', ws, light_green_dx, x_if_empty=True)
+        buildtools.conditionally_format_range(column, 'concur', ws, light_blue_dx, x_if_empty=True)
     
     highest_reponse_letters = buildtools.get_columns_by_name('highest resp', table_info)
     highest_response_columns = buildtools.build_column_vectors(highest_reponse_letters, table_info)[0]
     buildtools.add_data_validation_to_column(status_options, [highest_response_columns], ws)
-    buildtools.conditionally_format_range(highest_response_columns, 'check and resolve', ws, red_dx)
-    buildtools.conditionally_format_range(highest_response_columns, 'non-concur', ws, yellow_dx)
-    buildtools.conditionally_format_range(highest_response_columns, 'for information only', ws, green_dx)
-    buildtools.conditionally_format_range(highest_response_columns, 'concur', ws, blue_dx)
-
-
+    buildtools.conditionally_format_range(highest_response_columns, 'check and resolve', ws, red_dx, x_if_empty=True)
+    buildtools.conditionally_format_range(highest_response_columns, 'non-concur', ws, yellow_dx, x_if_empty=True)
+    buildtools.conditionally_format_range(highest_response_columns, 'for information only', ws, green_dx, x_if_empty=True)
+    buildtools.conditionally_format_range(highest_response_columns, 'concur', ws, blue_dx, x_if_empty=True)
+    
     critical_options = 'Yes, No'
     critical_column_letters = buildtools.get_columns_by_name('critical', table_info)
     critical_column = buildtools.build_column_vectors(critical_column_letters, table_info)

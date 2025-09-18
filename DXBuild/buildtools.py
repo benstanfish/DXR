@@ -10,6 +10,8 @@ from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.cell_range import CellRange
 
+from dxcore.cellformats import x_border_style
+
 
 #TODO: Need to split the DrChecks Review formatting tools from the basic range operations tools (different modules)
 
@@ -204,7 +206,8 @@ def conditionally_format_range(
         ws: Worksheet, 
         dxf: DifferentialStyle,
         apply_to_range_string: str='',
-        stop_if_true:bool = False
+        stop_if_true:bool = False,
+        x_if_empty:bool = False
     ) -> None:
     start_cell, end_cell = start_end_cells_from_range(check_range_string)
     if start_cell:
@@ -218,7 +221,12 @@ def conditionally_format_range(
             ws.conditional_formatting.add(range_string=apply_to_range_string, cfRule=cf_rule)
         else:
             ws.conditional_formatting.add(range_string=check_range_string, cfRule=cf_rule)
-
+    if x_if_empty:
+        cell_range = ws[check_range_string]
+        for row in cell_range:
+            for cell in row:
+                if cell.value == '':
+                    cell.border = x_border_style
 
 def get_table_info(worksheet: Worksheet) -> Dict:
     """Returns a dictionary containing the header row number and first and last rows of the databody range of the first listobject in the supplied Worksheet.
