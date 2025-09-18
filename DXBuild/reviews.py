@@ -3,6 +3,7 @@
 from os.path import getctime
 from datetime import datetime
 from typing import List, Dict, Tuple
+from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.worksheet.cell_range import CellRange
 
 from .constants import (COMMENT_COLUMNS, 
@@ -15,7 +16,27 @@ from .parsetools import (get_root, parse_single_tag, date_to_excel)
 from .remarks import Comment
 
 
-class ProjectInfo:
+class Frameable:
+    def __init__(self):
+        self.frames = {}
+
+    def shift_frames(self, col_shift: int = 0, row_shift: int = 0) -> None:
+        for region in self.frames:
+            self.frames[region].shift(col_shift=col_shift, row_shift=row_shift)
+
+    def expand_frame(self, frame_name:str, right:int=0, down:int=0, left:int=0, up:int=0):
+        self.frames[frame_name].expand(right=right, down=down, left=left, up=up)  
+
+    def get_anchor_cell(self, worksheet:Worksheet, frame_name:str=''):
+        if frame_name:
+            return worksheet.cell(row=self.frames[frame_name].min_row, column=self.frames[frame_name].min_col).coordinate
+        else:
+            if 'extents' in self.frames.keys():
+                return worksheet.cell(row=self.frames['extents'].min_row, column=self.frames['extents'].min_col).coordinate
+            return worksheet.cell(row=self.frames[0].min_row, column=self.frames[0].min_col).coordinate
+        
+
+class ProjectInfo(Frameable):
 
     def __init__(self, 
                  project_id=None,
@@ -25,6 +46,7 @@ class ProjectInfo:
                  review_name=None,
                  xml_date=None,
                  run_date=None):
+        super().__init__()
         self.project_id = project_id
         self.control_number = control_number
         self.project_name = project_name
@@ -32,9 +54,7 @@ class ProjectInfo:
         self.review_name = review_name
         self.xml_date = xml_date
         self.run_date = run_date
-        self.vertical_offset = 2
-        self.frames = {}
-        self.set_frames()
+        self.create_initial_frames()
         
     @classmethod
     def from_tree(cls, element, file_path=None):
@@ -66,7 +86,8 @@ class ProjectInfo:
             'Review Name': self.review_name,
             'Review ID': self.review_id,
             'XML Date': date_to_excel(self.xml_date),
-            'Run Date': date_to_excel(self.run_date)
+            'Run Date': date_to_excel(self.run_date),
+            'Notes': ''
         }
     
     def to_list(self) -> List:
@@ -84,21 +105,26 @@ class ProjectInfo:
     def size(self) -> Tuple[int, int]:
         return (self.count, 2)
     
-    def set_frames(self) -> None:
-        self.frames['outline'] = CellRange(min_col=1, max_col=2, min_row=1, max_row=self.count + self.vertical_offset)
+    def create_initial_frames(self) -> None:
+        """Set the initial cell range frames that define the Project Info region.
+
+        These 'frames' are Openpyxl CellRanges that define regions for the Project Info data
+        in a Worksheet. Initially, the Project Info frame is created starting at 'A1' however,
+        this will need to be shifted, once the User Notes object is created, given that is located
+        to the left of the Project Info and Comments table.
+        """
+        self.frames['extents'] = CellRange(min_col=1, max_col=2, min_row=1, max_row=self.count)
         self.frames['keys'] = CellRange(min_col=1, max_col=1, min_row=1, max_row=self.count)
         self.frames['values'] = CellRange(min_col=2, max_col=2, min_row=1, max_row=self.count)
 
-    def shift_frames(self, col_shift: int = 0, row_shift: int = 0) -> None:
-        for region in self.frames:
-            self.frames[region].shift(col_shift=col_shift, row_shift=row_shift)
-            
 
-class ReviewComments:
+class ReviewComments(Frameable):
 
     def __init__(self,
                  comments=[]):
+        super().__init__()
         self.comments = comments
+        self.create_initial_frames()
 
     @classmethod
     def from_tree(cls, element):
@@ -233,11 +259,28 @@ class ReviewComments:
     def size(self) -> Tuple[int, int]:
         return (self.count, self.all_column_count)
 
+    def create_initial_frames(self) -> None:
+        """Set the initial cell range frames that define the Review Comments region.
 
-class UserNotes:
+        These 'frames' are Openpyxl CellRanges that define regions for the Review Comments data
+        in a Worksheet. Initially, the Project Info frame is created starting at 'A1' however,
+        this will need to be shifted, once the Project Info and User Notes objects are created.
+        """
+        self.frames['extents'] = CellRange(min_col=1, max_col=self.all_column_count, min_row=1, max_row=self.count + 1)
+        self.frames['header'] = CellRange(min_col=1, max_col=self.all_column_count, min_row=1, max_row=1)
+        self.frames['body'] = CellRange(min_col=1, max_col=self.all_column_count, min_row=2, max_row=self.count + 1)
+        self.frames['comments_header'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=1, max_row=1)
+        self.frames['comments_body'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=2, max_row=self.count + 1)
+        self.frames['response_header'] = CellRange(min_col=1, max_col=self.response_columns_count, min_row=1, max_row=1)
+        self.frames['response_body'] = CellRange(min_col=1, max_col=self.response_columns_count, min_row=2, max_row=self.count + 1)
+
+                
+
+class UserNotes(Frameable):
     def __init__(self):
+        super().__init__()
         self.headers = [header for header in USER_NOTES_COLUMNS]
-        self.frames = {}
+        self.create_initial_frames()
 
     def to_list(self) -> List[str]:
         return self.headers
@@ -250,20 +293,35 @@ class UserNotes:
     def count(self) -> int:
         return len(self.headers)
     
-    def set_frames(self, cell_range: CellRange) -> None:
-        if cell_range:
-            self.frames['outline'] = cell_range
-            min_col, min_row, max_col, max_row = cell_range.min_col, cell_range.min_row, cell_range.max_col, cell_range.max_row            
-            self.frames['header']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row, max_row=min_row)
-            self.frames['body']  = CellRange(min_col=min_col, max_col=max_col, min_row=min_row + 1, max_row=max_row)
+    def create_initial_frames(self) -> None:
+        """Set the initial cell range frames that define the User Notes region.
+
+        These 'frames' are Openpyxl CellRanges that define regions for the User Note data
+        in a Worksheet. Initially, the Project Info frame is created starting at 'A1' however,
+        this will need to be shifted, once the Project Info object is created. This will determine
+        how far down to shift the region. Also, the Review Comments region will specify how
+        many rows to increase the User Notes body region.
+        """
+        self.frames['extents'] = CellRange(min_col=1, max_col=self.count, min_row=1, max_row=2)
+        self.frames['header'] = CellRange(min_col=1, max_col=self.count, min_row=1, max_row=1)
+        self.frames['body'] = CellRange(min_col=1, max_col=self.count, min_row=2, max_row=2)
+        self.frames['id_column'] = CellRange(min_col=1, max_col=1, min_row=2, max_row=2)
     
     def shift_frames(self, col_shift: int = 0, row_shift: int = 0) -> None:
         for region in self.frames:
             self.frames[region].shift(col_shift=col_shift, row_shift=row_shift)  
-        
 
+    def expand_frame(self, frame_name:str, right:int=0, down:int=0, left:int=0, up:int=0):
+        self.frames[frame_name].expand(right=right, down=down, left=left, up=up)        
 
-class Review:
+    def autonumber_id_column(self, worksheet:Worksheet) -> None:
+        i = 1
+        for row in worksheet[self.frames['id_column'].coord]:
+            for cell in row:
+                cell.value = i
+                i += 1
+
+class Review(Frameable):
     """Returns a Review object containing project info and review comments objects."""
 
     def __init__(self,
@@ -271,12 +329,13 @@ class Review:
                  review_comments: ReviewComments,
                  root=None,
                  file_path=None):
+        super().__init__()
         self.project_info = project_info
         self.review_comments = review_comments
         self.root = root
         self.file_path = file_path
         self.user_notes = UserNotes()
-        self.frames = {}
+        self.setup_frames()
 
     @classmethod
     def from_file(cls, path):
@@ -289,7 +348,18 @@ class Review:
                       root=root,
                       file_path=path)
 
-    def build_frames(self) -> Dict:
-        return {}
-
-
+    def setup_frames(self):
+        project_info_height = self.project_info.count
+        project_info_offset = 2
+        comment_rows = self.review_comments.count
+        table_header_row = project_info_height + project_info_offset
+        table_header_column = self.user_notes.count
+        self.project_info.shift_frames(col_shift=table_header_column)
+        self.user_notes.shift_frames(row_shift=table_header_row)
+        self.user_notes.expand_frame('extents', down=comment_rows-1)
+        self.user_notes.expand_frame('body', down=comment_rows-1)
+        self.user_notes.expand_frame('id_column', down=comment_rows-1)
+        self.review_comments.shift_frames(col_shift=table_header_column, row_shift=table_header_row)
+        self.frames['extents'] = self.user_notes.frames['extents'].union(self.review_comments.frames['extents'])
+        self.frames['header'] = self.user_notes.frames['header'].union(self.review_comments.frames['header'])
+        self.frames['body'] = self.user_notes.frames['body'].union(self.review_comments.frames['body'])

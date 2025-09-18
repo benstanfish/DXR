@@ -1,66 +1,53 @@
 from datetime import datetime
 
 from openpyxl import Workbook
-from openpyxl.cell.cell import Cell
 from openpyxl.utils.cell import get_column_letter
-from openpyxl.worksheet.errors import IgnoredError
-from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.table import Table
-from openpyxl.worksheet.datavalidation import DataValidation
-from openpyxl.formatting.rule import Rule
 from openpyxl.styles.alignment import Alignment
 from openpyxl.styles import DEFAULT_FONT
 
 from dxbuild.reviews import Review
 import dxbuild.buildtools as buildtools
 from dxcore.conditionalformats import *
-import dxconfig.settings as dxsettings
+from dxcore.cellformats import *
 from dxbuild.constants import FALLBACKS
 
+# Debug information
 _WRITE_FILE = True
-
 xml_path = './dev/test/data.xml'
 
+# Parse XML and create data objects
 review = Review.from_file(xml_path)
 project_info = review.project_info
 all_comments = review.review_comments
 user_notes = review.user_notes
 
+# Create workbook object with initial settings
 DEFAULT_FONT.__init__(name=FALLBACKS['font_name'], size=FALLBACKS['font_size'])
 wb = Workbook()
 ws = wb.active
 
-# Determine Anchor Cell
-user_notes_data = user_notes.to_list()
-project_info_data = project_info.to_list()
-all_comments_data = all_comments.to_list()
-
-VERTICAL_OFFSET = 3
-HEADER_ROW = VERTICAL_OFFSET + project_info.size[0]
-if ws:
-    USER_DATA_CELL = Cell(worksheet=ws, row=HEADER_ROW, column=1)
-    PROJECT_INFO_CELL = Cell(worksheet=ws, row=1, column=user_notes.size[1] + 1)
-    ALL_COMMENTS_CELL = Cell(worksheet=ws, row=HEADER_ROW, column=user_notes.size[1] + 1)
+# Get upper left cell of each major region
+user_notes_anchor_cell = review.user_notes.get_anchor_cell(ws, 'extents')
+project_info_anchor_cell = review.project_info.get_anchor_cell(ws, 'extents')
+review_comments_anchor = review.review_comments.get_anchor_cell(ws, 'extents')
 
 # Dump Data to Excel
-buildtools.copy_to_range(user_notes_data, worksheet=ws, anchor_cell=USER_DATA_CELL.coordinate)
-buildtools.copy_to_range(project_info_data, worksheet=ws, anchor_cell=PROJECT_INFO_CELL.coordinate)
-buildtools.copy_to_range(all_comments_data, worksheet=ws, anchor_cell=ALL_COMMENTS_CELL.coordinate)
+buildtools.copy_to_range(user_notes.to_list(), worksheet=ws, anchor_cell=user_notes_anchor_cell)
+buildtools.copy_to_range(project_info.to_list(), worksheet=ws, anchor_cell=project_info_anchor_cell)
+buildtools.copy_to_range(all_comments.to_list(), worksheet=ws, anchor_cell=review_comments_anchor)
 
-# Create ListObject, but don't assign a TableStyle since we can only used native options
-TABLE_REGION = CellRange(min_row=USER_DATA_CELL.row,
-                         max_row=USER_DATA_CELL.row + all_comments.count,
-                         min_col=USER_DATA_CELL.column,
-                         max_col=user_notes.size[1] + all_comments.size[1],
-                         title='comments')
+user_notes.autonumber_id_column(ws)
 
-table = Table(displayName='Comments', ref=TABLE_REGION.coord)
+TABLE_RANGE = review.frames['extents'].coord
+TABLE_HEADER = review.frames['header'].coord
+TABLE_BODY = review.frames['body'].coord
+table = Table(displayName='Comments', ref=TABLE_RANGE)
 
 if ws is not None:
     ws.add_table(table)
     ws.sheet_view.showGridLines = False
     table_info = buildtools.get_table_info(ws)
-
 
     top_left_alignment = Alignment(horizontal='left', vertical='top')
     used_range = ws.calculate_dimension()
@@ -70,6 +57,10 @@ if ws is not None:
                 cell.number_format = 'm/d/yy'
             cell.alignment = top_left_alignment
 
+    buildtools.apply_styles_to_region(table_header_styles, TABLE_HEADER, ws)
+    buildtools.apply_styles_to_region(table_body_styles, TABLE_BODY, ws)
+    buildtools.apply_styles_to_region(user_notes_header_styles, review.user_notes.frames['header'].coord, ws)
+    buildtools.apply_styles_to_region(user_notes_body_styles, review.user_notes.frames['body'].coord, ws)
 
     open_closed_options = 'Open, Closed'
     status_options = 'Concur, For Information Only, Non-Concur, Check and Resolve'
@@ -79,22 +70,29 @@ if ws is not None:
     buildtools.add_data_validation_to_column(status_options, status_columns[1:], ws)
     
     first_status_column = buildtools.add_data_validation_to_column(open_closed_options, status_columns[:1], ws)
-    buildtools.conditionally_format_range(status_columns[0], 'closed', ws, light_gray_dx, 'H12:BB125', stop_if_true=True)
+    buildtools.conditionally_format_range(status_columns[0], 
+                                          'closed', 
+                                          ws, 
+                                          light_gray_dx, 
+                                          review.review_comments.frames['body'].coord, 
+                                          stop_if_true=True)
         
     for column in status_columns[1:]:
-        buildtools.conditionally_format_range(column, 'check and resolve', ws, light_red_dx, x_if_empty=True)
-        buildtools.conditionally_format_range(column, 'non-concur', ws, light_yellow_dx, x_if_empty=True)
-        buildtools.conditionally_format_range(column, 'for information only', ws, light_green_dx, x_if_empty=True)
-        buildtools.conditionally_format_range(column, 'concur', ws, light_blue_dx, x_if_empty=True)
+        buildtools.conditionally_format_range(column, 'check and resolve', ws, light_red_dx)
+        buildtools.conditionally_format_range(column, 'non-concur', ws, light_yellow_dx)
+        buildtools.conditionally_format_range(column, 'for information only', ws, light_green_dx)
+        buildtools.conditionally_format_range(column, 'concur', ws, light_blue_dx)
+        buildtools.apply_styles_to_region_if_empty(empty_status_cell_style, column, ws)
     
     highest_reponse_letters = buildtools.get_columns_by_name('highest resp', table_info)
     highest_response_columns = buildtools.build_column_vectors(highest_reponse_letters, table_info)[0]
     buildtools.add_data_validation_to_column(status_options, [highest_response_columns], ws)
-    buildtools.conditionally_format_range(highest_response_columns, 'check and resolve', ws, red_dx, x_if_empty=True)
-    buildtools.conditionally_format_range(highest_response_columns, 'non-concur', ws, yellow_dx, x_if_empty=True)
-    buildtools.conditionally_format_range(highest_response_columns, 'for information only', ws, green_dx, x_if_empty=True)
-    buildtools.conditionally_format_range(highest_response_columns, 'concur', ws, blue_dx, x_if_empty=True)
-    
+    buildtools.conditionally_format_range(highest_response_columns, 'check and resolve', ws, red_dx)
+    buildtools.conditionally_format_range(highest_response_columns, 'non-concur', ws, yellow_dx)
+    buildtools.conditionally_format_range(highest_response_columns, 'for information only', ws, green_dx)
+    buildtools.conditionally_format_range(highest_response_columns, 'concur', ws, blue_dx)
+    buildtools.apply_styles_to_region_if_empty(empty_status_cell_style, highest_response_columns, ws)
+
     critical_options = 'Yes, No'
     critical_column_letters = buildtools.get_columns_by_name('critical', table_info)
     critical_column = buildtools.build_column_vectors(critical_column_letters, table_info)
@@ -107,29 +105,19 @@ if ws is not None:
     buildtools.add_data_validation_to_column(class_options, class_column, ws)
     buildtools.conditionally_format_range(class_column[0], 'cui', ws, red_dx)   
     buildtools.conditionally_format_range(class_column[0], 'unclassified', ws, yellow_dx)
+
     
-    
-    
-    #TODO: Work through the logic of setting the user column widths.
-    
-    for i, col_width in enumerate(dxsettings.COMMENT_COLUMN_WIDTHS):
-        ws.column_dimensions[get_column_letter(i + 8)].width = col_width
-    
+    for i, col_width in enumerate(USER_NOTES_WIDTHS):
+        ws.column_dimensions[get_column_letter(i + 1)].width = col_width
+
+    for i, col_width in enumerate(COMMENT_COLUMN_WIDTHS):
+        ws.column_dimensions[get_column_letter(i + review.user_notes.count + 1)].width = col_width
+
     #TODO: Work through the logic of setting widths for the Response columns
     # for i, col_width in enumerate(dxsettings.RESPONSE_COLUMN_WIDTHS):
     #     ws.column_dimensions[get_column_letter(i + 8)].width = col_width
 
-    #TODO: Write function to change the number format for a given column vector
-    # for row in ws.iter_rows(min_row=12, max_row=125, min_col=13, max_col=13):
-    #         for cell in row:
-    #             cell.number_format = 'm/d/yy'
-                
-    # ws.column_dimensions['S'].width = 70
-    for cell in ws['S']:
-        cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
-
-    # ignore_number_as_text = IgnoredError(numberStoredAsText=True)
-
+    #TODO: Collapse Groups
 
 
 if _WRITE_FILE:

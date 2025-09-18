@@ -10,8 +10,6 @@ from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.cell_range import CellRange
 
-from dxcore.cellformats import x_border_style
-
 
 #TODO: Need to split the DrChecks Review formatting tools from the basic range operations tools (different modules)
 
@@ -221,12 +219,6 @@ def conditionally_format_range(
             ws.conditional_formatting.add(range_string=apply_to_range_string, cfRule=cf_rule)
         else:
             ws.conditional_formatting.add(range_string=check_range_string, cfRule=cf_rule)
-    if x_if_empty:
-        cell_range = ws[check_range_string]
-        for row in cell_range:
-            for cell in row:
-                if cell.value == '':
-                    cell.border = x_border_style
 
 def get_table_info(worksheet: Worksheet) -> Dict:
     """Returns a dictionary containing the header row number and first and last rows of the databody range of the first listobject in the supplied Worksheet.
@@ -291,3 +283,29 @@ def build_column_vectors(column_list: list[str], table_info_dict: Dict) -> List[
     :rtype: List[str]
     """
     return [list_column_range(column, table_info_dict) for column in column_list]
+
+
+def apply_styles_to_region(styles:dict, range_string:str, worksheet:Worksheet):
+    for row in worksheet[range_string]:
+        for cell in row:
+            if 'font' in styles.keys() and styles['font'] is not None:
+                cell.font = styles['font']
+            if 'border' in styles.keys() and styles['border'] is not None:
+                cell.border = styles['border']
+            if 'alignment' in styles.keys() and styles['alignment'] is not None:
+                cell.alignment = styles['alignment']
+            if 'fill' in styles.keys() and styles['fill'] is not None:
+                cell.fill = styles['fill']
+
+def apply_styles_to_region_if_empty(styles:dict, range_string:str, worksheet:Worksheet):
+    for row in worksheet[range_string]:
+        for cell in row:
+            if cell.value == '':
+                if 'font' in styles.keys() and styles['font'] is not None:
+                    cell.font = styles['font']
+                if 'border' in styles.keys() and styles['border'] is not None:
+                    cell.border = styles['border']
+                if 'alignment' in styles.keys() and styles['alignment'] is not None:
+                    cell.alignment = styles['alignment']
+                if 'fill' in styles.keys() and styles['fill'] is not None:
+                    cell.fill = styles['fill']       

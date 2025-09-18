@@ -37,29 +37,32 @@ gray_dx = DifferentialStyle(
 light_red_dx = DifferentialStyle(
     font=Font(_FONT_NAME, size=_FONT_SIZE, bold=True, color=DXColor.RED_TEXT), 
     fill=PatternFill(start_color=DXColor.LIGHT_RED_BG, end_color=DXColor.LIGHT_RED_BG),
-    border=Border(left=Side(border_style='thin', color=DXColor.RED_TEXT))
+    border=Border(left=Side(border_style='thin', color=DXColor.RED_TEXT),
+                  bottom=Side(border_style='thin', color=DXColor.LIGHT_GRAY_TEXT))
 )
 
 light_yellow_dx = DifferentialStyle(
     font=Font(_FONT_NAME, size=_FONT_SIZE, bold=False, color=DXColor.YELLOW_TEXT), 
     fill=PatternFill(start_color=DXColor.LIGHT_YELLOW_BG, end_color=DXColor.LIGHT_YELLOW_BG),
-    border=Border(left=Side(border_style='thin', color=DXColor.YELLOW_TEXT))
+    border=Border(left=Side(border_style='thin', color=DXColor.YELLOW_TEXT),
+                  bottom=Side(border_style='thin', color=DXColor.LIGHT_GRAY_TEXT))
 )
 
 light_green_dx = DifferentialStyle(
     font=Font(_FONT_NAME, size=_FONT_SIZE, bold=False, color=DXColor.GREEN_TEXT), 
     fill=PatternFill(start_color=DXColor.LIGHT_GREEN_BG, end_color=DXColor.LIGHT_GREEN_BG),
-    border=Border(left=Side(border_style='thin', color=DXColor.GREEN_TEXT))
+    border=Border(left=Side(border_style='thin', color=DXColor.GREEN_TEXT),
+                  bottom=Side(border_style='thin', color=DXColor.LIGHT_GRAY_TEXT))
 )
 
 light_blue_dx = DifferentialStyle(
     font=Font(_FONT_NAME, size=_FONT_SIZE, bold=False, color=DXColor.BLUE_TEXT), 
     fill=PatternFill(start_color=DXColor.LIGHT_BLUE_BG, end_color=DXColor.LIGHT_BLUE_BG),
-    border=Border(left=Side(border_style='thin', color=DXColor.BLUE_TEXT))
+    border=Border(left=Side(border_style='thin', color=DXColor.BLUE_TEXT),
+                  bottom=Side(border_style='thin', color=DXColor.LIGHT_GRAY_TEXT))
 )
 
 light_gray_dx = DifferentialStyle(
     font=Font(_FONT_NAME, size=_FONT_SIZE, bold=False, color=DXColor.LIGHT_GRAY_TEXT), 
-    fill=PatternFill(start_color=DXColor.LIGHT_GRAY_BG, end_color=DXColor.LIGHT_GRAY_BG),
+    fill=PatternFill(start_color=DXColor.LIGHT_GRAY_BG, end_color=DXColor.LIGHT_GRAY_BG)
 )
-

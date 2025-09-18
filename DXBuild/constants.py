@@ -75,5 +75,6 @@ RESPONSE_VALUES = {
 
 FALLBACKS = {
     'font_name': 'Aptos',
-    'font_size': 10
+    'font_size': 10,
+    'font_bold': False
 }

@@ -24,6 +24,9 @@ class DXColor(StrEnum):
     BLUE_TEXT = '#0070C0'.replace('#','')
     LIGHT_GRAY_TEXT = '#C0C0C0'.replace('#','')
 
+    USER_NOTES_HEADER_BG = '#2F4F4F'.replace('#', '')
+    USER_NOTES_GRAY_BG = '#DCDCDC'.replace('#', '')
+
     LIGHT_RED_BG = '#FFE4E1'.replace('#','')
     LIGHT_YELLOW_BG = '#FFFACD'.replace('#','')
     LIGHT_GREEN_BG = '#E2EFDA'.replace('#','')
