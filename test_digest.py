@@ -13,7 +13,7 @@ from dxcore.cellformats import *
 from dxbuild.constants import FALLBACKS
 
 # Debug information
-_WRITE_FILE = True
+_WRITE_FILE = False
 xml_path = './dev/test/data.xml'
 
 # Parse XML and create data objects
@@ -118,6 +118,8 @@ if ws is not None:
     #     ws.column_dimensions[get_column_letter(i + 8)].width = col_width
 
     #TODO: Collapse Groups
+    
+
 
 
 if _WRITE_FILE:
