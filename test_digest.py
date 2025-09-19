@@ -162,7 +162,7 @@ if ws is not None:
 
         ws.column_dimensions.group(get_column_letter(start_col), 
                                    get_column_letter(stop_col), 
-                                   hidden=False)
+                                   hidden=True)
 
     # for col_dim in ws.column_dimensions.values():
     #     if col_dim.outlineLevel > 0:
