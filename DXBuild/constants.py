@@ -8,7 +8,8 @@ _PROJECT_INFO_INDEX = 0
 _COMMENTS_INDEX = 1
 _PROJECT_INFO_VERTICAL_OFFSET = 2
 _RESPONSE_EXPANSION_TYPES = Literal['chronological', 'type']
-_TRUE_SYMBOLIC = '〇'
+# _TRUE_SYMBOLIC = '〇'
+_TRUE_SYMBOLIC = '●'
 
 """
 COMMENT_COLUMNS and RESPONSE_COLUMNS are dictionaries where the key

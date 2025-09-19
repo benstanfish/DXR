@@ -8,13 +8,13 @@ from openpyxl.styles import DEFAULT_FONT
 
 from dxbuild.reviews import Review
 import dxbuild.buildtools as buildtools
-from dxbuild.constants import RESPONSE_COLUMNS
+from dxbuild.constants import RESPONSE_COLUMNS, USER_NOTES_COLUMNS
 from dxcore.conditionalformats import *
 from dxcore.cellformats import *
 from dxbuild.constants import FALLBACKS
 
 # Debug information
-_WRITE_FILE = False
+_WRITE_FILE = True
 xml_path = './dev/test/data.xml'
 
 # Parse XML and create data objects
@@ -110,6 +110,7 @@ if ws is not None:
     buildtools.conditionally_format_range(class_column[0], 'cui', ws, red_dx)   
     buildtools.conditionally_format_range(class_column[0], 'unclassified', ws, yellow_dx)
 
+
     
     for i, col_width in enumerate(USER_NOTES_WIDTHS):
         ws.column_dimensions[get_column_letter(i + 1)].width = col_width
@@ -118,16 +119,37 @@ if ws is not None:
         ws.column_dimensions[get_column_letter(i + review.user_notes.count + 1)].width = col_width
 
     #TODO: Work through the logic of setting widths for the Response columns
-    # for i, col_width in enumerate(dxsettings.RESPONSE_COLUMN_WIDTHS):
-    #     ws.column_dimensions[get_column_letter(i + 8)].width = col_width
+    response_header_cell_range = review.review_comments.frames['response_header']
+    for i in range(response_header_cell_range.min_col, response_header_cell_range.max_col + 1):
+        i_modulo = (i - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS)
+        ws.column_dimensions[f'{get_column_letter(i)}'].width = RESPONSE_COLUMN_WIDTHS[i_modulo]
 
-    #TODO: Collapse Groups
+    wrappables = USER_NOTES_COLUMNS + ['Comment']
+    #FIXME add 'Text' to the list above to wrap the Text column in the responses. Right now
+    #it's not wrapping because Openpyxl column_dimensions.group changes reverts the column widths
+    #and I need to figure out how to prevent that from happening.
+    for wrappable in wrappables:
+        for item in review.table_column_list:
+            if wrappable in item:
+                range_string = f'{get_column_letter(review.table_column_list.index(item) + 1)}{review.frames['body'].min_row}:' \
+                               f'{get_column_letter(review.table_column_list.index(item) + 1)}{review.frames['body'].max_row}'
+                buildtools.apply_styles_to_region(table_body_wrap_styles, range_string, ws)
+
+    # Group columns
     collapse_left = '▷'
     collapse_right = '◁ Expand'
-
     collapse_regions = [['Notes', 'State'],
                         ['Source', 'Section']]
-    
+
+    response_collapse_region = []   # This is used in conjunction wiht the reponse_header_cell_range from above
+    for col in range(response_header_cell_range.min_col, response_header_cell_range.max_col + 1):
+        current_modulo = (col - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS)
+        if current_modulo == 1 or current_modulo == len(RESPONSE_COLUMNS) - 1:
+            response_collapse_region.append(table_column_list[col - 1])
+        if current_modulo == len(RESPONSE_COLUMNS) - 1:
+            collapse_regions.append(response_collapse_region)
+            response_collapse_region = []
+        
     for region in collapse_regions:
         start_col = table_column_list.index(region[0]) + 1
         stop_col = table_column_list.index(region[1]) + 1
@@ -140,20 +162,13 @@ if ws is not None:
 
         ws.column_dimensions.group(get_column_letter(start_col), 
                                    get_column_letter(stop_col), 
-                                   hidden=True)
-        
-    
-    print(sum(review.review_comments.max_responses) * len(RESPONSE_COLUMNS))
-    print(review.review_comments.frames['response_header'].coord)
-    response_header_cell_range = review.review_comments.frames['response_header']
-    response_collapse_region = []
-    for col in range(response_header_cell_range.min_col, response_header_cell_range.max_col + 1):
-        print(col, (col - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS))
-        current_modulo = (col - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS)
-        if current_modulo == 1:
-            print('start: ' + get_column_letter(col))
-        if current_modulo == len(RESPONSE_COLUMNS) - 1:
-            print('stop: ' + get_column_letter(col))
+                                   hidden=False)
+
+    # for col_dim in ws.column_dimensions.values():
+    #     if col_dim.outlineLevel > 0:
+    #         col_dim.hidden = True
+    #         col_dim.collapsed = True
+
 
 if _WRITE_FILE:
     save_name = f'./dev/test/out/test_{buildtools.timestamp()}.xlsx'

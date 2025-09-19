@@ -20,8 +20,7 @@ COMMENT_COLUMN_WIDTHS = [Widths.SMALL, Widths.SMALL, Widths.MEDIUM, Widths.MEDIU
                          Widths.SMALL, Widths.MEDIUM, Widths.MEDIUM, Widths.X_LARGE, 
                          Widths.SMALL, Widths.SMALL, Widths.XX_SMALL, Widths.X_SMALL, Widths.SMALL]
 
-RESPONSE_COLUMN_WIDTHS = [Widths.SMALL, Widths.MEDIUM, Widths.SMALL, Widths.SMALL,  
-                          Widths.X_LARGE, Widths.X_SMALL]
+RESPONSE_COLUMN_WIDTHS = [Widths.SMALL, Widths.MEDIUM, Widths.SMALL, Widths.SMALL, Widths.X_LARGE, Widths.X_SMALL]
 
 
 _FONT_NAME = FALLBACKS['font_name']
@@ -51,6 +50,13 @@ table_body_styles = {
     'fill': None,
     'border': Border(bottom=Side(border_style='thin', color=DXColor.LIGHT_GRAY_TEXT)),
     'alignment': Alignment(horizontal='left', vertical='top', wrap_text=False) 
+}
+
+table_body_wrap_styles = {
+    'font': Font(name=_FONT_NAME, size=_FONT_SIZE, bold=_FONT_BOLD, ),
+    'fill': None,
+    'border': Border(bottom=Side(border_style='thin', color=DXColor.LIGHT_GRAY_TEXT)),
+    'alignment': Alignment(horizontal='left', vertical='top', wrap_text=True) 
 }
 
 user_notes_header_styles = {
