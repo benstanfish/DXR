@@ -271,8 +271,8 @@ class ReviewComments(Frameable):
         self.frames['body'] = CellRange(min_col=1, max_col=self.all_column_count, min_row=2, max_row=self.count + 1)
         self.frames['comments_header'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=1, max_row=1)
         self.frames['comments_body'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=2, max_row=self.count + 1)
-        self.frames['response_header'] = CellRange(min_col=1, max_col=self.response_columns_count, min_row=1, max_row=1)
-        self.frames['response_body'] = CellRange(min_col=1, max_col=self.response_columns_count, min_row=2, max_row=self.count + 1)
+        self.frames['response_header'] = CellRange(min_col=1 + self.comment_columns_count, max_col=self.comment_columns_count + self.response_columns_count, min_row=1, max_row=1)
+        self.frames['response_body'] = CellRange(min_col=1 + self.comment_columns_count, max_col=self.comment_columns_count + self.response_columns_count, min_row=2, max_row=self.count + 1)
 
                 
 
@@ -335,7 +335,9 @@ class Review(Frameable):
         self.root = root
         self.file_path = file_path
         self.user_notes = UserNotes()
+        self.table_column_list = []
         self.setup_frames()
+
 
     @classmethod
     def from_file(cls, path):
@@ -363,3 +365,11 @@ class Review(Frameable):
         self.frames['extents'] = self.user_notes.frames['extents'].union(self.review_comments.frames['extents'])
         self.frames['header'] = self.user_notes.frames['header'].union(self.review_comments.frames['header'])
         self.frames['body'] = self.user_notes.frames['body'].union(self.review_comments.frames['body'])
+
+    def build_table_column_list(self, worksheet:Worksheet) -> List:
+        temp = []
+        for row in worksheet[self.frames['header'].coord]:
+            for cell in row:
+                if cell.value not in temp:
+                    temp.append(cell.value)
+        self.table_column_list = temp

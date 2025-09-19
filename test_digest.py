@@ -8,6 +8,7 @@ from openpyxl.styles import DEFAULT_FONT
 
 from dxbuild.reviews import Review
 import dxbuild.buildtools as buildtools
+from dxbuild.constants import RESPONSE_COLUMNS
 from dxcore.conditionalformats import *
 from dxcore.cellformats import *
 from dxbuild.constants import FALLBACKS
@@ -48,6 +49,9 @@ if ws is not None:
     ws.add_table(table)
     ws.sheet_view.showGridLines = False
     table_info = buildtools.get_table_info(ws)
+    
+    review.build_table_column_list(ws)
+    table_column_list = review.table_column_list
 
     top_left_alignment = Alignment(horizontal='left', vertical='top')
     used_range = ws.calculate_dimension()
@@ -118,9 +122,38 @@ if ws is not None:
     #     ws.column_dimensions[get_column_letter(i + 8)].width = col_width
 
     #TODO: Collapse Groups
+    collapse_left = '▷'
+    collapse_right = '◁ Expand'
+
+    collapse_regions = [['Notes', 'State'],
+                        ['Source', 'Section']]
     
+    for region in collapse_regions:
+        start_col = table_column_list.index(region[0]) + 1
+        stop_col = table_column_list.index(region[1]) + 1
 
+        label_left_cell = ws[f'{get_column_letter(start_col - 1)}{review.frames['header'].min_row - 1}']
+        label_left_cell.value = collapse_left
+        label_left_cell.alignment = Alignment(horizontal='right', vertical='top')
+        label_right_cell = ws[f'{get_column_letter(stop_col + 1)}{review.frames['header'].min_row - 1}']
+        label_right_cell.value = collapse_right
 
+        ws.column_dimensions.group(get_column_letter(start_col), 
+                                   get_column_letter(stop_col), 
+                                   hidden=True)
+        
+    
+    print(sum(review.review_comments.max_responses) * len(RESPONSE_COLUMNS))
+    print(review.review_comments.frames['response_header'].coord)
+    response_header_cell_range = review.review_comments.frames['response_header']
+    response_collapse_region = []
+    for col in range(response_header_cell_range.min_col, response_header_cell_range.max_col + 1):
+        print(col, (col - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS))
+        current_modulo = (col - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS)
+        if current_modulo == 1:
+            print('start: ' + get_column_letter(col))
+        if current_modulo == len(RESPONSE_COLUMNS) - 1:
+            print('stop: ' + get_column_letter(col))
 
 if _WRITE_FILE:
     save_name = f'./dev/test/out/test_{buildtools.timestamp()}.xlsx'
