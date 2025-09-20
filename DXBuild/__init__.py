@@ -5,3 +5,4 @@ from .reviews import (
     Comment,
     UserNotes
 )
+import buildtools
