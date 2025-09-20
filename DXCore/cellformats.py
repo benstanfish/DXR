@@ -21,6 +21,7 @@ COMMENT_COLUMN_WIDTHS = [Widths.SMALL, Widths.SMALL, Widths.MEDIUM, Widths.MEDIU
                          Widths.SMALL, Widths.MEDIUM, Widths.MEDIUM, Widths.X_LARGE, 
                          Widths.SMALL, 
                          Widths.SMALL, 
+                         Widths.SMALL,
                          Widths.XX_SMALL, Widths.X_SMALL, Widths.SMALL]
 
 RESPONSE_COLUMN_WIDTHS = [Widths.SMALL, Widths.MEDIUM, 

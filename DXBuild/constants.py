@@ -39,7 +39,7 @@ COMMENT_COLUMNS = {
     'Class': 'classification',
     'Att': 'has_attachment',
     'Days Open': 'days_open',
-    # 'Ball in Court': 'ball_in_court',
+    'Ball in Court': 'ball_in_court',
     'Highest Resp.': 'highest_response'
 }
 
