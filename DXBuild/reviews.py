@@ -80,9 +80,9 @@ class ProjectInfo(Frameable):
     @property
     def all_data_dict(self) -> Dict:
         return {
-            'Project Name': self.project_name,
             'Project ID': self.project_id,
             'Control Number': self.control_number,
+            'Project Name': self.project_name,
             'Review Name': self.review_name,
             'Review ID': self.review_id,
             'XML Date': date_to_excel(self.xml_date),
@@ -116,7 +116,7 @@ class ProjectInfo(Frameable):
         self.frames['extents'] = CellRange(min_col=1, max_col=2, min_row=1, max_row=self.count)
         self.frames['keys'] = CellRange(min_col=1, max_col=1, min_row=1, max_row=self.count)
         self.frames['values'] = CellRange(min_col=2, max_col=2, min_row=1, max_row=self.count)
-
+        self.frames['project_title'] = CellRange(min_col=2, max_col=2, min_row=3, max_row=3)
 
 class ReviewComments(Frameable):
 

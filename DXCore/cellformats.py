@@ -16,16 +16,42 @@ class Widths(IntEnum):
 USER_NOTES_WIDTHS = [Widths.XX_SMALL, Widths.MEDIUM, Widths.MEDIUM, Widths.MEDIUM, Widths.MEDIUM, Widths.SMALL, Widths.X_SMALL]
 
 COMMENT_COLUMN_WIDTHS = [Widths.SMALL, Widths.SMALL, Widths.MEDIUM, Widths.MEDIUM, 
-                         Widths.SMALL, Widths.SMALL, Widths.MEDIUM, Widths.MEDIUM, 
+                         Widths.SMALL, 
+                         Widths.SMALL, Widths.MEDIUM, Widths.MEDIUM, 
                          Widths.SMALL, Widths.MEDIUM, Widths.MEDIUM, Widths.X_LARGE, 
-                         Widths.SMALL, Widths.SMALL, Widths.XX_SMALL, Widths.X_SMALL, Widths.SMALL]
+                         Widths.SMALL, 
+                         Widths.SMALL, 
+                         Widths.XX_SMALL, Widths.X_SMALL, Widths.SMALL]
 
-RESPONSE_COLUMN_WIDTHS = [Widths.SMALL, Widths.MEDIUM, Widths.SMALL, Widths.SMALL, Widths.X_LARGE, Widths.X_SMALL]
+RESPONSE_COLUMN_WIDTHS = [Widths.SMALL, Widths.MEDIUM, 
+                        #   Widths.SMALL, 
+                          Widths.SMALL, Widths.X_LARGE, Widths.X_SMALL]
 
 
 _FONT_NAME = FALLBACKS['font_name']
 _FONT_SIZE = FALLBACKS['font_size']
 _FONT_BOLD = FALLBACKS['font_bold']
+
+project_info_key_style = {
+    'font': Font(name='Aptos Narrow', size=10, bold=True),
+    'fill': None,
+    'border': None,
+    'alignment': Alignment(horizontal='left', vertical='top', wrap_text=False)
+}
+
+project_info_value_style = {
+    'font': Font(name='Aptos Narrow', size=10, bold=False),
+    'fill': None,
+    'border': None,
+    'alignment': Alignment(horizontal='left', vertical='top', wrap_text=False)
+}
+
+project_title_style = {
+    'font': Font(name='Aptos Narrow', size=12, bold=True),
+    'fill': None,
+    'border': None,
+    'alignment': Alignment(horizontal='left', vertical='top', wrap_text=False)
+}
 
 empty_status_cell_style = {
     'font': Font(name=_FONT_NAME, size=_FONT_SIZE, bold=_FONT_BOLD),
@@ -39,7 +65,7 @@ empty_status_cell_style = {
 }
 
 table_header_styles = {
-    'font': Font(name=_FONT_NAME, size=9, bold=True),
+    'font': Font(name='Aptos Narrow', size=9, bold=True),
     'fill': None,
     'border': Border(bottom=Side(border_style='medium', color=DXColor.BLUE)),
     'alignment': Alignment(horizontal='left', vertical='bottom', wrap_text=False) 
@@ -60,7 +86,7 @@ table_body_wrap_styles = {
 }
 
 user_notes_header_styles = {
-    'font': Font(name=_FONT_NAME, size=9, bold=True, color=DXColor.WHITE),
+    'font': Font(name='Aptos Narrow', size=9, bold=True, color=DXColor.WHITE),
     'fill': PatternFill(fill_type='solid', start_color=DXColor.USER_NOTES_HEADER_BG),
     'border': Border(bottom=Side(border_style='medium', color=DXColor.BLUE)),
     'alignment': Alignment(horizontal='left', vertical='bottom', wrap_text=False) 

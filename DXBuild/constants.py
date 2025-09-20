@@ -46,7 +46,7 @@ COMMENT_COLUMNS = {
 RESPONSE_COLUMNS = {
     'Status': 'status',
     'Author': 'author',
-    'Email': 'email',
+    # 'Email': 'email',
     'Date': 'date_created',
     'Text': 'text',
     'Att': 'has_attachment'

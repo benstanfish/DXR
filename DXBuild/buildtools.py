@@ -264,10 +264,10 @@ def get_columns_by_name(search_text: str, table_info_dict: Dict) -> List[str]:
     :return: _description_
     :rtype: List[str]
     """
-    list_columns =table_info_dict['headers']
+    list_columns = table_info_dict['headers']
     temp = []
     for header_no, header in enumerate(list_columns):
-        if search_text in header.lower():
+        if search_text.lower() in header.lower():
             temp.append(get_column_letter(header_no + 1))
     return temp
 
@@ -286,16 +286,26 @@ def build_column_vectors(column_list: list[str], table_info_dict: Dict) -> List[
 
 
 def apply_styles_to_region(styles:dict, range_string:str, worksheet:Worksheet):
-    for row in worksheet[range_string]:
-        for cell in row:
-            if 'font' in styles.keys() and styles['font'] is not None:
-                cell.font = styles['font']
-            if 'border' in styles.keys() and styles['border'] is not None:
-                cell.border = styles['border']
-            if 'alignment' in styles.keys() and styles['alignment'] is not None:
-                cell.alignment = styles['alignment']
-            if 'fill' in styles.keys() and styles['fill'] is not None:
-                cell.fill = styles['fill']
+    if ':' not in range_string:
+        if 'font' in styles.keys() and styles['font'] is not None:
+            worksheet[range_string].font = styles['font']
+        if 'border' in styles.keys() and styles['border'] is not None:
+            worksheet[range_string].border = styles['border']
+        if 'alignment' in styles.keys() and styles['alignment'] is not None:
+            worksheet[range_string].alignment = styles['alignment']
+        if 'fill' in styles.keys() and styles['fill'] is not None:
+            worksheet[range_string].fill = styles['fill']
+    else:  
+        for row in worksheet[range_string]:
+            for cell in row:
+                if 'font' in styles.keys() and styles['font'] is not None:
+                    cell.font = styles['font']
+                if 'border' in styles.keys() and styles['border'] is not None:
+                    cell.border = styles['border']
+                if 'alignment' in styles.keys() and styles['alignment'] is not None:
+                    cell.alignment = styles['alignment']
+                if 'fill' in styles.keys() and styles['fill'] is not None:
+                    cell.fill = styles['fill']
 
 def apply_styles_to_region_if_empty(styles:dict, range_string:str, worksheet:Worksheet):
     for row in worksheet[range_string]:
