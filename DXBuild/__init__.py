@@ -5,4 +5,4 @@ from .reviews import (
     Comment,
     UserNotes
 )
-import buildtools
+from .buildtools import timestamp
