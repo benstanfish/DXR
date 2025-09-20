@@ -7,8 +7,7 @@ from typing import List, Dict, Tuple
 
 from .constants import (_TRUE_SYMBOLIC, COMMENT_COLUMNS, RESPONSE_COLUMNS, RESPONSE_VALUES)
 from .parsetools import (parse_single_tag, parse_date_node, date_to_excel, clean_text)
-
-
+""""""
 class Remark(ABC):
     """Parent class for Comment, Evaluation and Backcheck classes"""
     def __init__(self,
