@@ -24,20 +24,32 @@ proj_info_dict = {'ProjectID': fake.numerify('######'),
 for item in proj_info_dict:
     ET.SubElement(proj_info, item).text = proj_info_dict[item]
 
+disciplines = ['General',
+               'Architecture',
+               'Structural',
+               'Civil',
+               'Landscape',
+               'Mechanical',
+               'Electrical',
+               'Plumbing',
+               'Life Safety',
+               'Fire Protection']
+
 def make_comment(parent_element: Element) -> None:
     a_comment = ET.SubElement(parent_element, 'comment')
+    a_comment_id = ET.SubElement(a_comment, 'id')
+    a_comment_id.text = fake.numerify('#'*7)
     evaluation_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']    
-    comment_dict = {'id': fake.numerify('#'*7),
-                    'spec': random.choice([fake.text(),'']),
-                    'sheet': random.choice([fake.text(),'']),
-                    'detail': random.choice([fake.text(),'']),
+    comment_dict = {'spec': random.choice([fake.sentence(nb_words=3),'']),
+                    'sheet': random.choice([fake.sentence(nb_words=3),'']),
+                    'detail': random.choice([fake.sentence(nb_words=3),'']),
                     'critical': random.choice(['Yes','']),
-                    'commentText': fake.text(100),
-                    'status': random.choice(evaluation_statuses),
-                    'DocRef': random.choice([fake.text(),'']),
-                    'Discipline': random.choice([fake.text(),'']),
-                    'DocType': random.choice([fake.text(),'']),
-                    'CoordinatingDiscipline': random.choice([fake.text(),'']),
+                    'commentText': fake.text(max_nb_chars=100),
+                    'status': random.choice(['Open', 'Closed']),
+                    'DocRef': random.choice([fake.sentence(nb_words=3),'']),
+                    'Discipline': random.choice(disciplines),
+                    'DocType': random.choice([fake.sentence(nb_words=3),'']),
+                    'CoordinatingDiscipline': random.choice(disciplines),
                     'attachment': random.choice(['True', '']),
                     'createdBy': fake.name(),
                     'createdOn': fake.date(date_format_string)}
@@ -49,15 +61,15 @@ def make_comment(parent_element: Element) -> None:
     
     has_evals = random.choice([True, False])
     if has_evals:
-        for i in range(1, random.randint(1,10)):
+        for i in range(1, random.randint(1,3)):
             bc = ET.SubElement(evals, f'evaluation{i}')
-            make_evaluaton(bc, a_comment.find('id').text)
+            make_evaluaton(bc, a_comment_id.text)
 
     has_bcs = random.choice([True, False])
     if has_bcs:
-        for i in range(1, random.randint(1,10)):
+        for i in range(1, random.randint(1,3)):
             bc = ET.SubElement(bcs, f'backcheck{i}')
-            make_backcheck(bc, a_comment.find('id').text)
+            make_backcheck(bc, a_comment_id.text)
 
 def make_evaluaton(parent_element: Element, comment_id: str) -> None:
     evaluation_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']
@@ -89,7 +101,7 @@ def make_backcheck(parent_element, comment_id: str) -> None:
         ET.SubElement(parent_element, item).text = backcheck_dict[item]
 
 
-for i in range(1, random.randint(1,20)):
+for i in range(1, random.randint(1,1000)):
     make_comment(review_comments)
 
 
