@@ -1,10 +1,13 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import Element
 import random
 from faker import Faker
 from dxbuild.buildtools import timestamp
-from typing import Literal
+from typing import Dict
+
+date_format_string = '%b %d %Y %I:%M %p'
 
 root = ET.Element('ProjNet')
 
@@ -12,8 +15,6 @@ proj_info = ET.SubElement(root, 'DrChecks')
 review_comments = ET.SubElement(root, 'Comments')
 
 fake = Faker()
-date_format_string = '%b %d %Y %I:%M %p'
-
 proj_info_dict = {'ProjectID': fake.numerify('######'),
                   'ProjectControlNbr': fake.numerify('######'),
                   'ProjectName': fake.text(75),
@@ -23,13 +24,36 @@ proj_info_dict = {'ProjectID': fake.numerify('######'),
 for item in proj_info_dict:
     ET.SubElement(proj_info, item).text = proj_info_dict[item]
 
+def make_comment(parent_element: Element) -> None:
+    a_comment = ET.SubElement(parent_element, 'comment')
+    evals = ET.SubElement(a_comment, 'evaluations')
+    bcs = ET.SubElement(a_comment, 'backchecks')
+    
+    for i in range(1, 5):
+        bc = ET.SubElement(evals, f'evaluation{i}')
+        make_evaluaton(bc)
+
+    for i in range(1, 10):
+        bc = ET.SubElement(bcs, f'backcheck{i}')
+        make_backcheck(bc)
+
+def make_evaluaton(parent_element: Element) -> None:
+    evaluation_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']
+    evaluation_dict = {'id': fake.numerify('######'),
+                        'comment': '1',
+                        'status': random.choice(evaluation_statuses),
+                        'impactScope': random.choice(['Yes', 'No']),
+                        'impactCost': random.choice(['Yes', 'No']),
+                        'impactTime': random.choice(['Yes', 'No']),
+                        'evaluationText': fake.text(100),
+                        'attachment': random.choice(['True', '']),
+                        'createdBy': fake.name(),
+                        'createdOn': fake.date(date_format_string)}
+    for item in evaluation_dict:
+        ET.SubElement(parent_element, item).text = evaluation_dict[item]
 
 
-
-
-
-
-def make_backcheck(parent_element):
+def make_backcheck(parent_element) -> None:
     backcheck_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']
     backcheck_dict = {'id': fake.numerify('######'),
                     'comment': '1',
@@ -42,9 +66,11 @@ def make_backcheck(parent_element):
     for item in backcheck_dict:
         ET.SubElement(parent_element, item).text = backcheck_dict[item]
 
+
 for i in range(1, 10):
-    bc = ET.SubElement(review_comments, f'backcheck{i}')
-    make_backcheck(bc)
+    make_comment(review_comments)
+
+
 
 
 file_name = f'./dev/test/xml/test_xml_{timestamp()}.xml'
