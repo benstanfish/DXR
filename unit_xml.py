@@ -26,8 +26,24 @@ for item in proj_info_dict:
 
 def make_comment(parent_element: Element) -> None:
     a_comment = ET.SubElement(parent_element, 'comment')
-    a_comment_id = ET.SubElement(a_comment, 'id')
-    a_comment_id.text = fake.numerify('#'*7)
+    evaluation_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']    
+    comment_dict = {'id': fake.numerify('#'*7),
+                    'spec': random.choice([fake.text(),'']),
+                    'sheet': random.choice([fake.text(),'']),
+                    'detail': random.choice([fake.text(),'']),
+                    'critical': random.choice(['Yes','']),
+                    'commentText': fake.text(100),
+                    'status': random.choice(evaluation_statuses),
+                    'DocRef': random.choice([fake.text(),'']),
+                    'Discipline': random.choice([fake.text(),'']),
+                    'DocType': random.choice([fake.text(),'']),
+                    'CoordinatingDiscipline': random.choice([fake.text(),'']),
+                    'attachment': random.choice(['True', '']),
+                    'createdBy': fake.name(),
+                    'createdOn': fake.date(date_format_string)}
+    for item in comment_dict:
+        ET.SubElement(a_comment, item).text = comment_dict[item]
+
     evals = ET.SubElement(a_comment, 'evaluations')
     bcs = ET.SubElement(a_comment, 'backchecks')
     
@@ -35,13 +51,13 @@ def make_comment(parent_element: Element) -> None:
     if has_evals:
         for i in range(1, random.randint(1,10)):
             bc = ET.SubElement(evals, f'evaluation{i}')
-            make_evaluaton(bc, a_comment_id.text)
+            make_evaluaton(bc, a_comment.find('id').text)
 
     has_bcs = random.choice([True, False])
     if has_bcs:
         for i in range(1, random.randint(1,10)):
             bc = ET.SubElement(bcs, f'backcheck{i}')
-            make_backcheck(bc, a_comment_id.text)
+            make_backcheck(bc, a_comment.find('id').text)
 
 def make_evaluaton(parent_element: Element, comment_id: str) -> None:
     evaluation_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']
