@@ -27,7 +27,7 @@ for item in proj_info_dict:
 def make_comment(parent_element: Element) -> None:
     a_comment = ET.SubElement(parent_element, 'comment')
     a_comment_id = ET.SubElement(a_comment, 'id')
-    a_comment_id.text = fake.numerify('######')
+    a_comment_id.text = fake.numerify('#'*7)
     evals = ET.SubElement(a_comment, 'evaluations')
     bcs = ET.SubElement(a_comment, 'backchecks')
     
@@ -59,7 +59,7 @@ def make_backcheck(parent_element, comment_id: str) -> None:
     backcheck_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']
     backcheck_dict = {'id': fake.numerify('######'),
                     'comment': comment_id,
-                    'evaluation': '1',
+                    'evaluation': fake.numerify('#'*7),
                     'status': random.choice(backcheck_statuses),
                     'backcheckText': fake.text(100),
                     'attachment': random.choice(['True', '']),
