@@ -31,13 +31,17 @@ def make_comment(parent_element: Element) -> None:
     evals = ET.SubElement(a_comment, 'evaluations')
     bcs = ET.SubElement(a_comment, 'backchecks')
     
-    for i in range(1, 5):
-        bc = ET.SubElement(evals, f'evaluation{i}')
-        make_evaluaton(bc, a_comment_id.text)
+    has_evals = random.choice([True, False])
+    if has_evals:
+        for i in range(1, random.randint(1,10)):
+            bc = ET.SubElement(evals, f'evaluation{i}')
+            make_evaluaton(bc, a_comment_id.text)
 
-    for i in range(1, 10):
-        bc = ET.SubElement(bcs, f'backcheck{i}')
-        make_backcheck(bc, a_comment_id.text)
+    has_bcs = random.choice([True, False])
+    if has_bcs:
+        for i in range(1, random.randint(1,10)):
+            bc = ET.SubElement(bcs, f'backcheck{i}')
+            make_backcheck(bc, a_comment_id.text)
 
 def make_evaluaton(parent_element: Element, comment_id: str) -> None:
     evaluation_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']
@@ -69,7 +73,7 @@ def make_backcheck(parent_element, comment_id: str) -> None:
         ET.SubElement(parent_element, item).text = backcheck_dict[item]
 
 
-for i in range(1, 10):
+for i in range(1, random.randint(1,20)):
     make_comment(review_comments)
 
 
