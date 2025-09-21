@@ -94,7 +94,7 @@ def make_evaluaton(parent_element: Element, comment_id: str) -> None:
 
 
 def make_backcheck(parent_element, comment_id: str) -> None:
-    backcheck_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']
+    backcheck_statuses = ['Concur', 'Non-Concur']
     backcheck_dict = {'id': fake.numerify('######'),
                     'comment': comment_id,
                     'evaluation': fake.numerify('#'*7),
@@ -117,7 +117,7 @@ else:
 
 
 if override_name:
-    file_name = f'./dev/test/xml/{override_name}_{timestamp()}.xml'
+    file_name = f'./dev/test/xml/{override_name}.xml'
 else:
     file_name = f'./dev/test/xml/test_xml_{timestamp()}.xml'
     

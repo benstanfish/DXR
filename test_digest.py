@@ -15,7 +15,8 @@ from dxbuild.constants import FALLBACKS
 
 # Debug information
 _WRITE_FILE = True
-xml_path = './dev/test/data.xml'
+# xml_path = './dev/test/data.xml'
+xml_path = './dev/test/xml/normal.xml'
 
 # Parse XML and create data objects
 review = Review.from_file(xml_path)
