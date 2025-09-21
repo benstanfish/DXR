@@ -72,7 +72,7 @@ def make_comment(parent_element: Element) -> None:
             make_backcheck(bc, a_comment_id.text)
 
 def make_evaluaton(parent_element: Element, comment_id: str) -> None:
-    evaluation_statuses = ['Closed', 'Closed without comment.', 'Non-Concur']
+    evaluation_statuses = ['Concur', 'For Information Only', 'Non-Concur', 'Check and Resolve']
     evaluation_dict = {'id': fake.numerify('######'),
                         'comment': comment_id,
                         'status': random.choice(evaluation_statuses),
