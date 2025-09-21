@@ -7,6 +7,11 @@ from faker import Faker
 from dxbuild.buildtools import timestamp
 from typing import Dict
 
+
+override_name = 'normal'
+comment_count_override = None
+has_responses = True
+
 date_format_string = '%b %d %Y %I:%M %p'
 
 root = ET.Element('ProjNet')
@@ -59,17 +64,18 @@ def make_comment(parent_element: Element) -> None:
     evals = ET.SubElement(a_comment, 'evaluations')
     bcs = ET.SubElement(a_comment, 'backchecks')
     
-    has_evals = random.choice([True, False])
-    if has_evals:
-        for i in range(1, random.randint(1,3)):
-            bc = ET.SubElement(evals, f'evaluation{i}')
-            make_evaluaton(bc, a_comment_id.text)
+    if has_responses:
+        has_evals = random.choice([True, False])
+        if has_evals:
+            for i in range(1, random.randint(1,3)):
+                bc = ET.SubElement(evals, f'evaluation{i}')
+                make_evaluaton(bc, a_comment_id.text)
 
-    has_bcs = random.choice([True, False])
-    if has_bcs:
-        for i in range(1, random.randint(1,3)):
-            bc = ET.SubElement(bcs, f'backcheck{i}')
-            make_backcheck(bc, a_comment_id.text)
+        has_bcs = random.choice([True, False])
+        if has_bcs:
+            for i in range(1, random.randint(1,3)):
+                bc = ET.SubElement(bcs, f'backcheck{i}')
+                make_backcheck(bc, a_comment_id.text)
 
 def make_evaluaton(parent_element: Element, comment_id: str) -> None:
     evaluation_statuses = ['Concur', 'For Information Only', 'Non-Concur', 'Check and Resolve']
@@ -99,14 +105,23 @@ def make_backcheck(parent_element, comment_id: str) -> None:
                     'createdOn': fake.date(date_format_string)}
     for item in backcheck_dict:
         ET.SubElement(parent_element, item).text = backcheck_dict[item]
+        
+if comment_count_override is None:
+    for i in range(1, random.randint(1,30)):
+        make_comment(review_comments)
+elif isinstance(comment_count_override, int) and comment_count_override > 0:
+    for i in range(1, random.randint(1, comment_count_override)):
+        make_comment(review_comments)
+else:
+    pass
 
 
-for i in range(1, random.randint(1,1000)):
-    make_comment(review_comments)
-
-
-
-
-file_name = f'./dev/test/xml/test_xml_{timestamp()}.xml'
+if override_name:
+    file_name = f'./dev/test/xml/{override_name}_{timestamp()}.xml'
+else:
+    file_name = f'./dev/test/xml/test_xml_{timestamp()}.xml'
+    
+    
+    
 tree = ET.ElementTree(root)
 tree.write(file_name, encoding='utf-8', xml_declaration=True)
