@@ -1,6 +1,7 @@
 import os
 from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element
+from dxcore.dxconsole import Escape
 
 def get_root(path: str) -> Element | None:
     try:
@@ -13,14 +14,25 @@ def get_root(path: str) -> Element | None:
         print(e)
         return None
 
-dir_path = './dev/test/xml'
-file_names = os.listdir(dir_path)
-file_paths = [dir_path + '/' + file_name for file_name in file_names]
 
+dir_path = './dev/test/xml/'
+file_names = [
+    'bad_root.xml',
+    'empty_comments_element.xml',
+    'empty_root.xml',
+    'normal.xml',
+    'no_bcs.xml',
+    'no_comments_element.xml',
+    'no_evals.xml',
+    'no_project_info.xml',
+    'no_responses.xml',
+    'no_root.xml'
+]
 
-for file in file_paths:
+for file_name in file_names:
+    file_path = dir_path + file_name
     try:
-        root = ET.parse(file).getroot()
-        print(file, root)
-    except Exception as e:
-        print(file, e.args, e.with_traceback)
+        root = ET.parse(file_path).getroot()
+        
+    except:
+        pass

@@ -8,14 +8,14 @@ from dxbuild.buildtools import timestamp
 
 fake = Faker()
 
-override_name = 'no_bcs'
+override_name = 'test'
 
 write_good_root = True
 write_drchecks_element = True
 write_comments_element = True
 write_comments = True
 write_evaluations = True
-write_backchecks = False
+write_backchecks = True
 
 max_comment_count = 30
 max_evaluation_count = 4
@@ -132,7 +132,7 @@ if write_comments_element and write_comments:
 
 
 if override_name:
-    file_name = f'./dev/test/xml/{override_name}_{timestamp()}.xml'
+    file_name = f'./dev/test/xml/{override_name}.xml'
 else:
     file_name = f'./dev/test/xml/test_xml_{timestamp()}.xml'
     
