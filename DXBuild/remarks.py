@@ -31,16 +31,16 @@ class Remark(ABC):
         return [attr for attr in self.__dict__]
 
     @abstractmethod
-    def from_tree(self):
+    def from_element(self):
         pass
     
     @property
     @abstractmethod
-    def dump(self) -> Dict:
+    def all_properties_to_dict(self) -> Dict:
         pass
 
     def to_list(self, attrs: Tuple | Dict=COMMENT_COLUMNS) -> List:
-        props = self.dump
+        props = self.all_properties_to_dict
         if isinstance(attrs, list):
             return [props[item] if item in props else '' for item in attrs]
         if isinstance(attrs, dict):
@@ -84,7 +84,7 @@ class Comment(Remark):
         self.backchecks = backchecks
 
     @classmethod
-    def from_tree(cls, element):
+    def from_element(cls, element):
         id_ = parse_single_tag('id', element)
         spec = parse_single_tag('spec', element)
         sheet = parse_single_tag('sheet', element)
@@ -99,9 +99,9 @@ class Comment(Remark):
         has_attachment = _TRUE_SYMBOLIC if parse_single_tag('attachment', element) is not None else None
         author = parse_single_tag('createdBy', element)
         date_created = parse_date_node('createdOn', element)
-        evaluations = [Evaluation.from_tree(eval) for eval in element.find('evaluations')] \
+        evaluations = [Evaluation.from_element(eval) for eval in element.find('evaluations')] \
             if element.find('evaluations') is not None else []
-        backchecks = [Backcheck.from_tree(bc) for bc in element.find('backchecks')] \
+        backchecks = [Backcheck.from_element(bc) for bc in element.find('backchecks')] \
                     if element.find('backchecks') is not None else []
         return Comment(id_=id_,
                        spec=spec,
@@ -121,7 +121,7 @@ class Comment(Remark):
                        backchecks=backchecks)
 
     @property
-    def dump(self):
+    def all_properties_to_dict(self):
         return {
             'id': self.id,
             'status': self.status,
@@ -273,7 +273,7 @@ class Evaluation(Remark):
         self.impact_time = impact_time
 
     @classmethod
-    def from_tree(cls, element):
+    def from_element(cls, element):
         id_ = parse_single_tag('id', element)
         parent_id = parse_single_tag('comment', element)
         status = parse_single_tag('status', element)
@@ -296,7 +296,7 @@ class Evaluation(Remark):
                         date_created=date_created)
 
     @property
-    def dump(self) -> Dict:
+    def all_properties_to_dict(self) -> Dict:
         return {
             'id': self.id,
             'status': self.status,
@@ -333,7 +333,7 @@ class Backcheck(Remark):
         self.evaulation_id = evaluation_id
 
     @classmethod
-    def from_tree(cls, element):
+    def from_element(cls, element):
         id_ = parse_single_tag('id', element)
         parent_id = parse_single_tag('comment', element)
         evaluation_id = parse_single_tag('evaluation', element)
@@ -352,7 +352,7 @@ class Backcheck(Remark):
                         date_created=date_created)
     
     @property
-    def dump(self) -> Dict:
+    def all_properties_to_dict(self) -> Dict:
         return {
             'id': self.id,
             'status': self.status,

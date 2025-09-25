@@ -57,7 +57,7 @@ class ProjectInfo(Frameable):
         self.create_initial_frames()
         
     @classmethod
-    def from_tree(cls, element, file_path=None):
+    def from_element(cls, element, file_path=None):
         project_id = parse_single_tag('ProjectID', element)
         control_number = parse_single_tag('ProjectControlNbr', element)
         project_name = parse_single_tag('ProjectName', element)
@@ -78,7 +78,7 @@ class ProjectInfo(Frameable):
                            run_date=run_date)
    
     @property
-    def all_data_dict(self) -> Dict:
+    def all_properties_to_dict(self) -> Dict:
         return {
             'Project ID': self.project_id,
             'Control Number': self.control_number,
@@ -93,8 +93,8 @@ class ProjectInfo(Frameable):
     def to_list(self) -> List:
         """Returns a 2D list intended to be exported to Excel."""
         info = []
-        for key in self.all_data_dict.keys():
-            info.append([key, self.all_data_dict[key]])
+        for key in self.all_properties_to_dict.keys():
+            info.append([key, self.all_properties_to_dict[key]])
         return info
 
     @property
@@ -118,6 +118,8 @@ class ProjectInfo(Frameable):
         self.frames['values'] = CellRange(min_col=2, max_col=2, min_row=1, max_row=self.count)
         self.frames['project_title'] = CellRange(min_col=2, max_col=2, min_row=3, max_row=3)
 
+
+
 class ReviewComments(Frameable):
 
     def __init__(self,
@@ -130,7 +132,7 @@ class ReviewComments(Frameable):
     def from_tree(cls, element):
         comments = []
         for comment in element.findall('comment'):
-            comments.append(Comment.from_tree(comment))
+            comments.append(Comment.from_element(comment))
         return ReviewComments(comments=comments)
     
     @property
@@ -343,7 +345,7 @@ class Review(Frameable):
     def from_file(cls, path):
         root = get_root(path) if not None else None
         if root:
-            project_info = ProjectInfo.from_tree(root[_PROJECT_INFO_INDEX], file_path=path) if not None else None
+            project_info = ProjectInfo.from_element(root[_PROJECT_INFO_INDEX], file_path=path) if not None else None
             review_comments = ReviewComments.from_tree(root[_COMMENTS_INDEX]) if not None else None
         return Review(project_info=project_info,
                       review_comments=review_comments,
