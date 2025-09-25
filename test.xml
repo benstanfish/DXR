@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjNet>
+    <shorthandempty />
+    <whitespaceempty>   </whitespaceempty>
+    <hastext>hello world</hastext>
+    <haschild>
+        <child>hello world</child>
+    </haschild>
+</ProjNet>
