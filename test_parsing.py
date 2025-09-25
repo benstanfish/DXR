@@ -1,4 +1,4 @@
-
+import os
 from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element
 
@@ -13,11 +13,14 @@ def get_root(path: str) -> Element | None:
         print(e)
         return None
 
+dir_path = './dev/test/xml'
+file_names = os.listdir(dir_path)
+file_paths = [dir_path + '/' + file_name for file_name in file_names]
 
-file_name = './dev/test/data.xml'
 
-root = get_root(file_name)
-print(root.tag)
-
-print(root.find('DrChecks').tag)
-print(root.find('Comments').tag)
+for file in file_paths:
+    try:
+        root = ET.parse(file).getroot()
+        print(file, root)
+    except Exception as e:
+        print(file, e.args, e.with_traceback)
