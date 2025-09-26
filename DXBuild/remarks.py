@@ -6,9 +6,9 @@ from heapq import merge
 from typing import List, Dict, Tuple
 
 from .constants import (_TRUE_SYMBOLIC, COMMENT_COLUMNS, RESPONSE_COLUMNS, RESPONSE_VALUES)
-from .parsetools import (parse_single_tag, parse_date_node, date_to_excel, clean_text)
-""""""
-class Remark(ABC):
+from .parseable import Parseable
+
+class Remark(ABC, Parseable):
     """Parent class for Comment, Evaluation and Backcheck classes"""
     def __init__(self,
                  id_=None,
@@ -18,6 +18,7 @@ class Remark(ABC):
                  author=None,
                  date_created=None,
                  remark_type='remark'):
+        super().__init__()
         self.id = id_
         self.status = status
         self.text = text
@@ -85,20 +86,20 @@ class Comment(Remark):
 
     @classmethod
     def from_element(cls, element):
-        id_ = parse_single_tag('id', element)
-        spec = parse_single_tag('spec', element)
-        sheet = parse_single_tag('sheet', element)
-        detail = parse_single_tag('detail', element)
-        is_critical = parse_single_tag('critical', element)
-        docref = parse_single_tag('DocRef', element)
-        doctype = parse_single_tag('DocType', element)
-        discipline = parse_single_tag('Discipline', element)
-        coordinating_discipline = parse_single_tag('CoordinatingDiscipline', element)     
-        status = parse_single_tag('status', element)
-        text = clean_text(parse_single_tag('commentText', element))
-        has_attachment = _TRUE_SYMBOLIC if parse_single_tag('attachment', element) is not None else None
-        author = parse_single_tag('createdBy', element)
-        date_created = parse_date_node('createdOn', element)
+        id_ = cls.parse_single_tag('id', element)
+        spec = cls.parse_single_tag('spec', element)
+        sheet = cls.parse_single_tag('sheet', element)
+        detail = cls.parse_single_tag('detail', element)
+        is_critical = cls.parse_single_tag('critical', element)
+        docref = cls.parse_single_tag('DocRef', element)
+        doctype = cls.parse_single_tag('DocType', element)
+        discipline = cls.parse_single_tag('Discipline', element)
+        coordinating_discipline = cls.parse_single_tag('CoordinatingDiscipline', element)     
+        status = cls.parse_single_tag('status', element)
+        text = cls.clean_text(cls.parse_single_tag('commentText', element))
+        has_attachment = _TRUE_SYMBOLIC if cls.parse_single_tag('attachment', element) is not None else None
+        author = cls.parse_single_tag('createdBy', element)
+        date_created = cls.parse_date_node('createdOn', element)
         evaluations = [Evaluation.from_element(eval) for eval in element.find('evaluations')] \
             if element.find('evaluations') is not None else []
         backchecks = [Backcheck.from_element(bc) for bc in element.find('backchecks')] \
@@ -128,7 +129,7 @@ class Comment(Remark):
             'text': self.text,
             'has_attachment': self.has_attachment,
             'author': self.author,
-            'date_created': date_to_excel(self.date_created),
+            'date_created': self.date_to_excel(self.date_created),
             'remark_type': self.remark_type,
             'spec': self.spec,
             'sheet': self.sheet,
@@ -274,16 +275,16 @@ class Evaluation(Remark):
 
     @classmethod
     def from_element(cls, element):
-        id_ = parse_single_tag('id', element)
-        parent_id = parse_single_tag('comment', element)
-        status = parse_single_tag('status', element)
-        impact_scope = parse_single_tag('impactScope', element)
-        impact_cost = parse_single_tag('impactCost', element)
-        impact_time = parse_single_tag('impactTime', element)
-        text = clean_text(parse_single_tag('evaluationText', element))
-        has_attachment = _TRUE_SYMBOLIC if parse_single_tag('attachment', element) is not None else None
-        author = parse_single_tag('createdBy', element)
-        date_created = parse_date_node('createdOn', element)
+        id_ = cls.parse_single_tag('id', element)
+        parent_id = cls.parse_single_tag('comment', element)
+        status = cls.parse_single_tag('status', element)
+        impact_scope = cls.parse_single_tag('impactScope', element)
+        impact_cost = cls.parse_single_tag('impactCost', element)
+        impact_time = cls.parse_single_tag('impactTime', element)
+        text = cls.clean_text(cls.parse_single_tag('evaluationText', element))
+        has_attachment = _TRUE_SYMBOLIC if cls.parse_single_tag('attachment', element) is not None else None
+        author = cls.parse_single_tag('createdBy', element)
+        date_created = cls.parse_date_node('createdOn', element)
         return Evaluation(id_=id_, 
                         parent_id=parent_id, 
                         status=status, 
@@ -303,7 +304,7 @@ class Evaluation(Remark):
             'text': self.text,
             'has_attachment': self.has_attachment,
             'author': self.author,
-            'date_created': date_to_excel(self.date_created),
+            'date_created': self.date_to_excel(self.date_created),
             'remark_type': self.remark_type,
             'parent_id': self.parent_id,
             'impact_scope': self.impact_scope,
@@ -334,14 +335,14 @@ class Backcheck(Remark):
 
     @classmethod
     def from_element(cls, element):
-        id_ = parse_single_tag('id', element)
-        parent_id = parse_single_tag('comment', element)
-        evaluation_id = parse_single_tag('evaluation', element)
-        status = parse_single_tag('status', element)
-        text = clean_text(parse_single_tag('backcheckText', element))
-        has_attachment = _TRUE_SYMBOLIC if parse_single_tag('attachment', element) is not None else None
-        author = parse_single_tag('createdBy', element)
-        date_created = parse_date_node('createdOn', element)
+        id_ = cls.parse_single_tag('id', element)
+        parent_id = cls.parse_single_tag('comment', element)
+        evaluation_id = cls.parse_single_tag('evaluation', element)
+        status = cls.parse_single_tag('status', element)
+        text = cls.clean_text(cls.parse_single_tag('backcheckText', element))
+        has_attachment = _TRUE_SYMBOLIC if cls.parse_single_tag('attachment', element) is not None else None
+        author = cls.parse_single_tag('createdBy', element)
+        date_created = cls.parse_date_node('createdOn', element)
         return Backcheck(id_=id_, 
                         parent_id=parent_id, 
                         status=status, 
@@ -359,7 +360,7 @@ class Backcheck(Remark):
             'text': self.text,
             'has_attachment': self.has_attachment,
             'author': self.author,
-            'date_created': date_to_excel(self.date_created),
+            'date_created': self.date_to_excel(self.date_created),
             'remark_type': self.remark_type,
             'parent_id': self.parent_id,
             'evaluation_id': self.evaulation_id

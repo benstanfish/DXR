@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+		<ProjNet>
+			<DrChecks>
+				<ProjectID>76965</ProjectID>
+				<ProjectControlNbr>3924423</ProjectControlNbr>
+				<ProjectName>Dummy Project (Example)</ProjectName>
+				<ReviewID>259364</ReviewID>
+				<ReviewName>Only Comments</ReviewName>
+			</DrChecks>
+			
+			<Comments>
+				
+					<comment>
+						<id>11544530</id>
+						<spec>n/a</spec>
+						<sheet></sheet>
+						<detail></detail>
+						<critical>No</critical>
+						<commentText>Hello World</commentText>
+						<attachment></attachment>
+                                                <DocRef></DocRef>
+						<createdBy>Benjamin Fisher</createdBy>
+						<createdOn>Sep 26 2025 11:52 AM</createdOn>
+						<status>Open</status>
+                                                <Discipline>Architectural</Discipline>
+                                                <DocType>Design Analysis</DocType>
+                        
+						<evaluations>
+							
+						</evaluations>
+						
+						<backchecks>
+							
+						</backchecks>
+					</comment>
+				
+					<comment>
+						<id>11544531</id>
+						<spec>n/a</spec>
+						<sheet></sheet>
+						<detail></detail>
+						<critical>No</critical>
+						<commentText>Here is a comment</commentText>
+						<attachment></attachment>
+                                                <DocRef></DocRef>
+						<createdBy>Benjamin Fisher</createdBy>
+						<createdOn>Sep 26 2025 11:52 AM</createdOn>
+						<status>Open</status>
+                                                <Discipline>Biology-Ecology</Discipline>
+                                                <DocType>Design Analysis</DocType>
+                        
+						<evaluations>
+							
+						</evaluations>
+						
+						<backchecks>
+							
+						</backchecks>
+					</comment>
+				
+					<comment>
+						<id>11544532</id>
+						<spec>n/a</spec>
+						<sheet></sheet>
+						<detail></detail>
+						<critical>No</critical>
+						<commentText>Here is yet another comment.</commentText>
+						<attachment></attachment>
+                                                <DocRef></DocRef>
+						<createdBy>Benjamin Fisher</createdBy>
+						<createdOn>Sep 26 2025 11:52 AM</createdOn>
+						<status>Open</status>
+                                                <Discipline>Biology-Ecology</Discipline>
+                                                <DocType>Design Analysis</DocType>
+                        
+						<evaluations>
+							
+						</evaluations>
+						
+						<backchecks>
+							
+						</backchecks>
+					</comment>
+				
+			</Comments>
+		</ProjNet>
+		

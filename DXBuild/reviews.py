@@ -12,9 +12,8 @@ from .constants import (COMMENT_COLUMNS,
                         _PROJECT_INFO_INDEX,
                         _COMMENTS_INDEX,
                         _RESPONSE_EXPANSION_TYPES)
-from .parsetools import (get_root, parse_single_tag, date_to_excel)
+from .parseable import Parseable
 from .remarks import Comment
-
 
 class Frameable:
     def __init__(self):
@@ -22,21 +21,24 @@ class Frameable:
 
     def shift_frames(self, col_shift: int = 0, row_shift: int = 0) -> None:
         for region in self.frames:
-            self.frames[region].shift(col_shift=col_shift, row_shift=row_shift)
+            if self.frames[region] is not None:
+                self.frames[region].shift(col_shift=col_shift, row_shift=row_shift)
 
     def expand_frame(self, frame_name:str, right:int=0, down:int=0, left:int=0, up:int=0):
-        self.frames[frame_name].expand(right=right, down=down, left=left, up=up)  
+        if self.frames[frame_name] is not None:
+            self.frames[frame_name].expand(right=right, down=down, left=left, up=up)  
 
     def get_anchor_cell(self, worksheet:Worksheet, frame_name:str=''):
-        if frame_name:
-            return worksheet.cell(row=self.frames[frame_name].min_row, column=self.frames[frame_name].min_col).coordinate
-        else:
-            if 'extents' in self.frames.keys():
-                return worksheet.cell(row=self.frames['extents'].min_row, column=self.frames['extents'].min_col).coordinate
-            return worksheet.cell(row=self.frames[0].min_row, column=self.frames[0].min_col).coordinate
+        if self.frames[frame_name] is not None:
+            if frame_name:
+                return worksheet.cell(row=self.frames[frame_name].min_row, column=self.frames[frame_name].min_col).coordinate
+            else:
+                if 'extents' in self.frames.keys():
+                    return worksheet.cell(row=self.frames['extents'].min_row, column=self.frames['extents'].min_col).coordinate
+                return worksheet.cell(row=self.frames[0].min_row, column=self.frames[0].min_col).coordinate
         
 
-class ProjectInfo(Frameable):
+class ProjectInfo(Frameable, Parseable):
 
     def __init__(self, 
                  project_id=None,
@@ -58,11 +60,11 @@ class ProjectInfo(Frameable):
         
     @classmethod
     def from_element(cls, element, file_path=None):
-        project_id = parse_single_tag('ProjectID', element)
-        control_number = parse_single_tag('ProjectControlNbr', element)
-        project_name = parse_single_tag('ProjectName', element)
-        review_id = parse_single_tag('ReviewID', element)
-        review_name = parse_single_tag('ReviewName', element)
+        project_id = cls.parse_single_tag('ProjectID', element)
+        control_number = cls.parse_single_tag('ProjectControlNbr', element)
+        project_name = cls.parse_single_tag('ProjectName', element)
+        review_id = cls.parse_single_tag('ReviewID', element)
+        review_name = cls.parse_single_tag('ReviewName', element)
         if file_path is not None:
             file_date = getctime(file_path)
             xml_date = datetime.fromtimestamp(file_date).strftime('%Y-%m-%d %H:%M:%S')
@@ -85,8 +87,8 @@ class ProjectInfo(Frameable):
             'Project Name': self.project_name,
             'Review Name': self.review_name,
             'Review ID': self.review_id,
-            'XML Date': date_to_excel(self.xml_date),
-            'Run Date': date_to_excel(self.run_date),
+            'XML Date': self.date_to_excel(self.xml_date),
+            'Run Date': self.date_to_excel(self.run_date),
             'Notes': ''
         }
     
@@ -120,7 +122,7 @@ class ProjectInfo(Frameable):
 
 
 
-class ReviewComments(Frameable):
+class ReviewComments(Frameable, Parseable):
 
     def __init__(self,
                  comments=[]):
@@ -207,18 +209,19 @@ class ReviewComments(Frameable):
                         expansion_type: _RESPONSE_EXPANSION_TYPES ='chronological') -> List:
         """Returns a list of all the column names (for use in Excel) and the column count."""
         header_names = [key for key in comment_attrs.keys()]
-        max_evals, max_bcs = self.max_responses
-        if expansion_type.lower() != 'chronological':
-            for i in range(max_evals):
-                for key in response_attrs.keys():
-                    header_names.append(f'Eval {i + 1} {key}')
-            for j in range(max_bcs):
-                for key in response_attrs.keys():
-                    header_names.append(f'BCheck {j + 1} {key}')
-        else:
-            for k in range(max_evals + max_bcs):
-                for key in response_attrs.keys():
-                    header_names.append(f'Resp {k + 1} {key}')
+        if self.responses_count > 0:
+            max_evals, max_bcs = self.max_responses
+            if expansion_type.lower() != 'chronological':
+                for i in range(max_evals):
+                    for key in response_attrs.keys():
+                        header_names.append(f'Eval {i + 1} {key}')
+                for j in range(max_bcs):
+                    for key in response_attrs.keys():
+                        header_names.append(f'BCheck {j + 1} {key}')
+            else:
+                for k in range(max_evals + max_bcs):
+                    for key in response_attrs.keys():
+                        header_names.append(f'Resp {k + 1} {key}')
         return header_names
 
     def to_list(self, 
@@ -234,26 +237,29 @@ class ReviewComments(Frameable):
         for comment in self.comments:
             temp = []
             temp += comment.to_list(comment_attrs)
-            if expansion_type == 'chronological':
-                resp_list = comment.list_responses_chronological
-                resp_count = comment.total_response_count
-                diff_eval = (max_eval_count + max_bc_count) - resp_count
-                for resp in resp_list:
-                    temp += resp.to_list(response_attrs)
-                for i in range(diff_eval):
-                    temp += [''] * len(response_attrs)
-                full_list.append(temp)
+            if self.responses_count > 0:
+                if expansion_type == 'chronological':
+                    resp_list = comment.list_responses_chronological
+                    resp_count = comment.total_response_count
+                    diff_eval = (max_eval_count + max_bc_count) - resp_count
+                    for resp in resp_list:
+                        temp += resp.to_list(response_attrs)
+                    for i in range(diff_eval):
+                        temp += [''] * len(response_attrs)
+                    full_list.append(temp)
+                else:
+                    for evaluation in comment.evaluations:
+                        temp += evaluation.to_list(response_attrs)
+                    diff_eval = max_eval_count - comment.evaluations_count
+                    for _ in range(diff_eval):
+                        temp += [''] * len(response_attrs)
+                    for backcheck in comment.backchecks:
+                        temp += backcheck.to_list(response_attrs)
+                    diff_bc = max_bc_count - comment.backchecks_count
+                    for _ in range(diff_bc):
+                        temp += [''] * len(response_attrs)
+                    full_list.append(temp)
             else:
-                for evaluation in comment.evaluations:
-                    temp += evaluation.to_list(response_attrs)
-                diff_eval = max_eval_count - comment.evaluations_count
-                for _ in range(diff_eval):
-                    temp += [''] * len(response_attrs)
-                for backcheck in comment.backchecks:
-                    temp += backcheck.to_list(response_attrs)
-                diff_bc = max_bc_count - comment.backchecks_count
-                for _ in range(diff_bc):
-                    temp += [''] * len(response_attrs)
                 full_list.append(temp)
         return full_list
 
@@ -273,10 +279,10 @@ class ReviewComments(Frameable):
         self.frames['body'] = CellRange(min_col=1, max_col=self.all_column_count, min_row=2, max_row=self.count + 1)
         self.frames['comments_header'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=1, max_row=1)
         self.frames['comments_body'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=2, max_row=self.count + 1)
-        self.frames['response_header'] = CellRange(min_col=1 + self.comment_columns_count, max_col=self.comment_columns_count + self.response_columns_count, min_row=1, max_row=1)
-        self.frames['response_body'] = CellRange(min_col=1 + self.comment_columns_count, max_col=self.comment_columns_count + self.response_columns_count, min_row=2, max_row=self.count + 1)
+        if self.responses_count > 0:
+            self.frames['response_header'] = CellRange(min_col=1 + self.comment_columns_count, max_col=self.comment_columns_count + self.response_columns_count, min_row=1, max_row=1)
+            self.frames['response_body'] = CellRange(min_col=1 + self.comment_columns_count, max_col=self.comment_columns_count + self.response_columns_count, min_row=2, max_row=self.count + 1)
 
-                
 
 class UserNotes(Frameable):
     def __init__(self):
@@ -323,7 +329,7 @@ class UserNotes(Frameable):
                 cell.value = i
                 i += 1
 
-class Review(Frameable):
+class Review(Frameable, Parseable):
     """Returns a Review object containing project info and review comments objects."""
 
     def __init__(self,
@@ -343,7 +349,7 @@ class Review(Frameable):
 
     @classmethod
     def from_file(cls, path):
-        root = get_root(path) if not None else None
+        root = cls.get_root(path) if not None else None
         if root:
             project_info = ProjectInfo.from_element(root[_PROJECT_INFO_INDEX], file_path=path) if not None else None
             review_comments = ReviewComments.from_tree(root[_COMMENTS_INDEX]) if not None else None

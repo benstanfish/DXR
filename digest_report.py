@@ -11,12 +11,12 @@ import dxbuild.buildtools as buildtools
 from dxbuild.constants import RESPONSE_COLUMNS, USER_NOTES_COLUMNS
 from dxcore.conditionalformats import *
 from dxcore.cellformats import *
-from dxbuild.constants import FALLBACKS
+from dxbuild.constants import FALLBACKS, _TRUE_SYMBOLIC
 
 # Debug information
 _WRITE_FILE = True
 xml_path = './dev/test/data.xml'
-# xml_path = './dev/test/xml/normal.xml'
+# xml_path = './dev/test/only_comments.xml'
 
 # Parse XML and create data objects
 review = Review.from_file(xml_path)
@@ -122,7 +122,6 @@ if ws is not None and review:
     buildtools.conditionally_format_range(highest_response_columns, 'concur', ws, blue_dx)
     buildtools.apply_styles_to_region_if_empty(empty_status_cell_style, highest_response_columns, ws)
 
-
     critical_options = 'Yes, No'
     critical_column_letters = buildtools.get_columns_by_name('critical', TABLE_INFO)
     critical_column = buildtools.build_column_vectors(critical_column_letters, TABLE_INFO)
@@ -136,6 +135,12 @@ if ws is not None and review:
     buildtools.conditionally_format_range(class_column[0], 'cui', ws, red_dx)   
     buildtools.conditionally_format_range(class_column[0], 'unclassified', ws, yellow_dx)
 
+    att_options = f'{_TRUE_SYMBOLIC}, '
+    att_column_letters = buildtools.get_columns_by_name('att', TABLE_INFO)
+    att_columns = buildtools.build_column_vectors(att_column_letters, TABLE_INFO)    
+    for column in att_columns:
+        buildtools.add_data_validation_to_column(att_options, [column], ws)
+        buildtools.conditionally_format_range(column, _TRUE_SYMBOLIC, ws, has_att_dx)  
     
     for i, col_width in enumerate(USER_NOTES_WIDTHS):
         ws.column_dimensions[get_column_letter(i + 1)].width = col_width
@@ -143,10 +148,11 @@ if ws is not None and review:
     for i, col_width in enumerate(COMMENT_COLUMN_WIDTHS):
         ws.column_dimensions[get_column_letter(i + review.user_notes.count + 1)].width = col_width
 
-    response_header_cell_range = review.review_comments.frames['response_header']
-    for i in range(response_header_cell_range.min_col, response_header_cell_range.max_col + 1):
-        i_modulo = (i - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS)
-        ws.column_dimensions[f'{get_column_letter(i)}'].width = RESPONSE_COLUMN_WIDTHS[i_modulo]
+    if review.review_comments.responses_count > 0:
+        response_header_cell_range = review.review_comments.frames['response_header']
+        for i in range(response_header_cell_range.min_col, response_header_cell_range.max_col + 1):
+            i_modulo = (i - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS)
+            ws.column_dimensions[f'{get_column_letter(i)}'].width = RESPONSE_COLUMN_WIDTHS[i_modulo]
 
     wrappables = USER_NOTES_COLUMNS + ['Comment']
     #NOTE: add 'Text' to the list above to wrap the Text column in the responses. Right now
@@ -165,14 +171,15 @@ if ws is not None and review:
     collapse_regions = [['Notes', 'State'],
                         ['Source', 'Section']]
 
-    response_collapse_region = []   # This is used in conjunction wiht the reponse_header_cell_range from above
-    for col in range(response_header_cell_range.min_col, response_header_cell_range.max_col + 1):
-        current_modulo = (col - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS)
-        if current_modulo == 1 or current_modulo == len(RESPONSE_COLUMNS) - 1:
-            response_collapse_region.append(table_column_list[col - 1])
-        if current_modulo == len(RESPONSE_COLUMNS) - 1:
-            collapse_regions.append(response_collapse_region)
-            response_collapse_region = []
+    if review.review_comments.responses_count > 0:
+        response_collapse_region = []   # This is used in conjunction wiht the reponse_header_cell_range from above
+        for col in range(response_header_cell_range.min_col, response_header_cell_range.max_col + 1):
+            current_modulo = (col - response_header_cell_range.min_col) % len(RESPONSE_COLUMNS)
+            if current_modulo == 1 or current_modulo == len(RESPONSE_COLUMNS) - 1:
+                response_collapse_region.append(table_column_list[col - 1])
+            if current_modulo == len(RESPONSE_COLUMNS) - 1:
+                collapse_regions.append(response_collapse_region)
+                response_collapse_region = []
         
     for region in collapse_regions:
         start_col = table_column_list.index(region[0]) + 1

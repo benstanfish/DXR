@@ -15,6 +15,12 @@ def get_root(path: str) -> Element | None:
         return None
 
 
+def has_children(element: Element) -> bool:
+    if element is not None and len(element) > 0:
+        return True
+    return False
+
+
 dir_path = './dev/test/xml/'
 file_names = [
     'bad_root.xml',

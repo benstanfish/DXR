@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
-from openpyxl.styles import Font, PatternFill, Border, Side
+from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.styles.differential import DifferentialStyle
 from .dxcolor import DXColor
 from dxbuild.constants import FALLBACKS
@@ -65,4 +65,10 @@ light_blue_dx = DifferentialStyle(
 light_gray_dx = DifferentialStyle(
     font=Font(_FONT_NAME, size=_FONT_SIZE, bold=False, color=DXColor.LIGHT_GRAY_TEXT), 
     fill=PatternFill(start_color=DXColor.LIGHT_GRAY_BG, end_color=DXColor.LIGHT_GRAY_BG)
+)
+
+has_att_dx = DifferentialStyle(
+    font=Font(_FONT_NAME, size=_FONT_SIZE, bold=False, color=DXColor.BLUE_TEXT), 
+    fill=PatternFill(start_color=DXColor.LIGHT_BLUE_BG, end_color=DXColor.LIGHT_BLUE_BG),
+    alignment=Alignment(horizontal='center', vertical='top', wrap_text=False)
 )

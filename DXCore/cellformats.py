@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
 from enum import IntEnum
-from openpyxl.styles import Font, Fill, PatternFill, Border, Side, Alignment
+from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from .dxcolor import DXColor
 from dxbuild.constants import FALLBACKS
 
@@ -9,6 +9,7 @@ class Widths(IntEnum):
     XX_SMALL = 5
     X_SMALL = 8
     SMALL = 10
+    SMALL_MEDIUM = 15
     MEDIUM = 20
     LARGE = 50
     X_LARGE = 70
@@ -22,7 +23,7 @@ COMMENT_COLUMN_WIDTHS = [Widths.SMALL, Widths.SMALL, Widths.MEDIUM, Widths.MEDIU
                          Widths.SMALL, 
                          Widths.SMALL, 
                          Widths.SMALL,
-                         Widths.XX_SMALL, Widths.X_SMALL, Widths.SMALL]
+                         Widths.XX_SMALL, Widths.SMALL_MEDIUM, Widths.SMALL]
 
 RESPONSE_COLUMN_WIDTHS = [Widths.SMALL, Widths.MEDIUM, 
                         #   Widths.SMALL, 
