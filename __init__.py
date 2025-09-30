@@ -5,6 +5,7 @@ import dxconfig
 import dxcore
 import dxbuild
 import dxgui
+import dxreport
 import _constants as constants
 
 

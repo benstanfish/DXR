@@ -23,38 +23,40 @@ class CustomTitleBar(QWidget):
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title.setStyleSheet(
             """
-        QLabel { text-transform: uppercase; font-size: 10pt; margin-left: 48px; }
-        """
+            QLabel { text-transform: uppercase; font-size: 10pt; margin-left: 48px; }
+            """
         )
 
         if title := parent.windowTitle():
             self.title.setText(title)
         title_bar_layout.addWidget(self.title)
+
+
         # Min button
         self.min_button = QToolButton(self)
         min_icon = QIcon()
-        min_icon.addFile("min.svg")
+        min_icon.addFile("./dxgui/min.svg")
         self.min_button.setIcon(min_icon)
         self.min_button.clicked.connect(self.window().showMinimized)
 
         # Max button
         self.max_button = QToolButton(self)
         max_icon = QIcon()
-        max_icon.addFile("max.svg")
+        max_icon.addFile("./dxgui/max.svg")
         self.max_button.setIcon(max_icon)
         self.max_button.clicked.connect(self.window().showMaximized)
 
         # Close button
         self.close_button = QToolButton(self)
         close_icon = QIcon()
-        close_icon.addFile("close.svg")  # Close has only a single state.
+        close_icon.addFile("./dxgui/close.svg")  # Close has only a single state.
         self.close_button.setIcon(close_icon)
         self.close_button.clicked.connect(self.window().close)
 
         # Normal button
         self.normal_button = QToolButton(self)
         normal_icon = QIcon()
-        normal_icon.addFile("normal.svg")
+        normal_icon.addFile("./dxgui/normal.svg")
         self.normal_button.setIcon(normal_icon)
         self.normal_button.clicked.connect(self.window().showNormal)
         self.normal_button.setVisible(False)
@@ -86,6 +88,9 @@ class CustomTitleBar(QWidget):
             self.max_button.setVisible(True)
 
 
+stop_0 = '#051c2a'
+stop_1 = '#44315f'
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -97,10 +102,7 @@ class MainWindow(QMainWindow):
         # This container holds the window contents, so we can style it.
         central_widget.setObjectName("Container")
         central_widget.setStyleSheet(
-            """#Container {
-            background: qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #051c2a stop:1 #44315f);
-            border-radius: 5px;
-        }"""
+            r"#Container {background: qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 " + stop_0 + " stop:1 " + stop_1 + "); border-radius: 5px;}"
         )
         self.title_bar = CustomTitleBar(self)
 
