@@ -1,19 +1,18 @@
-from PyQt6.QtCore import QEvent, QSize, Qt
+import sys
+from PyQt6.QtWidgets import (QApplication,
+                             QMainWindow, 
+                             QWidget,
+                             QLabel,
+                             QVBoxLayout,
+                             QHBoxLayout,
+                             QPushButton,
+                             QToolButton)
+from PyQt6.QtCore import (Qt, QSize, QEvent)
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import (
-    QApplication,
-    QHBoxLayout,
-    QLabel,
-    QMainWindow,
-    QStyle,
-    QToolButton,
-    QVBoxLayout,
-    QWidget,
-)
 
 
-stop_0 = "#65737c"
-stop_1 = '#44315f'
+stop_0 = "#406175"
+stop_1 = "#5f2157"
 
 class CustomTitleBar(QWidget):
     def __init__(self, parent):
@@ -33,6 +32,7 @@ class CustomTitleBar(QWidget):
         if title := parent.windowTitle():
             self.title.setText(title)
         title_bar_layout.addWidget(self.title)
+
 
         # Min button
         self.min_button = QToolButton(self)
@@ -90,24 +90,38 @@ class CustomTitleBar(QWidget):
             self.max_button.setVisible(True)
 
 
-class MainWindow(QMainWindow):
+class DXRMainWindow(QMainWindow):
+    
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Custom Title Bar")
-        self.resize(400, 200)
+
+        self.setWindowTitle("DXR v1.0")
+        self.resize(600, 400)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         central_widget = QWidget()
-        # This container holds the window contents, so we can style it.
+
         central_widget.setObjectName("Container")
         central_widget.setStyleSheet(
-            r"#Container {background: qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 " + stop_0 + " stop:1 " + stop_1 + "); border-radius: 5px;}"
+            r"#Container {background: qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 "
+              + stop_0 + " stop:1 " + stop_1 + "); border-radius: 5px;}"
         )
         self.title_bar = CustomTitleBar(self)
 
         work_space_layout = QVBoxLayout()
         work_space_layout.setContentsMargins(11, 11, 11, 11)
-        work_space_layout.addWidget(QLabel("Hello, World!", self))
+
+        open_files_button = QPushButton('Create from XML', self)
+        open_files_button.setObjectName('OpenFileButton')
+        open_files_button.setStyleSheet(
+            """
+            #OpenFileButton {background: transparent; border: 1px solid white; border-radius: 6px; padding: 6px}
+            #OpenFileButton::hover {background: #333;}
+            """)
+        open_files_button.clicked.connect(self.on_open_files_button_clicked)
+
+        work_space_layout.addWidget(QLabel("Select a Tool:", self))
+        work_space_layout.addWidget(open_files_button)
 
         centra_widget_layout = QVBoxLayout()
         centra_widget_layout.setContentsMargins(0, 0, 0, 0)
@@ -117,6 +131,7 @@ class MainWindow(QMainWindow):
 
         central_widget.setLayout(centra_widget_layout)
         self.setCentralWidget(central_widget)
+
 
     def changeEvent(self, event):
         if event.type() == QEvent.Type.WindowStateChange:
@@ -149,13 +164,14 @@ class MainWindow(QMainWindow):
         super().mouseReleaseEvent(event)
         event.accept()
 
-
-
+    def on_open_files_button_clicked(self, event):
+        print('Button Clicked!')
 
 
 
 if __name__ == "__main__":
     app = QApplication([])
-    window = MainWindow()
+    window = DXRMainWindow()
     window.show()
-    app.exec()
+    sys.exit(app.exec())
+
