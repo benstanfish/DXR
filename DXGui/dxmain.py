@@ -1,6 +1,7 @@
 import sys
 from PyQt6.QtWidgets import (QApplication,
-                             QMainWindow, 
+                             QMainWindow,
+                             QFileDialog, 
                              QWidget,
                              QLabel,
                              QVBoxLayout,
@@ -9,6 +10,8 @@ from PyQt6.QtWidgets import (QApplication,
                              QToolButton)
 from PyQt6.QtCore import (Qt, QSize, QEvent)
 from PyQt6.QtGui import QIcon
+
+
 
 
 stop_0 = "#406175"
@@ -165,7 +168,15 @@ class DXRMainWindow(QMainWindow):
         event.accept()
 
     def on_open_files_button_clicked(self, event):
-        print('Button Clicked!')
+        caption = 'Select Files'
+        filter = 'XML Files (*.xml);;HTML Files (*.html);;All Files (*)'
+        file_names, _ = QFileDialog.getOpenFileNames(None, caption=caption, filter=filter)
+        if file_names:
+            for file_name in file_names:
+                
+                #TODO: This is where I need to process the XML reports:
+                print(file_name)
+                
 
 
 

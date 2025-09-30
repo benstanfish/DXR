@@ -5,16 +5,15 @@ from PyQt6.QtGui import QIcon
 
 _DIALOG_TYPES = Literal['critical', 'warning', 'info', 'question', 'no_icon']
 
-class SelectFileDialog(QFileDialog):
+# class SelectFileDialog(QFileDialog):
 
-    def __init__():
-        super().__init__()
+#     def __init__():
+#         super().__init__()
 
-    def get_files(self,
-                  caption='Select Files Dialog',
-                  filter='XML Files (*.xml);;HTML Files (*.html);;All Files (*)'):
-        self.paths, _ = self.getOpenFileNames(None, caption=caption, filter=filter)
-        return self.paths
+#         self.caption = 'Select Files'
+#         self.filter = 'XML Files (*.xml);;HTML Files (*.html);;All Files (*)'
+#         self.file_names, _ = self.getOpenFileNames(self, caption=self.caption, filter=self.filter)
+
 
 
 # class SelectFolderDialog():
