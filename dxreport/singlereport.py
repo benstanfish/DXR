@@ -15,9 +15,8 @@ from dxcore.cellformats import *
 from dxbuild.constants import FALLBACKS, _TRUE_SYMBOLIC
 
 
-def create_report(ws: Worksheet, xml_path: str):
+def create_report(review:Review, ws: Worksheet):
 
-    review = Review.from_file(xml_path)
     project_info = review.project_info
     all_comments = review.review_comments
     user_notes = review.user_notes

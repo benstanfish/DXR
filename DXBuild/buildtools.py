@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from typing import List, Tuple, Dict, Literal
+from defusedxml import ElementTree as ET
 
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles.differential import DifferentialStyle
@@ -12,6 +13,17 @@ from openpyxl.worksheet.cell_range import CellRange
 
 
 #TODO: Need to split the DrChecks Review formatting tools from the basic range operations tools (different modules)
+
+def is_valid_root(xml_path: str) -> bool:
+    try:
+        root = ET.parse(xml_path).getroot()
+        if root.tag == 'ProjNet':
+            return True
+        else:
+            return False
+    except Exception as e:
+        return False
+
 
 def timestamp(
         format_string: str=r'%Y%m%d_%H%M%S'

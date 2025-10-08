@@ -346,7 +346,6 @@ class Review(Frameable, Parseable):
         self.table_column_list = []
         self.setup_frames()
 
-
     @classmethod
     def from_file(cls, path):
         root = cls.get_root(path) if not None else None
@@ -381,3 +380,9 @@ class Review(Frameable, Parseable):
                 if cell.value not in temp:
                     temp.append(cell.value)
         self.table_column_list = temp
+
+    @property
+    def is_valid(self):
+        if self.root.tag.lower() == 'projnet':
+            return True
+        return False
