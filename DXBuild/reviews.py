@@ -16,12 +16,14 @@ from .parseable import Parseable
 from .remarks import Comment
 
 
+from dxbuild.constants import _LOG_DIR
+
 import logging
 from dxcore.logconstants import log_format_string
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARNING)
 log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'./logs/{__name__}.log')
+log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 

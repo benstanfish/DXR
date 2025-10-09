@@ -12,12 +12,14 @@ from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.cell_range import CellRange
 
+from dxbuild.constants import _LOG_DIR
+
 import logging
 from dxcore.logconstants import log_format_string
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARNING)
 log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'./logs/{__name__}.log')
+log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 
@@ -177,13 +179,18 @@ def abs_rel_address(
             return whole_match
     return ''
     
-    
+
+def clean_name(basename: str) -> str:
+    import re
+    bad_chars = r'[!?@#$%^&*()\[\]|\\\/]'
+    return re.sub(bad_chars, '', basename)
+
 def autoincrement_name(
-        base_name: str, 
+        basename: str, 
         search_list: List,
         return_cleaned_name: bool = True
     ) -> str:
-    """_summary_
+    """Returns the base_name with next largest integer suffixed if name already exists in search_list.
 
     :param base_name: _description_
     :type base_name: str
@@ -192,12 +199,10 @@ def autoincrement_name(
     :return: _description_
     :rtype: str
     """
-    # """Returns the base_name with next largest integer suffixed if name already exists in search_list."""
-
-    base_name_length = len(base_name)
+    base_name_length = len(basename)
     temp = []
     for thing in search_list:
-        if thing[:base_name_length] == base_name:
+        if thing[:base_name_length] == basename:
             temp.append(thing)
     if len(temp):
         # This block executes if there are potential collisions with the base name
@@ -207,15 +212,24 @@ def autoincrement_name(
                 curr_num = int(thing[base_name_length:])
                 if curr_num > max_number:
                     max_number = curr_num
-        return base_name + str(max_number + 1)
+        if return_cleaned_name:
+            return clean_name(basename + str(max_number + 1))
+        return basename + str(max_number + 1)
     # If no collisions, the base name is returned.
     if return_cleaned_name:
-        import re
-        bad_chars = r'[!?@#$%^&*()\[\]|\\\/]'
-        base_name = re.sub(bad_chars, '', base_name)
-    print(base_name)
-    return base_name
+        return clean_name(basename)
+    return basename
 
+def get_next_worksheet(ws_basename: str, workbook: Workbook) -> Worksheet:
+    """Add an autoincremented worksheet to existing workbook."""
+    modified_name = autoincrement_name(ws_basename, workbook.sheetnames, True)
+    if len(workbook.sheetnames) == 1:
+        ws = workbook.active
+        ws.title = modified_name
+    else:
+        ws = workbook.create_sheet(modified_name)
+    return ws
+    
 
 def add_data_validation_to_column(
     options_string: str,

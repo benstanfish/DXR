@@ -6,6 +6,7 @@ from openpyxl.utils.cell import get_column_letter
 from openpyxl.worksheet.table import Table
 from openpyxl.styles.alignment import Alignment
 from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.worksheet.cell_range import CellRange
 
 from dxbuild.reviews import Review
 import dxbuild.buildtools as buildtools
@@ -14,11 +15,14 @@ from dxcore.conditionalformats import *
 from dxcore.cellformats import *
 from dxbuild.constants import FALLBACKS, _TRUE_SYMBOLIC
 
+from dxbuild.constants import _LOG_DIR
+
 import logging
+from dxcore.logconstants import log_format_string
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-log_formatter = logging.Formatter('%(asctime)s::%(levelname)s::%(name)s::%(message)s')
-log_file_handler = logging.FileHandler(f'./logs/{__name__}.log')
+logger.setLevel(logging.WARNING)
+log_formatter = logging.Formatter(log_format_string)
+log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 
@@ -51,7 +55,7 @@ def create_report(review:Review, ws: Worksheet):
 
         table_names = buildtools.get_table_names(ws.parent)
 
-        new_table_name = buildtools.autoincrement_name(base_name='Comments', search_list=table_names)
+        new_table_name = buildtools.autoincrement_name(basename='Comments', search_list=table_names)
         table = Table(displayName=new_table_name, ref=TABLE_RANGE)
 
         ws.add_table(table)
@@ -72,9 +76,9 @@ def create_report(review:Review, ws: Worksheet):
         buildtools.apply_styles_to_region(project_info_key_style, review.project_info.frames['keys'].coord, ws)
         buildtools.apply_styles_to_region(project_title_style, review.project_info.frames['project_title'].coord, ws)
 
-
         buildtools.apply_styles_to_region(table_header_styles, TABLE_HEADER, ws)
         buildtools.apply_styles_to_region(table_body_styles, TABLE_BODY, ws)
+
         buildtools.apply_styles_to_region(user_notes_header_styles, review.user_notes.frames['header'].coord, ws)
         buildtools.apply_styles_to_region(user_notes_body_styles, review.user_notes.frames['body'].coord, ws)
 
@@ -134,12 +138,12 @@ def create_report(review:Review, ws: Worksheet):
         buildtools.add_data_validation_to_column(critical_options, critical_column, ws)
         buildtools.conditionally_format_range(critical_column[0], 'yes', ws, red_dx)    
         
-        class_options = 'CUI, Unclassified, Public'
-        class_column_letters = buildtools.get_columns_by_name('class', TABLE_INFO)
-        class_column = buildtools.build_column_vectors(class_column_letters, TABLE_INFO)
-        buildtools.add_data_validation_to_column(class_options, class_column, ws)
-        buildtools.conditionally_format_range(class_column[0], 'cui', ws, red_dx)   
-        buildtools.conditionally_format_range(class_column[0], 'unclassified', ws, yellow_dx)
+        # class_options = 'CUI, Unclassified, Public'
+        # class_column_letters = buildtools.get_columns_by_name('class', TABLE_INFO)
+        # class_column = buildtools.build_column_vectors(class_column_letters, TABLE_INFO)
+        # buildtools.add_data_validation_to_column(class_options, class_column, ws)
+        # buildtools.conditionally_format_range(class_column[0], 'cui', ws, red_dx)   
+        # buildtools.conditionally_format_range(class_column[0], 'unclassified', ws, yellow_dx)
 
         att_options = f'{_TRUE_SYMBOLIC}, '
         att_column_letters = buildtools.get_columns_by_name('att', TABLE_INFO)
@@ -171,6 +175,9 @@ def create_report(review:Review, ws: Worksheet):
                                 f'{get_column_letter(review.table_column_list.index(item) + 1)}{review.frames['body'].max_row}'
                     buildtools.apply_styles_to_region(table_body_wrap_styles, range_string, ws)
 
+        comment_column = buildtools.build_column_vectors(buildtools.get_columns_by_name('Comment', TABLE_INFO), TABLE_INFO)
+        buildtools.apply_styles_to_region(table_body_comment_styles, comment_column[0], ws)
+        
         # Group columns
         _COLLAPSE_LEFT = '▷'
         _COLLAPSE_RIGHT = '◁ Expand'
