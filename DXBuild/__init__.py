@@ -5,4 +5,4 @@ from .reviews import (
     Comment,
     UserNotes
 )
-from .buildtools import timestamp
+from .buildtools import timestamp, get_table_names

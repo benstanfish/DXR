@@ -14,6 +14,14 @@ from dxcore.conditionalformats import *
 from dxcore.cellformats import *
 from dxbuild.constants import FALLBACKS, _TRUE_SYMBOLIC
 
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+log_formatter = logging.Formatter('%(asctime)s::%(levelname)s::%(name)s::%(message)s')
+log_file_handler = logging.FileHandler(f'./logs/{__name__}.log')
+log_file_handler.setFormatter(log_formatter)
+logger.addHandler(log_file_handler)
+
 
 def create_report(review:Review, ws: Worksheet):
 
@@ -23,7 +31,7 @@ def create_report(review:Review, ws: Worksheet):
 
     if ws is not None and review:
         
-        ws.title = project_info.review_name[:30]
+        # ws.title = project_info.review_name[:30]
 
         # Get upper left cell of each major region
         user_notes_anchor_cell = review.user_notes.get_anchor_cell(ws, 'extents')
@@ -41,11 +49,7 @@ def create_report(review:Review, ws: Worksheet):
         TABLE_HEADER = review.frames['header'].coord
         TABLE_BODY = review.frames['body'].coord
 
-        table_names = []
-        wb = ws.parent
-        for sht in wb.worksheets:
-            for table in sht.tables:
-                table_names.append(table.name)
+        table_names = buildtools.get_table_names(ws.parent)
 
         new_table_name = buildtools.autoincrement_name(base_name='Comments', search_list=table_names)
         table = Table(displayName=new_table_name, ref=TABLE_RANGE)

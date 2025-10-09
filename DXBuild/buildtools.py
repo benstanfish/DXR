@@ -4,12 +4,22 @@ from datetime import datetime
 from typing import List, Tuple, Dict, Literal
 from defusedxml import ElementTree as ET
 
+from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.formatting.rule import Rule
 from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.cell_range import CellRange
+
+import logging
+from dxcore.logconstants import log_format_string
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+log_formatter = logging.Formatter(log_format_string)
+log_file_handler = logging.FileHandler(f'./logs/{__name__}.log')
+log_file_handler.setFormatter(log_formatter)
+logger.addHandler(log_file_handler)
 
 
 #TODO: Need to split the DrChecks Review formatting tools from the basic range operations tools (different modules)
@@ -24,6 +34,17 @@ def is_valid_root(xml_path: str) -> bool:
     except Exception as e:
         return False
 
+def get_table_names(wb: Workbook) -> list:
+    table_names = []
+    try:
+
+        for ws in wb.worksheets:
+            if ws.tables:
+                for table_name, table_obj in ws.tables.items():
+                    table_names.append(table_name)
+    finally:
+        wb.close()
+    return table_names
 
 def timestamp(
         format_string: str=r'%Y%m%d_%H%M%S'
@@ -159,7 +180,8 @@ def abs_rel_address(
     
 def autoincrement_name(
         base_name: str, 
-        search_list: List
+        search_list: List,
+        return_cleaned_name: bool = True
     ) -> str:
     """_summary_
 
@@ -171,6 +193,7 @@ def autoincrement_name(
     :rtype: str
     """
     # """Returns the base_name with next largest integer suffixed if name already exists in search_list."""
+
     base_name_length = len(base_name)
     temp = []
     for thing in search_list:
@@ -186,6 +209,11 @@ def autoincrement_name(
                     max_number = curr_num
         return base_name + str(max_number + 1)
     # If no collisions, the base name is returned.
+    if return_cleaned_name:
+        import re
+        bad_chars = r'[!?@#$%^&*()\[\]|\\\/]'
+        base_name = re.sub(bad_chars, '', base_name)
+    print(base_name)
     return base_name
 
 

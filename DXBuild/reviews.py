@@ -15,6 +15,17 @@ from .constants import (COMMENT_COLUMNS,
 from .parseable import Parseable
 from .remarks import Comment
 
+
+import logging
+from dxcore.logconstants import log_format_string
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+log_formatter = logging.Formatter(log_format_string)
+log_file_handler = logging.FileHandler(f'./logs/{__name__}.log')
+log_file_handler.setFormatter(log_formatter)
+logger.addHandler(log_file_handler)
+
+
 class Frameable:
     def __init__(self):
         self.frames = {}

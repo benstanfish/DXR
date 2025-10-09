@@ -5,6 +5,16 @@ from xml.etree.ElementTree import Element
 from typing import Literal
 from datetime import datetime
 
+import logging
+from dxcore.logconstants import log_format_string
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+log_formatter = logging.Formatter(log_format_string)
+log_file_handler = logging.FileHandler(f'./logs/{__name__}.log')
+log_file_handler.setFormatter(log_formatter)
+logger.addHandler(log_file_handler)
+
+
 responses_types = Literal['evaluations', 'backchecks']
 
 class Parseable():
