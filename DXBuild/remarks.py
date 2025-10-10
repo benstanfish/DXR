@@ -256,12 +256,19 @@ class Comment(Remark):
     def days_open(self) -> int:
         """Calculates the number of days a comment is (was) open (if already closed)."""
         current_date = datetime.now()
-        if self.status and self.status.lower() == 'closed' and self.backchecks_count > 0:
-            latest_backcheck = self.backchecks[-1]
-            time_diff = current_date - datetime.fromisoformat(str(latest_backcheck.date_created))
-        else:
-            time_diff = current_date - datetime.fromisoformat(str(self.date_created))
-        return time_diff.days
+        try:
+            if self.status and self.status.lower() == 'closed' and self.backchecks_count > 0:
+                latest_backcheck = self.backchecks[-1]
+                time_diff = current_date - datetime.fromisoformat(str(latest_backcheck.date_created))
+            elif self.date_created is not None:
+                time_diff = current_date - datetime.fromisoformat(str(self.date_created))
+            else:
+                time_diff = current_date - current_date
+        except Exception as e:
+            logger.exception(f'There was an error trying to calculate the days_open(): {e}')
+            time_diff = current_date - current_date
+        finally:
+            return time_diff.days
 
 
 class Evaluation(Remark):

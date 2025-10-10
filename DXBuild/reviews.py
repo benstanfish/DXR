@@ -66,7 +66,11 @@ class ProjectInfo(Frameable, Parseable):
         self.control_number = control_number
         self.project_name = project_name
         self.review_id = review_id
-        self.review_name = review_name
+        if not review_name:
+            logger.error('No <ReviewName> element in the xml file. Default name will be used instead.')
+            self.review_name = 'DefaultReviewName'
+        else:
+            self.review_name = review_name
         self.xml_date = xml_date
         self.run_date = run_date
         self.create_initial_frames()
@@ -363,8 +367,18 @@ class Review(Frameable, Parseable):
     def from_file(cls, path):
         root = cls.get_root(path) if not None else None
         if root:
-            project_info = ProjectInfo.from_element(root[_PROJECT_INFO_INDEX], file_path=path) if not None else None
-            review_comments = ReviewComments.from_tree(root[_COMMENTS_INDEX]) if not None else None
+            try:
+                project_info = ProjectInfo.from_element(root[_PROJECT_INFO_INDEX], file_path=path) if not None else None
+            except Exception as e:
+                logger.exception(f'Could not initialize the ProjectInfo object: {e}')
+                project_info = None
+
+            try:
+                review_comments = ReviewComments.from_tree(root[_COMMENTS_INDEX]) if not None else None
+            except:
+                logger.exception(f'Could not initialize the ReviewComments object: {e}')
+                review_comments = None
+            
         return Review(project_info=project_info,
                       review_comments=review_comments,
                       root=root,
