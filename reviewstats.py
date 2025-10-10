@@ -76,12 +76,18 @@ def main() -> None:
     anchor.offset(row=7, column=3).value = 'Total'
 
     anchor.offset(row=8).value = f'=UNIQUE({ws_table_name}[Discipline])'
-    anchor.offset(row=8, column=1).value = f'=COUNTIFS({ws_table_name}[Discipline],$A9,{ws_table_name}[Status],B$8)'
+    for i in range(1, 3):
+        anchor.offset(row=8, column=i).value = f'=COUNTIFS({ws_table_name}[Discipline],$A9,{ws_table_name}[Status],B$8)'
     
-    print(anchor.offset(row=8, column=1).coordinate)
+    # print(anchor.offset(row=8, column=1).coordinate)
 
     
     anchor.offset(row=8 + len(disciplines)).value = 'Grand Total'
+    for i in range(1, 4):
+        anchor.offset(row=8 + len(disciplines), column=i).value = \
+            f'=SUM({anchor.offset(row=8 + len(disciplines) - 1, column=i).coordinate}:{anchor.offset(row=8, column=i).coordinate})'
+
+
 
 
     if _WRITE_FILE:
