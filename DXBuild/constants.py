@@ -45,6 +45,14 @@ COMMENT_COLUMNS = {
     'Highest Resp.': 'highest_response'
 }
 
+# The following 'constant' is used in ReviewComments to create frames used in the stats development.
+INDEXED_COMMENT_COLUMNS = {}
+for i, key in enumerate(COMMENT_COLUMNS):
+    if COMMENT_COLUMNS[key] == '':
+        INDEXED_COMMENT_COLUMNS[key.lower()] = i + 1
+    else:
+        INDEXED_COMMENT_COLUMNS[COMMENT_COLUMNS[key]] = i + 1
+
 RESPONSE_COLUMNS = {
     'Status': 'status',
     'Author': 'author',

@@ -296,6 +296,14 @@ class ReviewComments(Frameable, Parseable):
         self.frames['body'] = CellRange(min_col=1, max_col=self.all_column_count, min_row=2, max_row=self.count + 1)
         self.frames['comments_header'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=1, max_row=1)
         self.frames['comments_body'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=2, max_row=self.count + 1)
+
+        from dxbuild.constants import INDEXED_COMMENT_COLUMNS
+        self.frames['id_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['id'], max_col=INDEXED_COMMENT_COLUMNS['id'], min_row=2, max_row=self.count + 1)
+        self.frames['status_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['status'], max_col=INDEXED_COMMENT_COLUMNS['status'], min_row=2, max_row=self.count + 1)
+        self.frames['discipline_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['discipline'], max_col=INDEXED_COMMENT_COLUMNS['discipline'], min_row=2, max_row=self.count + 1)
+        self.frames['author_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['author'], max_col=INDEXED_COMMENT_COLUMNS['author'], min_row=2, max_row=self.count + 1)
+        self.frames['highest_response_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['highest_response'], max_col=INDEXED_COMMENT_COLUMNS['highest_response'], min_row=2, max_row=self.count + 1)
+        
         if self.responses_count > 0:
             self.frames['response_header'] = CellRange(min_col=1 + self.comment_columns_count, max_col=self.comment_columns_count + self.response_columns_count, min_row=1, max_row=1)
             self.frames['response_body'] = CellRange(min_col=1 + self.comment_columns_count, max_col=self.comment_columns_count + self.response_columns_count, min_row=2, max_row=self.count + 1)
