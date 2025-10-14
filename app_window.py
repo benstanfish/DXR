@@ -1,5 +1,6 @@
 import sys
-from PyQt6.QtWidgets import (QApplication, 
+from PyQt6.QtWidgets import (QApplication,
+                             QMainWindow, 
                              QWidget, 
                              QLabel, 
                              QLineEdit, 
@@ -11,33 +12,34 @@ from PyQt6.QtCore import Qt
 from digest_reports import batch_create_reports
 
 
-class AppWindow(QWidget):
+class AppWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("DXR Suite v1.0")
         self.setGeometry(300, 300, 400, 300)
 
-        layout = QGridLayout()
-        self.setLayout(layout)
+        
+        self.setCentralWidget(QPushButton('Test'))
 
         run_dxr = QPushButton("Dr Checks Review")
         run_bid = QPushButton("Bidder RFI Log")
+        
+        # layout = QVBoxLayout()
+        # layout.addWidget(run_dxr, 1, 0, alignment=Qt.AlignmentFlag.AlignCenter)
+        # layout.addWidget(run_bid, 1, 1, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        layout.addWidget(run_dxr, 1, 0, alignment=Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(run_bid, 1, 1, alignment=Qt.AlignmentFlag.AlignCenter)
+        # self.setStyleSheet(
+        #     """ 
+        #     QPushButton {background: transparent; 
+        #                  padding: 24px; 
+        #                  border: 2px solid dodgerblue; 
+        #                  border-radius: 12px;}
+        #     QPushButton::hover {background: dodgerblue;}
+        #     """
+        # )
 
-        self.setStyleSheet(
-            """ 
-            QPushButton {background: transparent; 
-                         padding: 24px; 
-                         border: 2px solid dodgerblue; 
-                         border-radius: 12px;}
-            QPushButton::hover {background: dodgerblue;}
-            """
-        )
-
-        run_dxr.clicked.connect(self.run_dxr_report)
-        run_bid.clicked.connect(self.run_bid_report)
+        # run_dxr.clicked.connect(self.run_dxr_report)
+        # run_bid.clicked.connect(self.run_bid_report)
 
 
     def run_dxr_report(self):
