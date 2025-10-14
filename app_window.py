@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import (QApplication,
                              QVBoxLayout,
                              QHBoxLayout)
 from PyQt6.QtCore import Qt
+from digest_reports import batch_create_reports
 
 
 class AppWindow(QWidget):
@@ -40,7 +41,8 @@ class AppWindow(QWidget):
 
 
     def run_dxr_report(self):
-        print('Running DXR report.')
+        batch_create_reports()
+        print('Batch completed')
 
 
     def run_bid_report(self):

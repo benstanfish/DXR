@@ -26,7 +26,7 @@ log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 
 
-def digest_reports() -> None:
+def batch_create_reports() -> None:
 
     _WRITE_FILE = True
     # xml_path = './dev/test/data.xml'
@@ -68,4 +68,4 @@ def digest_reports() -> None:
         logger.debug('File dialog closed without selecting files.')
 
 if __name__ == '__main__':
-    digest_reports()
+    batch_create_reports()
