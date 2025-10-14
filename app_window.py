@@ -50,12 +50,13 @@ class AppWindow(QMainWindow):
 
         vbox_container = QVBoxLayout() 
         
-        head_bannder = QHBoxLayout()
-        head_bannder.addWidget(QLabel('Header Area'))
-        
-    
+        head_banner = QHBoxLayout()
+        head_banner.addWidget(QLabel('Header Area'))
+
+            
         foot_banner = QHBoxLayout()
         foot_banner.addWidget(QLabel('Footer Area'))
+
 
 
         body = QHBoxLayout()
@@ -67,7 +68,7 @@ class AppWindow(QMainWindow):
         body.addWidget(run_dxr)
         body.addWidget(run_bid)
 
-        vbox_container.addLayout(head_bannder)
+        vbox_container.addLayout(head_banner)
         vbox_container.addLayout(body)
         vbox_container.addLayout(foot_banner)
 
