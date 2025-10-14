@@ -39,7 +39,6 @@ class AppWindow(QWidget):
         run_bid.clicked.connect(self.run_bid_report)
 
 
-
     def run_dxr_report(self):
         print('Running DXR report.')
 

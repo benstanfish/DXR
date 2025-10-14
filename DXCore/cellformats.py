@@ -9,6 +9,7 @@ class Widths(IntEnum):
     XX_SMALL = 5
     X_SMALL = 8
     SMALL = 10
+    SMALL_12 = 12
     SMALL_MEDIUM = 15
     MEDIUM = 20
     LARGE = 50
@@ -106,4 +107,18 @@ user_notes_body_styles = {
     'fill': PatternFill(fill_type='solid', start_color=DXColor.USER_NOTES_GRAY_BG),
     'border': Border(bottom=Side(border_style='thin', color=DXColor.GRAY)),
     'alignment': Alignment(horizontal='left', vertical='top', wrap_text=False) 
+}
+
+stat_header_region_styles = {
+    'font': Font(name='Aptos Narrow', size=10, bold=True),
+    'fill': None,
+    'border': Border(bottom=Side(border_style='thin', color=DXColor.BLUE)),
+    'alignment': Alignment(horizontal='left', vertical='bottom', wrap_text=True) 
+}
+
+stat_footer_region_styles = {
+    'font': Font(name='Aptos Narrow', size=10, bold=True),
+    'fill': None,
+    'border': Border(top=Side(border_style='thin', color=DXColor.BLUE)),
+    'alignment': Alignment(horizontal='left', vertical='top', wrap_text=True) 
 }

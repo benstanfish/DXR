@@ -27,7 +27,7 @@ log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 
 
-def create_report(review:Review, ws: Worksheet):
+def create_report(review:Review, ws: Worksheet) -> bool:
 
     project_info = review.project_info
     all_comments = review.review_comments
@@ -60,6 +60,11 @@ def create_report(review:Review, ws: Worksheet):
 
         ws.add_table(table)
         ws.sheet_view.showGridLines = False
+        #NOTE: typically this is where I'd do Application.DisplayAlerts = False to prevent the silly
+        # green triangles for what Excel thinks are formula or formatting errors, however, the
+        # OpenPyXL library doesn't really deal with this since it's not in the ECMA spec. So the alternative
+        # is to use the COM library, which is STUPID slow. Therefore -> I've just chosen to live with it.
+        
         TABLE_INFO = buildtools.get_table_info(ws)
         
         review.build_table_column_list(ws)

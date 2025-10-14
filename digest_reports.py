@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import QApplication, QFileDialog
 from dxbuild.reviews import Review
 from dxbuild.constants import FALLBACKS, _LOG_DIR
 from dxbuild.buildtools import timestamp, clean_name, autoincrement_name
-from dxreport import singlereport
+from dxreport import singlereport, reviewstats
 
 if not os.path.exists(_LOG_DIR):
     os.makedirs(_LOG_DIR)
@@ -26,12 +26,10 @@ log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 
 
-
-
-def main() -> None:
+def digest_reports() -> None:
 
     _WRITE_FILE = True
-    xml_path = './dev/test/data.xml'
+    # xml_path = './dev/test/data.xml'
 
     DEFAULT_FONT.__init__(name=FALLBACKS['font_name'], size=FALLBACKS['font_size'])
     wb = Workbook()
@@ -42,6 +40,7 @@ def main() -> None:
         caption='Select Files Dialog',
         filter='XML Files (*.xml);;HTML Files (*.html);;All Files (*)'
     )
+
 
     # Check to see if the user selected any files or cancelled the file select dialog.
     if len(xml_paths) > 0:
@@ -58,9 +57,10 @@ def main() -> None:
                     ws = wb.create_sheet(next_name)
                 logger.debug(f'Acquired worksheet {i + 1}, "{ws.title}", to insert report from "{xml_path}"')
                 singlereport.create_report(review, ws)
+                reviewstats.make_stats_sheet(review, ws)
                                 
         if _WRITE_FILE:
-            save_name = f'./dev/test/out/test_{timestamp()}.xlsx'
+            save_name = os.path.join(os.path.dirname(xml_paths[0]), f'DrChecks Summary Report {timestamp('%Y-%m-%d %H-%M-%S')}.xlsx')
             wb.save(save_name)
             logger.debug(f'_WRITE_FILE = {_WRITE_FILE} -> saved workbook to "{save_name}"')
         wb.close()
@@ -68,4 +68,4 @@ def main() -> None:
         logger.debug('File dialog closed without selecting files.')
 
 if __name__ == '__main__':
-    main()
+    digest_reports()
