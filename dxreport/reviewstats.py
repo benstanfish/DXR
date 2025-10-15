@@ -290,11 +290,11 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     
     # Add ChartObjects
     disc_chart = BarChart()
-    disc_chart.style = 1
     disc_chart.type = 'bar'
     disc_chart.grouping = 'stacked'
     disc_chart.overlap = 100
     
+    # disc_chart.style = 1
 
     disc_chart.title = 'Comments by Discipline'
     
@@ -334,6 +334,11 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     closed_series = Series(closed_data, title='Closed')
     closed_series.graphicalProperties.solidFill = ColorChoice(srgbClr=WebColor.DODGERBLUE)
     disc_chart.append(closed_series)
+    disc_chart.height = 8
+    disc_chart.width = 14
+    disc_chart.layout = Layout(manualLayout=ManualLayout(x=0, y=0,
+                                                         h=0.8, w=0.9))
+    
     
     disc_chart.set_categories(categories)
     
