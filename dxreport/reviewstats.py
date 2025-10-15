@@ -10,6 +10,9 @@ from openpyxl.styles import DEFAULT_FONT, Font, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.utils import get_column_letter
 from openpyxl.chart import BarChart, Series, Reference
+from openpyxl.chart.legend import Legend
+from openpyxl.chart.layout import Layout, ManualLayout
+from openpyxl.drawing.colors import ColorChoice
 
 from PyQt6.QtWidgets import QApplication, QFileDialog
 
@@ -287,32 +290,54 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     
     # Add ChartObjects
     disc_chart = BarChart()
+    disc_chart.style = 1
     disc_chart.type = 'bar'
-    # disc_chart.style = 10
-    disc_chart.title = 'Comments by Discipline'
-    disc_chart.y_axis.title = 'Disciplines'
-    disc_chart.legend = None
-
-    cat_rng = CellRange(range_string=f'{overall_status_anchor.offset(row=3, column=0).coordinate}:{overall_status_anchor.offset(row=3 + len(disciplines), column=0).coordinate}')
-
-    disc_cats = Reference(worksheet=ws_stats, 
-                          min_col=cat_rng.min_col, 
-                          max_col=cat_rng.max_col,
-                          min_row=cat_rng.min_row,
-                          max_row=cat_rng.max_row
-                          )
-
-    data_rng = CellRange(range_string=f'{overall_status_anchor.offset(row=3, column=1).coordinate}:{overall_status_anchor.offset(row=3 + len(disciplines), column=1).coordinate}')
-
-    disc_data = Reference(worksheet=ws_stats, 
-                        min_col=data_rng.min_col, 
-                        max_col=data_rng.max_col,
-                        min_row=data_rng.min_row,
-                        max_row=data_rng.max_row
-                        )
+    disc_chart.grouping = 'stacked'
+    disc_chart.overlap = 100
     
-    disc_chart.add_data(disc_data, titles_from_data=False)
-    disc_chart.set_categories(disc_cats)
+
+    disc_chart.title = 'Comments by Discipline'
+    
+    disc_chart.x_axis.delete = False    
+    disc_chart.y_axis.delete = False
+    
+    disc_chart.legend = Legend()
+    disc_chart.legend.legendPos = 'r'
+   
+    categories_cell_range = CellRange(range_string=f'{overall_status_anchor.offset(row=2, column=0).coordinate}:{overall_status_anchor.offset(row=2 + len(disciplines) - 1, column=0).coordinate}')
+    categories = Reference(worksheet=ws_stats, 
+                          min_col=categories_cell_range.min_col, 
+                          max_col=categories_cell_range.max_col,
+                          min_row=categories_cell_range.min_row,
+                          max_row=categories_cell_range.max_row
+                          )
+    
+
+    open_cell_range = CellRange(range_string=f'{overall_status_anchor.offset(row=2, column=1).coordinate}:{overall_status_anchor.offset(row=2 + len(disciplines) - 1, column=1).coordinate}')
+    open_data = Reference(worksheet=ws_stats, 
+                        min_col=open_cell_range.min_col, 
+                        max_col=open_cell_range.max_col,
+                        min_row=open_cell_range.min_row,
+                        max_row=open_cell_range.max_row
+                        )
+    open_series = Series(open_data, title='Open')
+    open_series.graphicalProperties.solidFill = ColorChoice(srgbClr=WebColor.TOMATO)
+    disc_chart.append(open_series)
+    
+    closed_cell_range =  CellRange(range_string=f'{overall_status_anchor.offset(row=2, column=2).coordinate}:{overall_status_anchor.offset(row=2 + len(disciplines) - 1, column=2).coordinate}')
+    closed_data = Reference(worksheet=ws_stats, 
+                        min_col=closed_cell_range.min_col, 
+                        max_col=closed_cell_range.max_col,
+                        min_row=closed_cell_range.min_row,
+                        max_row=closed_cell_range.max_row
+                        )
+    closed_series = Series(closed_data, title='Closed')
+    closed_series.graphicalProperties.solidFill = ColorChoice(srgbClr=WebColor.DODGERBLUE)
+    disc_chart.append(closed_series)
+    
+    disc_chart.set_categories(categories)
+    
+    
     # disc_chart.shape = 4
     ws_stats.add_chart(disc_chart, 'Q5')
 
