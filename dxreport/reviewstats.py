@@ -1,6 +1,7 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
 import sys, os
+import datetime
 # import win32com.client as COM
 
 from openpyxl import Workbook
@@ -8,6 +9,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles import DEFAULT_FONT, Font, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.utils import get_column_letter
+from openpyxl.chart import BarChart, Series, Reference
 
 from PyQt6.QtWidgets import QApplication, QFileDialog
 
@@ -31,21 +33,6 @@ logger.addHandler(log_file_handler)
 
 _PADDING_OFFSET = 1
 
-# def main() -> None:
-
-    # _WRITE_FILE = True
-    # xml_path = './dev/test/data.xml'
-
-    # DEFAULT_FONT.__init__(name=FALLBACKS['font_name'], size=FALLBACKS['font_size'])
-    # wb = Workbook()
-
-
-    # review = Review.from_file(xml_path)
-    
-
-    # ws = wb.active
-    
-    # singlereport.create_report(review, ws)
 
 def make_stats_sheet(review: Review, ws: Worksheet) -> None:
 
@@ -77,9 +64,18 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
         reviewer_open_comments_dict[reviewer] = comment_ids
 
 
+    xml_date = datetime.datetime.strptime(review.project_info.xml_date, '%Y-%m-%d %H:%M:%S')
+    staleness = datetime.datetime.now() - xml_date
+    
+    recommend_message = ''
+    if staleness.days > 7:
+        recommend_message = ' The data is over 7 days old, downloading a new XML report is RECOMMENDED.'
+    
     project_header_anchor = CellRange('A1')
     project_header = [
         ['Dr Checks Review Statistics',''],
+        [f'This statistics run was created based on data exported on {review.project_info.xml_date}.', ''],
+        [f'The age of this data is {staleness}.{recommend_message}', ''],
         ['', ''],
         ['Project Name', review.project_info.project_name],
         ['Project ID', review.project_info.project_id],
@@ -160,7 +156,7 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
 
     status_region_max_rows = max(len(overall_status), len(reviewer_status))
 
-    open_comments_anchor = ws_stats[project_header_anchor.coord].offset(row=len(project_header) + status_region_max_rows + _PADDING_OFFSET * 2 + 1, column=0)
+    open_comments_anchor = ws_stats[project_header_anchor.coord].offset(row=len(project_header) + _PADDING_OFFSET + status_region_max_rows + _PADDING_OFFSET + 1, column=0)
     open_comments_anchor.value = 'Open Comments by Author'
     for i, reviewer in enumerate(reviewer_open_comments_dict.keys()):
         open_comments_anchor.offset(row=1, column=i).value = reviewer
@@ -169,6 +165,58 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
         for j, comment_id in enumerate(comment_id_list):
             open_comments_anchor.offset(row=2 + j, column=i).value = comment_id
 
+
+    max_open_comments = 0
+    for key in reviewer_open_comments_dict.keys():
+        if len(reviewer_open_comments_dict[key]) > max_open_comments:
+            max_open_comments = len(reviewer_open_comments_dict[key])
+
+    review_open_comments_region_height = max_open_comments + 2
+    
+    open_by_discipline_evaluator = list(set([comment.discipline for comment in review.review_comments.comments if comment.status == 'Open' and comment.ball_in_court == 'Evaluator']))
+    open_by_discipline_evaluator.sort()   
+    bic_evaluator_dic = {}
+    for discipline in open_by_discipline_evaluator:
+        bic_evaluator_dic[discipline] = list(set([comment.id for comment in review.review_comments.comments if comment.discipline == discipline and comment.status == 'Open' and comment.ball_in_court == 'Evaluator']))
+
+    ball_in_court_evaluator_anchor = ws_stats[project_header_anchor.coord].offset(
+        row=len(project_header) + _PADDING_OFFSET + status_region_max_rows + _PADDING_OFFSET + review_open_comments_region_height + _PADDING_OFFSET + 1, column=0)
+    ball_in_court_evaluator_anchor.value = 'Open Comments --- Ball in Court: Evaluator'
+    for i, discipline in enumerate(bic_evaluator_dic.keys()):
+        ball_in_court_evaluator_anchor.offset(row=1, column=i).value = discipline
+        comment_id_list = bic_evaluator_dic[discipline]
+        comment_id_list.sort()
+        for j, comment_id in enumerate(comment_id_list):
+            ball_in_court_evaluator_anchor.offset(row=2 + j, column=i).value = comment_id    
+    
+    
+    max_bic_evaluator_comments = 0
+    for key in bic_evaluator_dic.keys():
+        if len(bic_evaluator_dic[key]) > max_bic_evaluator_comments:
+            max_bic_evaluator_comments = len(bic_evaluator_dic[key])
+            
+    bic_evaluator_comments_region_height = max_bic_evaluator_comments + 2
+        
+    open_by_discipline_commentor = list(set([comment.discipline for comment in review.review_comments.comments if comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
+    open_by_discipline_commentor.sort()
+    bic_commentor_dic = {}
+    for discipline in open_by_discipline_commentor:
+        bic_commentor_dic[discipline] = list(set([comment.id for comment in review.review_comments.comments if comment.discipline == discipline and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
+       
+    
+    ball_in_court_commentor_anchor = ws_stats[project_header_anchor.coord].offset(
+        row=len(project_header) + _PADDING_OFFSET + 
+            status_region_max_rows + _PADDING_OFFSET + 
+            review_open_comments_region_height + _PADDING_OFFSET +
+            bic_evaluator_comments_region_height + _PADDING_OFFSET + 1, column=0)
+    ball_in_court_commentor_anchor.value = 'Open Comments --- Ball in Court: Commentor'
+    for i, discipline in enumerate(bic_commentor_dic.keys()):
+        ball_in_court_commentor_anchor.offset(row=1, column=i).value = discipline
+        comment_id_list = bic_commentor_dic[discipline]
+        comment_id_list.sort()
+        for j, comment_id in enumerate(comment_id_list):
+            ball_in_court_commentor_anchor.offset(row=2 + j, column=i).value = comment_id    
+    
 
 
     # Global formatting: reset
@@ -179,25 +227,27 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
 
     # Lower priority column width changes first
     for i, _ in enumerate(reviewer_open_comments_dict.keys()):
-        ws_stats.column_dimensions[get_column_letter(open_comments_anchor.offset(column=i).column)].width = Widths.SMALL
+        ws_stats.column_dimensions[get_column_letter(open_comments_anchor.offset(column=i).column)].width = Widths.SMALL_12
 
     # Format the title and region titles
     ws_stats[project_header_anchor.coord].font = Font(name='Aptos', sz=14, bold=True)
     ws_stats[overall_status_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
     ws_stats[open_comments_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
+    ws_stats[ball_in_court_evaluator_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
+    ws_stats[ball_in_court_commentor_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
 
-    ws_stats.column_dimensions[get_column_letter(overall_status_anchor.column)].width = Widths.SMALL
-    ws_stats.column_dimensions[get_column_letter(reviewer_status_anchor.column)].width = Widths.SMALL
+    ws_stats.column_dimensions[get_column_letter(overall_status_anchor.column)].width = Widths.SMALL_12
+    ws_stats.column_dimensions[get_column_letter(reviewer_status_anchor.column)].width = Widths.SMALL_12
     try:
-        ws_stats.column_dimensions[get_column_letter(response_status_anchor.column)].width = Widths.SMALL
+        ws_stats.column_dimensions[get_column_letter(response_status_anchor.column)].width = Widths.SMALL_12
     except Exception as e:
         logger(f"Couldn't change the width of the Response Status region; perhaps there isn't a Response region? Error: {e}")
 
 
     # Format the bold fields in the project header region
-    for i in range(2, len(project_header)):
+    for i in range(4, len(project_header)):
         ws_stats[project_header_anchor.coord].offset(row=i, column=0).font = Font(name='Aptos Narrow', sz=10, bold=True)
-        if i == 2:
+        if i == 4:
             ws_stats[project_header_anchor.coord].offset(row=i, column=1).font = Font(name='Aptos Narrow', sz=12, bold=True)
 
 
@@ -215,10 +265,12 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     except Exception as e:
         logger(f"Couldn't format the Response Status region header; perhaps there isn't a Response region? Error: {e}") 
     headers.append(create_formatting_regions(open_comments_anchor.offset(row=1).coordinate, len(reviewer_open_comments_dict.keys()) - 1))
+    headers.append(create_formatting_regions(ball_in_court_evaluator_anchor.offset(row=1).coordinate, len(bic_evaluator_dic.keys()) - 1))
+    headers.append(create_formatting_regions(ball_in_court_commentor_anchor.offset(row=1).coordinate, len(bic_commentor_dic.keys()) - 1))
     for range_string in headers:
-        apply_styles_to_region(stat_header_region_styles, range_string, ws_stats)
-
-
+        apply_styles_to_region(stat_header_region_styles, range_string, ws_stats)    
+    
+    
     footers = []
     footers.append(create_formatting_regions(overall_status_anchor.offset(row=len(overall_status) - 1).coordinate, len(overall_status[0]) - 1))
     footers.append(create_formatting_regions(reviewer_status_anchor.offset(row=len(reviewer_status) - 1).coordinate, len(reviewer_status[0]) - 1))
@@ -230,17 +282,37 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
         apply_styles_to_region(stat_footer_region_styles, range_string, ws_stats)
 
 
+    
+    
+    
+    # Add ChartObjects
+    disc_chart = BarChart()
+    disc_chart.type = 'bar'
+    # disc_chart.style = 10
+    disc_chart.title = 'Comments by Discipline'
+    disc_chart.y_axis.title = 'Disciplines'
+    disc_chart.legend = None
 
+    cat_rng = CellRange(range_string=f'{overall_status_anchor.offset(row=3, column=0).coordinate}:{overall_status_anchor.offset(row=3 + len(disciplines), column=0).coordinate}')
 
+    disc_cats = Reference(worksheet=ws_stats, 
+                          min_col=cat_rng.min_col, 
+                          max_col=cat_rng.max_col,
+                          min_row=cat_rng.min_row,
+                          max_row=cat_rng.max_row
+                          )
 
-    # if _WRITE_FILE:
-    #     save_name = f'./dev/test/out/test_{timestamp()}.xlsx'
-    #     wb.save(save_name)
-    #     print(f'File {save_name} written to disk.')
-    #     logger.debug(f'_WRITE_FILE = {_WRITE_FILE} -> saved workbook to "{save_name}"')
+    data_rng = CellRange(range_string=f'{overall_status_anchor.offset(row=3, column=1).coordinate}:{overall_status_anchor.offset(row=3 + len(disciplines), column=1).coordinate}')
 
-    # wb.close()
+    disc_data = Reference(worksheet=ws_stats, 
+                        min_col=data_rng.min_col, 
+                        max_col=data_rng.max_col,
+                        min_row=data_rng.min_row,
+                        max_row=data_rng.max_row
+                        )
+    
+    disc_chart.add_data(disc_data, titles_from_data=False)
+    disc_chart.set_categories(disc_cats)
+    # disc_chart.shape = 4
+    ws_stats.add_chart(disc_chart, 'Q5')
 
-
-# if __name__ == '__main__':
-#     main()

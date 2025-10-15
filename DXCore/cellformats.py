@@ -2,7 +2,7 @@
 
 from enum import IntEnum
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
-from .dxcolor import DXColor
+from .dxcolor import DXColor, WebColor
 from dxbuild.constants import FALLBACKS
 
 class Widths(IntEnum):
@@ -111,14 +111,14 @@ user_notes_body_styles = {
 
 stat_header_region_styles = {
     'font': Font(name='Aptos Narrow', size=10, bold=True),
-    'fill': None,
+    'fill': PatternFill(fill_type='solid', start_color=WebColor.ALICEBLUE),
     'border': Border(bottom=Side(border_style='thin', color=DXColor.BLUE)),
     'alignment': Alignment(horizontal='left', vertical='bottom', wrap_text=True) 
 }
 
 stat_footer_region_styles = {
     'font': Font(name='Aptos Narrow', size=10, bold=True),
-    'fill': None,
+    'fill': PatternFill(fill_type='solid', start_color=WebColor.ALICEBLUE),
     'border': Border(top=Side(border_style='thin', color=DXColor.BLUE)),
-    'alignment': Alignment(horizontal='left', vertical='top', wrap_text=True) 
+    'alignment': Alignment(horizontal='left', vertical='top', wrap_text=False) 
 }
