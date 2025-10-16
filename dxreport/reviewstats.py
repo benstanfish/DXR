@@ -240,10 +240,8 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     ws_stats[project_header_anchor.coord].font = Font(name='Aptos', sz=14, bold=True)
     ws_stats[overall_status_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
     ws_stats[open_comments_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
-    if len(open_by_discipline_evaluator) > 0:
-        ws_stats[ball_in_court_evaluator_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
-    if len(open_by_discipline_commentor) > 0:
-        ws_stats[ball_in_court_commentor_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
+    ws_stats[ball_in_court_evaluator_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
+    ws_stats[ball_in_court_commentor_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
 
     ws_stats.column_dimensions[get_column_letter(overall_status_anchor.column)].width = Widths.SMALL_12
     ws_stats.column_dimensions[get_column_letter(reviewer_status_anchor.column)].width = Widths.SMALL_12
@@ -277,8 +275,12 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     headers.append(create_formatting_regions(open_comments_anchor.offset(row=1).coordinate, len(reviewer_open_comments_dict.keys()) - 1))
     if len(open_by_discipline_evaluator) > 0:
         headers.append(create_formatting_regions(ball_in_court_evaluator_anchor.offset(row=1).coordinate, len(bic_evaluator_dic.keys()) - 1))
+    else:
+        ball_in_court_evaluator_anchor.offset(row=1).value = "None"
     if len(open_by_discipline_commentor) > 0:
         headers.append(create_formatting_regions(ball_in_court_commentor_anchor.offset(row=1).coordinate, len(bic_commentor_dic.keys()) - 1))
+    else:
+        ball_in_court_commentor_anchor.offset(row=1).value = "None"
     for range_string in headers:
         apply_styles_to_region(stat_header_region_styles, range_string, ws_stats)    
     
