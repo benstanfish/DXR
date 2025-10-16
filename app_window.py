@@ -83,7 +83,10 @@ class AppWindow(QMainWindow):
     def run_dxr_report(self):
         self.status_bar.showMessage('Running DXR reports...')
         result = batch_create_reports()
-        self.status_bar.showMessage(f'Report created: {result}.')
+        if result:
+            self.status_bar.showMessage(f'Report created: {result}.')
+        else:
+            self.status_bar.showMessage('There was an error in writing the report.')
 
 
     def run_bid_report(self):
@@ -99,4 +102,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = AppWindow()
     window.show()
-    sys.exit(app.exec())
+    app.exec()
