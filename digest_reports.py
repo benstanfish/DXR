@@ -25,21 +25,25 @@ log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 
+_DEBUG_MODE = False
+test_path = './dev/test/data.xml'
 
 def batch_create_reports() -> None:
 
     _WRITE_FILE = True
-    # xml_path = './dev/test/data.xml'
 
     DEFAULT_FONT.__init__(name=FALLBACKS['font_name'], size=FALLBACKS['font_size'])
     wb = Workbook()
 
-    app = QApplication(sys.argv)
-    xml_paths, _ = QFileDialog.getOpenFileNames(
-        parent=None, 
-        caption='Select Files Dialog',
-        filter='XML Files (*.xml);;HTML Files (*.html);;All Files (*)'
-    )
+    if _DEBUG_MODE:
+        xml_paths = [test_path]
+    else:
+        app = QApplication(sys.argv)
+        xml_paths, _ = QFileDialog.getOpenFileNames(
+            parent=None, 
+            caption='Select Files Dialog',
+            filter='XML Files (*.xml);;HTML Files (*.html);;All Files (*)'
+        )
 
 
     # Check to see if the user selected any files or cancelled the file select dialog.
@@ -64,8 +68,10 @@ def batch_create_reports() -> None:
             wb.save(save_name)
             logger.debug(f'_WRITE_FILE = {_WRITE_FILE} -> saved workbook to "{save_name}"')
         wb.close()
+        print(f'{save_name} written to disk.')
     else:
         logger.debug('File dialog closed without selecting files.')
+        print('There was an error, refer to the logs.')
 
 if __name__ == '__main__':
     batch_create_reports()

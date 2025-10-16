@@ -1,18 +1,21 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
-import sys, os
+import os
 import datetime
-# import win32com.client as COM
 
-from openpyxl import Workbook
+
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles import DEFAULT_FONT, Font, Alignment
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.utils import get_column_letter
+
 from openpyxl.chart import BarChart, Series, Reference
 from openpyxl.chart.legend import Legend
 from openpyxl.chart.layout import Layout, ManualLayout
+from openpyxl.chart.shapes import GraphicalProperties
+from openpyxl.chart.axis import ChartLines
 from openpyxl.drawing.colors import ColorChoice
+
 
 from PyQt6.QtWidgets import QApplication, QFileDialog
 
@@ -176,6 +179,8 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
 
     review_open_comments_region_height = max_open_comments + 2
     
+    
+    
     open_by_discipline_evaluator = list(set([comment.discipline for comment in review.review_comments.comments if comment.status == 'Open' and comment.ball_in_court == 'Evaluator']))
     open_by_discipline_evaluator.sort()   
     bic_evaluator_dic = {}
@@ -206,7 +211,6 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     for discipline in open_by_discipline_commentor:
         bic_commentor_dic[discipline] = list(set([comment.id for comment in review.review_comments.comments if comment.discipline == discipline and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
        
-    
     ball_in_court_commentor_anchor = ws_stats[project_header_anchor.coord].offset(
         row=len(project_header) + _PADDING_OFFSET + 
             status_region_max_rows + _PADDING_OFFSET + 
@@ -236,8 +240,10 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     ws_stats[project_header_anchor.coord].font = Font(name='Aptos', sz=14, bold=True)
     ws_stats[overall_status_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
     ws_stats[open_comments_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
-    ws_stats[ball_in_court_evaluator_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
-    ws_stats[ball_in_court_commentor_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
+    if len(open_by_discipline_evaluator) > 0:
+        ws_stats[ball_in_court_evaluator_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
+    if len(open_by_discipline_commentor) > 0:
+        ws_stats[ball_in_court_commentor_anchor.coordinate].font = Font(name='Aptos', sz=12, bold=True)
 
     ws_stats.column_dimensions[get_column_letter(overall_status_anchor.column)].width = Widths.SMALL_12
     ws_stats.column_dimensions[get_column_letter(reviewer_status_anchor.column)].width = Widths.SMALL_12
@@ -267,9 +273,12 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
         headers.append(create_formatting_regions(response_status_anchor.coordinate, len(response_status[0]) - 1))
     except Exception as e:
         logger(f"Couldn't format the Response Status region header; perhaps there isn't a Response region? Error: {e}") 
+
     headers.append(create_formatting_regions(open_comments_anchor.offset(row=1).coordinate, len(reviewer_open_comments_dict.keys()) - 1))
-    headers.append(create_formatting_regions(ball_in_court_evaluator_anchor.offset(row=1).coordinate, len(bic_evaluator_dic.keys()) - 1))
-    headers.append(create_formatting_regions(ball_in_court_commentor_anchor.offset(row=1).coordinate, len(bic_commentor_dic.keys()) - 1))
+    if len(open_by_discipline_evaluator) > 0:
+        headers.append(create_formatting_regions(ball_in_court_evaluator_anchor.offset(row=1).coordinate, len(bic_evaluator_dic.keys()) - 1))
+    if len(open_by_discipline_commentor) > 0:
+        headers.append(create_formatting_regions(ball_in_court_commentor_anchor.offset(row=1).coordinate, len(bic_commentor_dic.keys()) - 1))
     for range_string in headers:
         apply_styles_to_region(stat_header_region_styles, range_string, ws_stats)    
     
@@ -285,26 +294,53 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
         apply_styles_to_region(stat_footer_region_styles, range_string, ws_stats)
 
 
-    
+
     
     
     # Add ChartObjects
+    # Comment Count by Discipline
     disc_chart = BarChart()
     disc_chart.type = 'bar'
     disc_chart.grouping = 'stacked'
     disc_chart.overlap = 100
-    
-    # disc_chart.style = 1
-
     disc_chart.title = 'Comments by Discipline'
-    
-    disc_chart.x_axis.delete = False    
-    disc_chart.y_axis.delete = False
-    
+
+    disc_chart.graphical_properties = GraphicalProperties()
+    disc_chart.graphical_properties.line.noFill = True
+
+    disc_chart.height = 8
+    disc_chart.width = 14
+
+    disc_chart.layout = Layout(manualLayout=ManualLayout(xMode='edge',
+                                                         yMode='edge',
+                                                         x=0,
+                                                         y=0.2,
+                                                         h=0.8, 
+                                                         w=1))
+    disc_chart.layout.layoutTarget = 'inner'
+
     disc_chart.legend = Legend()
-    disc_chart.legend.legendPos = 'r'
-   
-    categories_cell_range = CellRange(range_string=f'{overall_status_anchor.offset(row=2, column=0).coordinate}:{overall_status_anchor.offset(row=2 + len(disciplines) - 1, column=0).coordinate}')
+    disc_chart.legend.layout = Layout(manualLayout=ManualLayout(xMode='edge',
+                                                                yMode='edge',
+                                                                x=0.375,
+                                                                y=0.1,
+                                                                h=0.1, 
+                                                                w=0.25))
+
+    disc_chart.x_axis.delete = False
+    disc_chart.x_axis.graphicalProperties = GraphicalProperties()
+    disc_chart.x_axis.graphicalProperties.line.solidFill = WebColor.DARKSLATEGRAY
+    
+    disc_chart.y_axis.delete = False
+    disc_chart.y_axis.graphicalProperties = GraphicalProperties()
+    disc_chart.y_axis.graphicalProperties.line.noFill = True
+
+    disc_chart.y_axis.majorGridlines = ChartLines()
+    disc_chart.y_axis.majorGridlines.spPr = GraphicalProperties()
+    disc_chart.y_axis.majorGridlines.spPr.line.solidFill = WebColor.LIGHTGRAY
+
+    categories_cell_range = CellRange(range_string=f'{overall_status_anchor.offset(row=2, column=0).coordinate}:' \
+                                                   f'{overall_status_anchor.offset(row=2 + len(disciplines) - 1, column=0).coordinate}')
     categories = Reference(worksheet=ws_stats, 
                           min_col=categories_cell_range.min_col, 
                           max_col=categories_cell_range.max_col,
@@ -312,8 +348,8 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
                           max_row=categories_cell_range.max_row
                           )
     
-
-    open_cell_range = CellRange(range_string=f'{overall_status_anchor.offset(row=2, column=1).coordinate}:{overall_status_anchor.offset(row=2 + len(disciplines) - 1, column=1).coordinate}')
+    open_cell_range = CellRange(range_string=f'{overall_status_anchor.offset(row=2, column=1).coordinate}:' \
+                                             f'{overall_status_anchor.offset(row=2 + len(disciplines) - 1, column=1).coordinate}')
     open_data = Reference(worksheet=ws_stats, 
                         min_col=open_cell_range.min_col, 
                         max_col=open_cell_range.max_col,
@@ -324,7 +360,8 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     open_series.graphicalProperties.solidFill = ColorChoice(srgbClr=WebColor.TOMATO)
     disc_chart.append(open_series)
     
-    closed_cell_range =  CellRange(range_string=f'{overall_status_anchor.offset(row=2, column=2).coordinate}:{overall_status_anchor.offset(row=2 + len(disciplines) - 1, column=2).coordinate}')
+    closed_cell_range =  CellRange(range_string=f'{overall_status_anchor.offset(row=2, column=2).coordinate}:' \
+                                                f'{overall_status_anchor.offset(row=2 + len(disciplines) - 1, column=2).coordinate}')
     closed_data = Reference(worksheet=ws_stats, 
                         min_col=closed_cell_range.min_col, 
                         max_col=closed_cell_range.max_col,
@@ -334,15 +371,89 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     closed_series = Series(closed_data, title='Closed')
     closed_series.graphicalProperties.solidFill = ColorChoice(srgbClr=WebColor.DODGERBLUE)
     disc_chart.append(closed_series)
-    disc_chart.height = 8
-    disc_chart.width = 14
-    disc_chart.layout = Layout(manualLayout=ManualLayout(x=0, y=0,
-                                                         h=0.8, w=0.9))
-    
-    
+
     disc_chart.set_categories(categories)
+    ws_stats.add_chart(disc_chart, 'P5')
+
+
+
+    # Comment Count by Author
+    auth_chart = BarChart()
+    auth_chart.type = 'bar'
+    auth_chart.grouping = 'stacked'
+    auth_chart.overlap = 100
+    auth_chart.title = 'Comments by Author'
+
+    auth_chart.graphical_properties = GraphicalProperties()
+    auth_chart.graphical_properties.line.noFill = True
+
+    auth_chart.height = 8
+    auth_chart.width = 14
+
+    auth_chart.layout = Layout(manualLayout=ManualLayout(xMode='edge',
+                                                         yMode='edge',
+                                                         x=0,
+                                                         y=0.2,
+                                                         h=0.8, 
+                                                         w=1))
+    auth_chart.layout.layoutTarget = 'inner'
+
+    auth_chart.legend = Legend()
+    auth_chart.legend.layout = Layout(manualLayout=ManualLayout(xMode='edge',
+                                                                yMode='edge',
+                                                                x=0.375,
+                                                                y=0.1,
+                                                                h=0.1, 
+                                                                w=0.25))
+
+    auth_chart.x_axis.delete = False
+    auth_chart.x_axis.graphicalProperties = GraphicalProperties()
+    auth_chart.x_axis.graphicalProperties.line.solidFill = WebColor.DARKSLATEGRAY
     
+    auth_chart.y_axis.delete = False
+    auth_chart.y_axis.graphicalProperties = GraphicalProperties()
+    auth_chart.y_axis.graphicalProperties.line.noFill = True
+
+    auth_chart.y_axis.majorGridlines = ChartLines()
+    auth_chart.y_axis.majorGridlines.spPr = GraphicalProperties()
+    auth_chart.y_axis.majorGridlines.spPr.line.solidFill = WebColor.LIGHTGRAY
+
+    auth_categories_cell_range = CellRange(range_string=f'{reviewer_status_anchor.offset(row=1, column=0).coordinate}:' \
+                                                   f'{reviewer_status_anchor.offset(row=1 + len(reviewers) - 1, column=0).coordinate}')
+    auth_categories = Reference(worksheet=ws_stats, 
+                          min_col=auth_categories_cell_range.min_col, 
+                          max_col=auth_categories_cell_range.max_col,
+                          min_row=auth_categories_cell_range.min_row,
+                          max_row=auth_categories_cell_range.max_row
+                          )
     
-    # disc_chart.shape = 4
-    ws_stats.add_chart(disc_chart, 'Q5')
+    auth_open_cell_range = CellRange(range_string=f'{reviewer_status_anchor.offset(row=1, column=1).coordinate}:' \
+                                             f'{reviewer_status_anchor.offset(row=1 + len(reviewers) - 1, column=1).coordinate}')
+    
+    auth_open_data = Reference(worksheet=ws_stats, 
+                        min_col=auth_open_cell_range.min_col, 
+                        max_col=auth_open_cell_range.max_col,
+                        min_row=auth_open_cell_range.min_row,
+                        max_row=auth_open_cell_range.max_row
+                        )
+    auth_open_series = Series(auth_open_data, title='Open')
+    auth_open_series.graphicalProperties.solidFill = ColorChoice(srgbClr=WebColor.TOMATO)
+    auth_chart.append(auth_open_series)
+    
+    auth_closed_cell_range =  CellRange(range_string=f'{reviewer_status_anchor.offset(row=1, column=2).coordinate}:' \
+                                                f'{reviewer_status_anchor.offset(row=1 + len(reviewers) - 1, column=2).coordinate}')
+    auth_closed_data = Reference(worksheet=ws_stats, 
+                        min_col=auth_closed_cell_range.min_col, 
+                        max_col=auth_closed_cell_range.max_col,
+                        min_row=auth_closed_cell_range.min_row,
+                        max_row=auth_closed_cell_range.max_row
+                        )
+    auth_closed_series = Series(auth_closed_data, title='Closed')
+    auth_closed_series.graphicalProperties.solidFill = ColorChoice(srgbClr=WebColor.DODGERBLUE)
+    auth_chart.append(auth_closed_series)
+
+    auth_chart.set_categories(auth_categories)
+    ws_stats.add_chart(auth_chart, 'Y5')
+
+
 

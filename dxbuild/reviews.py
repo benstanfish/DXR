@@ -192,10 +192,16 @@ class ReviewComments(Frameable, Parseable):
         for comment in self.comments:
             temp_count += comment.backchecks_count
         return temp_count
-    
+
     @property
     def responses_count(self) -> int:
         return self.evaluations_count + self.backchecks_count
+
+    @property
+    def has_responses(self) -> bool:
+        if self.responses_count > 0:
+            return True
+        return False
 
     @property
     def comments_to_list(self, attrs: Dict=COMMENT_COLUMNS) -> List:
