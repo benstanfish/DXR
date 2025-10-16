@@ -28,7 +28,7 @@ logger.addHandler(log_file_handler)
 _DEBUG_MODE = False
 test_path = './dev/test/data.xml'
 
-def batch_create_reports() -> None:
+def batch_create_reports() -> bool:
 
     _WRITE_FILE = True
 
@@ -73,5 +73,7 @@ def batch_create_reports() -> None:
         logger.debug('File dialog closed without selecting files.')
         print('There was an error, refer to the logs.')
 
-if __name__ == '__main__':
-    batch_create_reports()
+    return True
+
+# if __name__ == '__main__':
+#     batch_create_reports()

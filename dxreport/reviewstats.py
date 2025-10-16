@@ -225,7 +225,6 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
             ball_in_court_commentor_anchor.offset(row=2 + j, column=i).value = comment_id    
     
 
-
     # Global formatting: reset
     for row in ws_stats.iter_rows():
         for cell in row:
