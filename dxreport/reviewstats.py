@@ -296,9 +296,6 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
         apply_styles_to_region(stat_footer_region_styles, range_string, ws_stats)
 
 
-
-    
-    
     # Add ChartObjects
     # Comment Count by Discipline
     disc_chart = BarChart()
