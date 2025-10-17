@@ -1,8 +1,6 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
-import os
 import datetime
-
 
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles import DEFAULT_FONT, Font, Alignment
@@ -16,26 +14,22 @@ from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.chart.axis import ChartLines
 from openpyxl.drawing.colors import ColorChoice
 
-
-from PyQt6.QtWidgets import QApplication, QFileDialog
-
 from dxbuild.reviews import Review
-from dxbuild.constants import FALLBACKS, _LOG_DIR
+from constants import LOG_DIR
 from dxbuild.buildtools import timestamp, copy_to_range, apply_styles_to_region
 from dxcore.cellformats import *
-from dxreport import singlereport
 
-if not os.path.exists(_LOG_DIR):
-    os.makedirs(_LOG_DIR)
 
 import logging
+from constants import LOG_DIR
 from dxcore.logconstants import log_format_string
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
 log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
+log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
+
 
 _PADDING_OFFSET = 1
 

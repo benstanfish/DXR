@@ -12,7 +12,7 @@ from openpyxl.utils import get_column_letter
 from PyQt6.QtWidgets import QApplication, QFileDialog
 
 from dxbuild.reviews import Review
-from dxbuild.constants import FALLBACKS, _LOG_DIR
+from dxbuild.variables import FALLBACKS, _LOG_DIR
 from dxbuild.buildtools import timestamp, copy_to_range, apply_styles_to_region
 from dxcore.cellformats import *
 from dxreport import singlereport

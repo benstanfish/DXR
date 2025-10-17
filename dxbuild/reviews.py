@@ -1,12 +1,14 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
+from constants import LOG_DIR
+
 from os.path import getctime
 from datetime import datetime
 from typing import List, Dict, Tuple
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.worksheet.cell_range import CellRange
 
-from .constants import (COMMENT_COLUMNS, 
+from .variables import (COMMENT_COLUMNS, 
                         RESPONSE_COLUMNS, 
                         USER_NOTES_COLUMNS,
                         _PROJECT_INFO_INDEX,
@@ -15,15 +17,12 @@ from .constants import (COMMENT_COLUMNS,
 from .parseable import Parseable
 from .remarks import Comment
 
-
-from dxbuild.constants import _LOG_DIR
-
 import logging
 from dxcore.logconstants import log_format_string
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
 log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
+log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 
@@ -303,7 +302,7 @@ class ReviewComments(Frameable, Parseable):
         self.frames['comments_header'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=1, max_row=1)
         self.frames['comments_body'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=2, max_row=self.count + 1)
 
-        from dxbuild.constants import INDEXED_COMMENT_COLUMNS
+        from dxbuild.variables import INDEXED_COMMENT_COLUMNS
         self.frames['id_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['id'], max_col=INDEXED_COMMENT_COLUMNS['id'], min_row=2, max_row=self.count + 1)
         self.frames['status_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['status'], max_col=INDEXED_COMMENT_COLUMNS['status'], min_row=2, max_row=self.count + 1)
         self.frames['discipline_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['discipline'], max_col=INDEXED_COMMENT_COLUMNS['discipline'], min_row=2, max_row=self.count + 1)

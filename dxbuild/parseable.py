@@ -1,23 +1,26 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
+
+
 from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element
 from typing import Literal
 from datetime import datetime
 
-from dxbuild.constants import _LOG_DIR
 
 import logging
+from constants import LOG_DIR
 from dxcore.logconstants import log_format_string
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
 log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
+log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 
 
 responses_types = Literal['evaluations', 'backchecks']
+
 
 class Parseable():
     def __init__(self):

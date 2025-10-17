@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
-import sys, os
+import sys, os, subprocess
 
 from openpyxl import Workbook
 from openpyxl.styles import DEFAULT_FONT
@@ -9,19 +9,17 @@ from openpyxl.worksheet.worksheet import Worksheet
 from PyQt6.QtWidgets import QApplication, QFileDialog
 
 from dxbuild.reviews import Review
-from dxbuild.constants import FALLBACKS, _LOG_DIR
+from dxbuild.variables import FALLBACKS
 from dxbuild.buildtools import timestamp, clean_name, autoincrement_name
 from dxreport import singlereport, reviewstats
 
-if not os.path.exists(_LOG_DIR):
-    os.makedirs(_LOG_DIR)
-
 import logging
+from constants import LOG_DIR
 from dxcore.logconstants import log_format_string
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
 log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
+log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 
@@ -67,6 +65,8 @@ def batch_create_reports() -> str | bool:
             logger.debug(f'_WRITE_FILE = {_WRITE_FILE} -> saved workbook to "{save_name}"')
         wb.close()
         print(f'{save_name} written to disk.')
+
+        subprocess.Popen(f'explorer /select,"{xml_paths[0]}"')  # macOS specific reveal in finder command
         return save_name
     else:
         logger.debug('File dialog closed without selecting files.')

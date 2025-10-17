@@ -11,8 +11,6 @@ _RESPONSE_EXPANSION_TYPES = Literal['chronological', 'type']
 # _TRUE_SYMBOLIC = '〇'
 _TRUE_SYMBOLIC = '●'
 
-_LOG_DIR = './dxlogs'
-
 """
 COMMENT_COLUMNS and RESPONSE_COLUMNS are dictionaries where the key
 is the name used in an Excel column, while the values are the property
