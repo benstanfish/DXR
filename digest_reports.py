@@ -61,12 +61,13 @@ def batch_create_reports() -> str | bool:
                                 
         if _WRITE_FILE:
             save_name = os.path.join(os.path.dirname(xml_paths[0]), f'DrChecks Summary Report {timestamp('%Y-%m-%d %H-%M-%S')}.xlsx')
+            # save_name = os.path.join(os.path.dirname(xml_paths[0]), f'DrChecks Summary Report {timestamp('%Y-%m-%d %H-%M-%S')}.xlsx')
             wb.save(save_name)
-            logger.debug(f'_WRITE_FILE = {_WRITE_FILE} -> saved workbook to "{save_name}"')
+            logger.debug(f'_WRITE_FILE = {_WRITE_FILE} -> saved workbook to {save_name}')
         wb.close()
         print(f'{save_name} written to disk.')
 
-        subprocess.Popen(f'explorer /select,"{xml_paths[0]}"')  # macOS specific reveal in finder command
+        subprocess.Popen(f'explorer /select,"{save_name}"') 
         return save_name
     else:
         logger.debug('File dialog closed without selecting files.')

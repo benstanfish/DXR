@@ -5,7 +5,7 @@ __author_email__ = "benstanfish@gmail.com"
 __license__ = "GPL-3"
 __maintainer_email__ = __author_email__
 __url__ = 'https://github.com/benstanfish/DXR'
-__version__ = "0.0.1 (alpha)"
+__version__ = "0.0.2a"
 __python__ = "3.13"
 
 

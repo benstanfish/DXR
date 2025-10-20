@@ -12,11 +12,11 @@ QVBoxLayout {
     border: 1px solid tomato;
 } */
 
-/* QMainWindow {
+QMainWindow {
     background-color: #333;
-} */
+}
 
-/* QPushButton {
+QPushButton {
     border: none;
     border-radius: 8px;
     background: qlineargradient(x1:0.9, y1:0, x2:0.3, y2:1, stop: 0 #14076b, stop: 1 #15665a);
@@ -27,34 +27,27 @@ QPushButton:hover {
     background: qlineargradient(x1:0.9, y1:0, x2:0.3, y2:1, stop: 0 #5845D5, stop: 1 #42B6A5);
 }
 
-*/
-
-.panel {
-    background-color: #333;
+QPushButton:disabled {
+    background-color: #555;
 }
 
-.panel-title,
-.stage-title {
-    font-size: 14px;
+.header {
+    font-size: 40px;
     font-weight: bold;
+    text-align: left;
+    vertical-align: middle;
+    color: white;
+    margin: 0;
+    padding: 0;
 }
 
-.stage {
-    background-color: #777;
+.last-logo {
+    margin-left: 6px;
 }
 
-QPushButton {
-    border: none;
-    border-radius: 6px;
-    padding: 10px;
-}
-
-.panel-button,
-.stage-button {
-    background-color: #aaa;
-}
-
-.panel-button:hover,
-.stage-button:hover {
-    background-color: #777;
+.section-header {
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    margin-top: 12px;
 }
