@@ -1,3 +1,4 @@
+import random
 import sys, os
 
 import logging
@@ -21,6 +22,7 @@ from PyQt6.QtWidgets import (QApplication,
 from PyQt6.QtGui import QPixmap, QFont, QIcon
 from PyQt6.QtCore import Qt
 
+from dxgui.scene import Scene
 from dxcore.dxcolor import WebColor
 from digest_reports import batch_create_reports
 
@@ -48,56 +50,47 @@ class AppWindow(QMainWindow):
         layout.setSpacing(0)
 
 
-        # Create a "Panel" with buttons on the left to control the stage contents
-
-        panel_title = QLabel("Modules")
-        panel_title.setProperty("class", "panel-title")
-
-        panel_content = QVBoxLayout()
-        panel_content.setProperty("class", "panel-content")
-        panel_content.setContentsMargins(0, 0, 0, 0)
-        panel_content.setSpacing(12)
-
-        btns = []
-        for i in range(5):
-            btn = QPushButton(f"Module {i+1}")
-            btn.setProperty("class", "panel-button")
-            panel_content.addWidget(btn)
-            btns.append(btn)
-
-        btns[0].clicked.connect(lambda: stage_container.setCurrentIndex(0))
-        btns[1].clicked.connect(lambda: stage_container.setCurrentIndex(1))
-
-        panel_container = QVBoxLayout()
-        panel_container.setProperty("class", "panel-container")
-        panel_container.addWidget(panel_title)
-        panel_container.addLayout(panel_content)    
-        panel_container.setContentsMargins(12, 12, 12, 12)
-
-        panel_spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        panel_content.addSpacerItem(panel_spacer)
-
-        panel = QWidget()
-        panel.setProperty("class", "panel")
-        panel.setLayout(panel_container)
-
-
         # Create a "Stage" area on the right to display content
 
+        tool_buttons = {
+            "Dr Checks Review": lambda: batch_create_reports(),  
+            "RFI Bidder Log": lambda: print("Button 2 clicked"),
+            "JDDG/JES Change Tracker": lambda: print("Button 3 clicked")
+        }
 
-        scene1 = create_scene("Dashboard")
-        scene2 = create_scene("Tools")
+        resc_buttons = {
+            "Resource 1": lambda: print("Resource 1 clicked"),  
+            "Resource 2": lambda: print("Resource 2 clicked"),
+            "Resource 3": lambda: print("Resource 3 clicked"),
+            "Resource 4": lambda: print("Resource 4 clicked")
+        }
 
-        stage_container = QStackedLayout()
-        stage_container.addWidget(scene1)
-        stage_container.addWidget(scene2)
-        stage_container.setProperty("class", "stage-stacked-layout")
+        tool_scene = Scene(scene_name='Tools', button_dict=tool_buttons)
+        resc_scene = Scene(scene_name='Resources', button_dict=resc_buttons)
+        help_scene = Scene(scene_name='Help')
+        scenes = [tool_scene, 
+                  resc_scene, 
+                  help_scene]
 
-
+        scene_container = QStackedLayout()
+        for scene in scenes:
+            scene_container.addWidget(scene)
+        scene_container.setProperty("class", "scene-container")
 
         stage = QWidget()
         stage.setProperty("class", "stage")
-        stage.setLayout(stage_container)
+        stage.setLayout(scene_container)
+
+
+        # Create a "Panel" with buttons on the left to control the stage contents
+        
+        panel_buttons = {
+            "Tools": lambda: scene_container.setCurrentIndex(0),  
+            "Resources": lambda: scene_container.setCurrentIndex(1),
+            "Info": lambda: scene_container.setCurrentIndex(2)  
+        }
+        panel = Scene(scene_name='Modules', scene_id='panel', button_dict=panel_buttons, col_count=1)
+        panel.setMaximumWidth(200)
 
     
         # Finish layout creation
@@ -107,35 +100,6 @@ class AppWindow(QMainWindow):
         central_widget.setLayout(layout)
         
         self.setCentralWidget(central_widget)
-
-
-def create_scene(scene_name:str="Tools"):
-    stage_title = QLabel(scene_name)
-    stage_title.setProperty("class", "stage-title") 
-
-    stage_grid = QGridLayout()
-    stage_grid.setProperty("class", "stage-grid")
-    stage_grid.setSpacing(12)
-
-    for i in range(7):
-        btn = QPushButton(f"Button {i+1}")
-        btn.setProperty("class", "stage-button")
-        stage_grid.addWidget(btn, i // 3, i % 3)
-
-    stage_container = QVBoxLayout()
-    stage_container.setProperty("class", "stage-container")
-    stage_container.addWidget(stage_title)
-    stage_container.addLayout(stage_grid)
-    stage_container.setContentsMargins(12, 12, 12, 12)
-
-    stage_spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-    stage_container.addSpacerItem(stage_spacer)
-
-    scene = QWidget()
-    scene.setProperty("class", "stage-scene")
-    scene.setLayout(stage_container)
-
-    return scene
 
 
 if __name__ == "__main__":

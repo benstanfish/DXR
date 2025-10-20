@@ -1,60 +1,28 @@
-/* QApplication,
-QMainWindow,
-QStatusBar,
-QWidget,
-QLabel,
-QPushButton,
-QSpacerItem,
-QSizePolicy,
-QGridLayout,
-QHBoxLayout,
-QVBoxLayout {
-    border: 1px solid tomato;
-} */
-
-/* QMainWindow {
-    background-color: #333;
-} */
-
-/* QPushButton {
-    border: none;
-    border-radius: 8px;
-    background: qlineargradient(x1:0.9, y1:0, x2:0.3, y2:1, stop: 0 #14076b, stop: 1 #15665a);
-    padding: 12px;
-}
-
-QPushButton:hover {
-    background: qlineargradient(x1:0.9, y1:0, x2:0.3, y2:1, stop: 0 #5845D5, stop: 1 #42B6A5);
-}
-
-*/
-
-.panel {
-    background-color: #333;
-}
-
-.panel-title,
-.stage-title {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.stage {
-    background-color: #777;
-}
-
 QPushButton {
     border: none;
     border-radius: 6px;
     padding: 10px;
 }
 
-.panel-button,
-.stage-button {
-    background-color: #aaa;
+
+.scene {
+    background: yellow;
+    border-right: 1px solid #ccc;
 }
 
-.panel-button:hover,
-.stage-button:hover {
-    background-color: #777;
+.scene-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+.scene-button {
+    background-color: #4CAF50;
+    color: white;
+}
+.scene-button:hover {
+    background-color: #45a049;
+}
+
+QWidget#panel {
+    background: red;
 }

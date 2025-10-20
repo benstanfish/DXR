@@ -210,7 +210,7 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
             status_region_max_rows + _PADDING_OFFSET + 
             review_open_comments_region_height + _PADDING_OFFSET +
             bic_evaluator_comments_region_height + _PADDING_OFFSET + 1, column=0)
-    ball_in_court_commentor_anchor.value = 'Open Comments --- Ball in Court: Commentor'
+    ball_in_court_commentor_anchor.value = 'Open Comments --- Ball in Court: Backchecker'
     for i, discipline in enumerate(bic_commentor_dic.keys()):
         ball_in_court_commentor_anchor.offset(row=1, column=i).value = discipline
         comment_id_list = bic_commentor_dic[discipline]
