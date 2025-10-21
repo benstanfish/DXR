@@ -28,17 +28,6 @@ from dxgui.spacers import VSpacer, HSpacer
 from digest_reports import batch_create_reports
 
 
-
-def get_color():
-    red = random.randint(0, 255)
-    green = random.randint(0, 255)
-    blue = random.randint(0, 255)
-    
-    hex_color = f"#{red:02x}{green:02x}{blue:02x}"
-    return hex_color
-
-
-
 class AppWindow(QMainWindow):
     def __init__(self):
         super().__init__()
