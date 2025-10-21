@@ -24,7 +24,7 @@ from PyQt6.QtCore import Qt
 
 from dxcore.dxcolor import WebColor
 from digest_reports import batch_create_reports
-
+from dxgui.spacers import VSpacer, HSpacer
 
 
 class AppWindow(QMainWindow):
@@ -91,7 +91,8 @@ class AppWindow(QMainWindow):
         panel_container.addLayout(panel_content)    
         panel_container.setContentsMargins(12, 12, 12, 12)
 
-        panel_spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        panel_spacer = VSpacer()
+        # panel_spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         panel_content.addSpacerItem(panel_spacer)
 
         panel = QWidget()

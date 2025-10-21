@@ -22,7 +22,7 @@ from PyQt6.QtWidgets import (QApplication,
 from PyQt6.QtGui import QPixmap, QFont, QIcon
 from PyQt6.QtCore import Qt
 
-from dxgui.scene import Scene
+from dxgui.scene import Scene   
 from dxcore.dxcolor import WebColor
 from digest_reports import batch_create_reports
 

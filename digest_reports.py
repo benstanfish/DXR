@@ -66,8 +66,9 @@ def batch_create_reports() -> str | bool:
             logger.debug(f'_WRITE_FILE = {_WRITE_FILE} -> saved workbook to {save_name}')
         wb.close()
         print(f'{save_name} written to disk.')
-
-        subprocess.Popen(f'explorer /select,"{save_name}"') 
+        os.startfile(os.path.dirname(save_name))
+        os.startfile(save_name)
+        # subprocess.Popen(f'explorer /select,"{save_name}"') 
         return save_name
     else:
         logger.debug('File dialog closed without selecting files.')

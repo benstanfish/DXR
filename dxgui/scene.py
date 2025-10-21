@@ -6,45 +6,52 @@ from PyQt6.QtWidgets import (QWidget,
                              QGridLayout,
                              QVBoxLayout)
 
-DEFAULT_SPACING = 16
-DEFAULT_MARGIN = 16
+from .spacers import VSpacer
 
 class Scene(QWidget):
     def __init__(self, 
-                 scene_name:str="Scene",
-                 scene_id=None, 
+                 scene_id,
+                 scene_name:str='Scene',
                  button_dict:dict=None, 
                  col_count:int=3):
         super().__init__()
-        self.setProperty("class", "scene")
         self.scene_id = scene_id
-        if scene_id:
-            self.setObjectName(self.scene_id)
+        self.setProperty('class', 'scene')
+        self.setObjectName(f'{scene_id}-scene')
 
-        self.scene_title = QLabel(scene_name)
-        self.scene_title.setProperty("class", "scene-title") 
+        self.banner = QLabel(scene_name)
+        self.banner.setProperty('class', 'header')
+        self.banner.setObjectName(f'{scene_id}-header') 
 
-        self.scene_grid = QGridLayout()
-        self.scene_grid.setProperty("class", "scene-grid")
-        self.scene_grid.setSpacing(DEFAULT_SPACING)
+        self.stage = QWidget()
+        self.stage.setProperty('class', 'stage')
+        self.stage_layout = QGridLayout()
+        self.stage_layout.setProperty('class', 'stage-layout')
+        self.stage.setLayout(self.stage_layout)
 
         if button_dict:
             for i, (btn_name, btn_action) in enumerate(button_dict.items()):
                 btn = QPushButton(btn_name)
-                btn.setProperty("class", "scene-button")
-                btn.clicked.connect(btn_action)
+                btn.setProperty('class', 'scene-button')
+                if btn_action:
+                    btn.clicked.connect(btn_action)
+                else:
+                    btn.setEnabled(False)
                 row = i // col_count
                 col = i % col_count 
-                self.scene_grid.addWidget(btn, row, col)
+                self.stage_layout.addWidget(btn, row, col)
 
-        self.scene_container = QVBoxLayout()
-        self.scene_container.setProperty("class", "scene-container")
+        self.scene_layout = QVBoxLayout()
+        self.scene_layout.setProperty('class', 'scene-layout')
+        self.scene_layout.addWidget(self.banner)
+        self.scene_layout.addWidget(self.stage)
+        self.scene_layout.addSpacerItem(VSpacer())
 
-        self.scene_container.addWidget(self.scene_title)
-        self.scene_container.addLayout(self.scene_grid)
-        self.scene_container.setContentsMargins(DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN)
+        self.setLayout(self.scene_layout)
 
-        self.stage_spacer = QSpacerItem(1, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        self.scene_container.addSpacerItem(self.stage_spacer)
 
-        self.setLayout(self.scene_container)
+    def setSpacing(self, spacing):
+        self.stage_layout.setSpacing(spacing)
+
+    def setMargins(self, left, top, right, bottom):
+        self.stage_layout.setContentsMargins(left, top, right, bottom)

@@ -9,4 +9,6 @@
 #     AboutDialog,
 #     TroubleDialog
 # )
+
 from .scene import Scene
+from .spacers import VSpacer, HSpacer

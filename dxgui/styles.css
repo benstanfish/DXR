@@ -1,53 +1,16 @@
-/* QApplication,
-QMainWindow,
-QStatusBar,
-QWidget,
-QLabel,
-QPushButton,
-QSpacerItem,
-QSizePolicy,
-QGridLayout,
-QHBoxLayout,
-QVBoxLayout {
-    border: 1px solid tomato;
-} */
+/* QWidget {border: 1px solid tomato;} */
 
-QMainWindow {
-    background-color: #333;
-}
+.central-widget {background: rgb(0, 46, 6);}
+.panel {background: rgb(70, 63, 0);}
+.stage{background: rgb(8, 0, 83);}
+.profile {background: rgb(70, 7, 0);}
 
 QPushButton {
-    border: none;
-    border-radius: 8px;
-    background: qlineargradient(x1:0.9, y1:0, x2:0.3, y2:1, stop: 0 #14076b, stop: 1 #15665a);
-    padding: 12px;
+    background-color: green;
+
+    padding: 8px;
 }
 
 QPushButton:hover {
-    background: qlineargradient(x1:0.9, y1:0, x2:0.3, y2:1, stop: 0 #5845D5, stop: 1 #42B6A5);
-}
-
-QPushButton:disabled {
-    background-color: #555;
-}
-
-.header {
-    font-size: 40px;
-    font-weight: bold;
-    text-align: left;
-    vertical-align: middle;
-    color: white;
-    margin: 0;
-    padding: 0;
-}
-
-.last-logo {
-    margin-left: 6px;
-}
-
-.section-header {
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
-    margin-top: 12px;
+    background-color: rgb(0, 189, 0);
 }
