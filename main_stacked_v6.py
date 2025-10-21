@@ -72,7 +72,10 @@ class AppWindow(QMainWindow):
         panel_widget.setMaximumWidth(200)
     
         panel_layout = QVBoxLayout()
-        panel_layout.addWidget(QLabel('Panel Region'))
+        panel_header = QLabel('Panel Region')
+        panel_header.setProperty('class', 'header')
+        panel_layout.addWidget(panel_header)
+        
         panel_layout.setSpacing(12)
         for i in range(5):
             panel_layout.addWidget(QPushButton(f'Button {i + 1}'))
@@ -98,6 +101,7 @@ class AppWindow(QMainWindow):
         profile_widget.setLayout(profile_layout)
 
         profile_header = QLabel('Profile Region')
+        profile_header.setProperty('class', 'header')
         profile_thumb = QLabel()
         profile_thumb.setMaximumHeight(150)
         img = QPixmap('./assets/yagura sunrays.png')
