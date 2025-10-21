@@ -77,8 +77,8 @@ class AppWindow(QMainWindow):
         panel_layout.addWidget(panel_header)
         
         panel_layout.setSpacing(12)
-        for i in range(5):
-            panel_layout.addWidget(QPushButton(f'Button {i + 1}'))
+        # for i in range(5):
+        #     panel_layout.addWidget(QPushButton(f'Button {i + 1}'))
         
         panel_layout.addSpacerItem(VSpacer())
         panel_widget.setLayout(panel_layout)
@@ -136,8 +136,8 @@ class AppWindow(QMainWindow):
         scene_body_layout.setContentsMargins(0, 0, 0, 0)
         scene_body.setLayout(scene_body_layout)
 
-        for i in range(9):
-            scene_body_layout.addWidget(QPushButton(f'Button {i + 1}'), i // 3, i % 3)
+        # for i in range(9):
+        #     scene_body_layout.addWidget(QPushButton(f'Button {i + 1}'), i // 3, i % 3)
 
 
         scene_layout.addWidget(scene_header)
@@ -146,10 +146,6 @@ class AppWindow(QMainWindow):
 
         stage_layout.addWidget(scene_widget)
 
-        
-
-
-        # Create a "Panel" with buttons on the left to control the stage contents
 
     
         # Finish layout creation
