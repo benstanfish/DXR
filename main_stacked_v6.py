@@ -41,12 +41,12 @@ class HoverButton(QPushButton):
 
     def enterEvent(self, event: QEvent):
         """Called when the mouse cursor enters the widget."""
-        print(f"Mouse entered {self.text()} button!")
+        # print(f"Mouse entered {self.text()} button!")
         super().enterEvent(event)
 
     def leaveEvent(self, event: QEvent):
         """Called when the mouse cursor leaves the widget."""
-        print(f"Mouse left {self.text()} button!")
+        # print(f"Mouse left {self.text()} button!")
         super().leaveEvent(event)
 
 
@@ -148,6 +148,7 @@ class AppWindow(QMainWindow):
         right_panel_header.setProperty('class', 'right-panel-header')
         right_panel_header_label = QLabel('Right Panel Header')
         right_panel_header_label.setProperty('class', 'header')
+        right_panel_header_label.setText('Hello World')
         right_panel_header.setLayout(QHBoxLayout())
         right_panel_header.layout().addWidget(right_panel_header_label)
 
@@ -181,7 +182,6 @@ class AppWindow(QMainWindow):
 
 
 
-
         scene0 = QWidget()
         scene0.setProperty('class', 'scene')
         scene0.setContentsMargins(0, 0, 0, 0)
@@ -210,14 +210,26 @@ class AppWindow(QMainWindow):
         scene0_layout.addSpacerItem(VSpacer())
         scene0.setLayout(scene0_layout)
 
-        for i in range(8):
-            btn = HoverButton(f'Button {i + 1}')
-            btn.setProperty('class', 'scene-button')
-            btn.setMouseTracking(True)
-            btn.clicked.connect(lambda: print(f'Button {i + 1} clicked'))
-            btn.enterEvent(print(f'Button {i + 1} mouse over'))
-            btn.leaveEvent(print(f'Button {i + 1} mouse over'))
-            scene0_body_layout.addWidget(btn, i // 3, i % 3)
+        # btns = []
+
+        # for i in range(8):
+        #     btn = QPushButton(f'Button {i + 1}')
+        #     btn.setProperty('class', 'scene-button')
+        #     btns.append(btn)
+        #     scene0_body_layout.addWidget(btn, i // 3, i % 3)
+
+        # for btn in btns:
+        #     btn.setMouseTracking(True)
+        #     btn.clicked.connect(lambda: print(f'Button {i + 1} clicked'))
+        #     # btn.enterEvent(
+        #     #     right_panel_header_label.setText(f'Button {i + 1} Data')
+        #     # )
+        #     # btn.leaveEvent(
+        #     #     right_panel_header_label.setText(f'')
+        #     # )
+
+
+
 
         stage_layout.addWidget(scene0)
 
@@ -230,6 +242,8 @@ class AppWindow(QMainWindow):
 
         main.setLayout(main_layout)
         self.setCentralWidget(main)
+
+
 
 
 
