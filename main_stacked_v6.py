@@ -86,10 +86,16 @@ class AppWindow(QMainWindow):
         right_panel_body_layout.setSpacing(12)  
         right_panel_body.setLayout(right_panel_body_layout)
 
-        for i in range(5):
-            right_panel_body_layout.addWidget(QPushButton(f'Button {i + 1}'), i, 0)
+        right_panel_buttons = {
+            'Review Tools': lambda: print('Hello World'),
+            'Library': lambda: print('test two'),
+            'Resources': lambda: print('test three')
+        }
 
-
+        for i, (button_name, button_action) in enumerate(right_panel_buttons.items()):
+            btn = QPushButton(button_name)
+            btn.clicked.connect(button_action)
+            right_panel_body_layout.addWidget(btn, i, 0)
 
         right_panel_layout.addWidget(right_panel_header)
         right_panel_layout.addWidget(right_panel_body)
