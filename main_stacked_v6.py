@@ -61,6 +61,65 @@ class AppWindow(QMainWindow):
 
         # Create the subregions to house all the controls for tools and modules.
 
+        left_panel = QWidget()
+        left_panel.setProperty('class', 'left-panel')
+        left_panel.setContentsMargins(0, 0, 0, 0)
+        left_panel.setMinimumWidth(200)
+        left_panel.setMaximumWidth(200)
+    
+        left_panel_layout = QVBoxLayout()
+        left_panel_layout.setProperty('class', 'left-panel-layout')
+        left_panel_layout.setContentsMargins(0, 0, 0, 0)
+        left_panel_layout.setSpacing(12)
+
+        left_panel_header = QWidget()
+        left_panel_header.setProperty('class', 'left-panel-header')
+        left_panel_header_label = QLabel('Left Panel Header')
+        left_panel_header_label.setProperty('class', 'header')
+        left_panel_header.setLayout(QHBoxLayout())
+        left_panel_header.layout().addWidget(left_panel_header_label)
+
+        left_panel_body = QWidget()
+        left_panel_body.setProperty('class', 'left-panel-body')
+        left_panel_body.setContentsMargins(0, 0, 0, 0)
+        left_panel_body_layout = QGridLayout()
+        left_panel_body_layout.setSpacing(12)  
+        left_panel_body.setLayout(left_panel_body_layout)
+
+        left_panel_buttons = {
+            'Review Tools': lambda: print('Hello World'),
+            'Library': lambda: print('test two'),
+            'Resources': ''
+        }
+
+        for i, (button_name, button_action) in enumerate(left_panel_buttons.items()):
+            btn = QPushButton(button_name)
+            if button_action:
+                btn.clicked.connect(button_action)
+            else:
+                btn.setDisabled(True)
+            left_panel_body_layout.addWidget(btn, i, 0)
+
+        left_panel_layout.addWidget(left_panel_header)
+        left_panel_layout.addWidget(left_panel_body)
+        left_panel_layout.addSpacerItem(VSpacer())
+        left_panel.setLayout(left_panel_layout)
+            
+
+
+        # The stage is the stacked layout widget that will host all the content layouts ('scenes')
+        stage = QWidget()
+        stage.setProperty('class', 'stage')
+        stage.setContentsMargins(0, 0, 0, 0)
+        stage_layout = QStackedLayout()
+        stage.setLayout(stage_layout)
+        stage.setMinimumWidth(600)
+
+
+
+
+        # Create a right panel bar
+
         right_panel = QWidget()
         right_panel.setProperty('class', 'right-panel')
         right_panel.setContentsMargins(0, 0, 0, 0)
@@ -86,66 +145,25 @@ class AppWindow(QMainWindow):
         right_panel_body_layout.setSpacing(12)  
         right_panel_body.setLayout(right_panel_body_layout)
 
-        right_panel_buttons = {
-            'Review Tools': lambda: print('Hello World'),
-            'Library': lambda: print('test two'),
-            'Resources': lambda: print('test three')
-        }
+        right_panel_image_placeholder = QLabel()
+        right_panel_image_placeholder.setMaximumHeight(150)
+        right_panel_image = QPixmap('./assets/yagura sunrays.png')
+        right_panel_image_scaled = right_panel_image.scaled(150, 
+                                150,
+                                Qt.AspectRatioMode.KeepAspectRatio, 
+                                Qt.TransformationMode.SmoothTransformation)
+        right_panel_image_placeholder.setPixmap(right_panel_image_scaled)
+        right_panel_description = QLabel(r"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum")
+        right_panel_description.setWordWrap(True)
 
-        for i, (button_name, button_action) in enumerate(right_panel_buttons.items()):
-            btn = QPushButton(button_name)
-            btn.clicked.connect(button_action)
-            right_panel_body_layout.addWidget(btn, i, 0)
+        right_panel_body_layout.addWidget(right_panel_image_placeholder)
+        right_panel_body_layout.addWidget(right_panel_description)
 
         right_panel_layout.addWidget(right_panel_header)
         right_panel_layout.addWidget(right_panel_body)
         right_panel_layout.addSpacerItem(VSpacer())
         right_panel.setLayout(right_panel_layout)
-            
 
-
-
-
-
-
-
-
-
-
-        stage = QWidget()
-        stage.setProperty('class', 'stage')
-        stage.setContentsMargins(0, 0, 0, 0)
-        stage_layout = QStackedLayout()
-        stage.setLayout(stage_layout)
-        stage.setMinimumWidth(600)
-
-        profile = QWidget()
-        profile.setProperty('class', 'profile')
-        profile.setContentsMargins(0, 0, 0, 0)   
-        profile.setMinimumWidth(200)
-        profile.setMaximumWidth(200)
-        profile_layout = QVBoxLayout()
-        profile_layout.setSpacing(12)
-
-        profile.setLayout(profile_layout)
-
-        profile_header = QLabel('Profile Region')
-        profile_header.setProperty('class', 'header')
-        profile_image_placeholder = QLabel()
-        profile_image_placeholder.setMaximumHeight(150)
-        profile_image = QPixmap('./assets/yagura sunrays.png')
-        profile_image_scaled = profile_image.scaled(150, 
-                                150,
-                                Qt.AspectRatioMode.KeepAspectRatio, 
-                                Qt.TransformationMode.SmoothTransformation)
-        profile_image_placeholder.setPixmap(profile_image_scaled)
-        profile_description = QLabel(r"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum")
-        profile_description.setWordWrap(True)
-
-        profile_layout.addWidget(profile_header)
-        profile_layout.addWidget(profile_image_placeholder)
-        profile_layout.addWidget(profile_description)
-        profile_layout.addSpacerItem(VSpacer())
 
 
         scene = QWidget()
@@ -178,9 +196,9 @@ class AppWindow(QMainWindow):
 
     
         # Finish layout creation
-        main_layout.addWidget(right_panel)
+        main_layout.addWidget(left_panel)
         main_layout.addWidget(stage)
-        main_layout.addWidget(profile)
+        main_layout.addWidget(right_panel)
 
         main.setLayout(main_layout)
         self.setCentralWidget(main)
