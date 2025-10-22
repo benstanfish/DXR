@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import (QApplication,
                              QVBoxLayout,
                              QStackedLayout)
 from PyQt6.QtGui import QPixmap, QFont, QIcon
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QEvent
 
 
 from dxcore.dxcolor import WebColor
@@ -33,6 +33,21 @@ _TYPICAL_SPACING = 12
 _OUTER_MARGINS = (0, 0, 0, 0)
 _INNER_MARGINS = (6, 6, 6, 6)
 _SPACING = 12
+
+
+class HoverButton(QPushButton):
+    def __init__(self, text, parent=None):
+        super().__init__(text, parent)
+
+    def enterEvent(self, event: QEvent):
+        """Called when the mouse cursor enters the widget."""
+        print(f"Mouse entered {self.text()} button!")
+        super().enterEvent(event)
+
+    def leaveEvent(self, event: QEvent):
+        """Called when the mouse cursor leaves the widget."""
+        print(f"Mouse left {self.text()} button!")
+        super().leaveEvent(event)
 
 
 class AppWindow(QMainWindow):
@@ -116,8 +131,6 @@ class AppWindow(QMainWindow):
         stage.setMinimumWidth(600)
 
 
-
-
         # Create a right panel bar
 
         right_panel = QWidget()
@@ -147,9 +160,9 @@ class AppWindow(QMainWindow):
 
         right_panel_image_placeholder = QLabel()
         right_panel_image_placeholder.setMaximumHeight(150)
+        right_panel_image_placeholder.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         right_panel_image = QPixmap('./assets/yagura sunrays.png')
-        right_panel_image_scaled = right_panel_image.scaled(150, 
-                                150,
+        right_panel_image_scaled = right_panel_image.scaled(150, 150,
                                 Qt.AspectRatioMode.KeepAspectRatio, 
                                 Qt.TransformationMode.SmoothTransformation)
         right_panel_image_placeholder.setPixmap(right_panel_image_scaled)
@@ -166,32 +179,47 @@ class AppWindow(QMainWindow):
 
 
 
-        scene = QWidget()
-        scene.setProperty('class', 'scene')
-        scene.setContentsMargins(0, 0, 0, 0)
-        scene_layout = QVBoxLayout()
-        scene_layout.setSpacing(12)
-        scene.setLayout(scene_layout)
-
-        scene_header = QLabel('Scene Banner')
-        scene_header.setProperty('class', 'header')
-        scene_body = QWidget()
-        scene_body.setProperty('class', 'scene-body')
-        scene_body.setContentsMargins(0, 0, 0, 0)
-        scene_body_layout = QGridLayout()
-        scene_body_layout.setSpacing(12)
-        scene_body_layout.setContentsMargins(0, 0, 0, 0)
-        scene_body.setLayout(scene_body_layout)
-
-        # for i in range(9):
-        #     scene_body_layout.addWidget(QPushButton(f'Button {i + 1}'), i // 3, i % 3)
 
 
-        scene_layout.addWidget(scene_header)
-        scene_layout.addWidget(scene_body)
-        scene_layout.addSpacerItem(VSpacer())
 
-        stage_layout.addWidget(scene)
+        scene0 = QWidget()
+        scene0.setProperty('class', 'scene')
+        scene0.setContentsMargins(0, 0, 0, 0)
+
+        scene0_layout = QVBoxLayout()
+        scene0_layout.setProperty('class', 'scene-layout')
+        scene0_layout.setContentsMargins(0, 0, 0, 0)
+        scene0_layout.setSpacing(12)
+
+        scene0_header = QWidget()
+        scene0_header.setProperty('class', 'scene-header')
+        scene0_header_label = QLabel('Scene Header')
+        scene0_header_label.setProperty('class', 'header')
+        scene0_header.setLayout(QHBoxLayout())
+        scene0_header.layout().addWidget(scene0_header_label)
+
+        scene0_body = QWidget()
+        scene0_body.setProperty('class', 'scene-body')
+        scene0_body.setContentsMargins(0, 0, 0, 0)
+        scene0_body_layout = QGridLayout()
+        scene0_body_layout.setSpacing(12)  
+        scene0_body.setLayout(scene0_body_layout)
+
+        scene0_layout.addWidget(scene0_header)
+        scene0_layout.addWidget(scene0_body)
+        scene0_layout.addSpacerItem(VSpacer())
+        scene0.setLayout(scene0_layout)
+
+        for i in range(8):
+            btn = HoverButton(f'Button {i + 1}')
+            btn.setProperty('class', 'scene-button')
+            btn.setMouseTracking(True)
+            btn.clicked.connect(lambda: print(f'Button {i + 1} clicked'))
+            btn.enterEvent(print(f'Button {i + 1} mouse over'))
+            btn.leaveEvent(print(f'Button {i + 1} mouse over'))
+            scene0_body_layout.addWidget(btn, i // 3, i % 3)
+
+        stage_layout.addWidget(scene0)
 
 
     
@@ -202,6 +230,7 @@ class AppWindow(QMainWindow):
 
         main.setLayout(main_layout)
         self.setCentralWidget(main)
+
 
 
 

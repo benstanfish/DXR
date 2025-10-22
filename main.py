@@ -170,7 +170,7 @@ class AppWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    with open('./assets/styles.css') as file:
+    with open('./dxgui/styles.css') as file:
         styles = file.read()
     app.setStyleSheet(styles)
 

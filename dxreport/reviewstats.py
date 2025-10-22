@@ -202,18 +202,25 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     open_by_discipline_commentor = list(set([comment.discipline for comment in review.review_comments.comments if comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
     open_by_discipline_commentor.sort()
     bic_commentor_dic = {}
-    for discipline in open_by_discipline_commentor:
-        bic_commentor_dic[discipline] = list(set([comment.id for comment in review.review_comments.comments if comment.discipline == discipline and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
+    
+    byDiscipline = False
+    if byDiscipline:
+        for discipline in open_by_discipline_commentor:
+            bic_commentor_dic[discipline] = list(set([comment.id for comment in review.review_comments.comments if comment.discipline == discipline and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))       
+    else:
+        for commentor in reviewer_open_comments_dict:
+            bic_commentor_dic[commentor] = list(set([comment.id for comment in review.review_comments.comments if comment.author == commentor and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
        
+
     ball_in_court_commentor_anchor = ws_stats[project_header_anchor.coord].offset(
         row=len(project_header) + _PADDING_OFFSET + 
             status_region_max_rows + _PADDING_OFFSET + 
             review_open_comments_region_height + _PADDING_OFFSET +
             bic_evaluator_comments_region_height + _PADDING_OFFSET + 1, column=0)
     ball_in_court_commentor_anchor.value = 'Open Comments --- Ball in Court: Backchecker'
-    for i, discipline in enumerate(bic_commentor_dic.keys()):
-        ball_in_court_commentor_anchor.offset(row=1, column=i).value = discipline
-        comment_id_list = bic_commentor_dic[discipline]
+    for i, author in enumerate(bic_commentor_dic.keys()):
+        ball_in_court_commentor_anchor.offset(row=1, column=i).value = author
+        comment_id_list = bic_commentor_dic[author]
         comment_id_list.sort()
         for j, comment_id in enumerate(comment_id_list):
             ball_in_court_commentor_anchor.offset(row=2 + j, column=i).value = comment_id    

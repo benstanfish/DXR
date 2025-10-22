@@ -13,17 +13,29 @@ QPushButton {
 
     background: qlineargradient(
         x1: 0, y1: 0, x2: 1, y2: 0,
-        stop: 0 red,
+        stop: 0 orangered,
         stop: 1 magenta
     );
 }
 
 QPushButton:hover {
-    background: rgb(0, 189, 0);
+    background: mediumseagreen;
 }
 
 QPushButton:disabled {
     background: #555;
+}
+
+.scene-button {
+    background: qlineargradient(
+        x1: 0, y1: 0, x2: 1, y2: 0,
+        stop: 0 mediumseagreen,
+        stop: 1 dodgerblue
+    );
+}
+
+.scene-button:hover {
+    background: tomato;
 }
 
 .central-widget {
@@ -39,7 +51,8 @@ QPushButton:disabled {
 }
 
 .left-panel-header,
-.right-panel-header {
+.right-panel-header,
+.scene-header {
     background: #555;
     border-bottom: 1px solid #666;
     border-radius: 12px;
