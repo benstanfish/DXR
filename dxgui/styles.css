@@ -6,19 +6,59 @@
 .profile {background: rgb(70, 7, 0);} */
 
 QPushButton {
-    background-color: green;
+    font-weight: bold;
+
     padding: 8px;
+    border-radius: 16px;
+
+    background: qlineargradient(
+        x1: 0, y1: 0, x2: 1, y2: 0,
+        stop: 0 red,
+        stop: 1 magenta
+    );
 }
 
 QPushButton:hover {
     background-color: rgb(0, 189, 0);
 }
 
+AppWindow {
+    background: None;
+}
+
+.central-widget {
+    background: transparent;
+    border-radius: 6px;
+}   
+
+.right-panel {
+    background: #777;
+    border: 1px solid #666;
+    border-radius: 12px;
+}
+
+.right-panel-header {
+    background: #555;
+    border-bottom: 1px solid #666;
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.scene {
+    background: #444;
+
+    border-radius: 12px;
+}
+
+.profile {
+    background: #777;
+    border-radius: 12px;
+}
+
+
+
 .header {
     font-size: 14px;
     font-weight: bold;
 }
 
-.scene {
-    background: #444;
-}
