@@ -130,8 +130,7 @@ class AppWindow(QMainWindow):
         right_panel = QWidget()
         right_panel.setProperty('class', 'right-panel')
         right_panel.setContentsMargins(0, 0, 0, 0)
-        right_panel.setMinimumWidth(200)
-        right_panel.setMaximumWidth(200)
+        right_panel.setMinimumWidth(300)
     
         right_panel_layout = QVBoxLayout()
         right_panel_layout.setProperty('class', 'right-panel-layout')
@@ -171,7 +170,6 @@ class AppWindow(QMainWindow):
         right_panel_layout.addWidget(right_panel_body)
         right_panel_layout.addSpacerItem(VSpacer())
         right_panel.setLayout(right_panel_layout)
-
 
 
         scene0 = QWidget()
@@ -217,30 +215,19 @@ class AppWindow(QMainWindow):
                 'action': '',
                 'image': '',
                 'description': ''
-            },
-            'Test': {
-                'action': '',
-                'image': '',
-                'description': ''
             }
         }
 
-        scene0_buttons = []
-        for i, (button_name, button_data) in enumerate(scene0_tools.items()):
-            scene0_buttons.append(HoverButton(button_name))
-            scene0_buttons[i].setProperty('class', 'scene-button')
-            if button_data['action']:
-                scene0_buttons[i].clicked.connect(button_data['action'])
-            else:                
-                pass
-            scene0_buttons[i].hovered.connect(lambda button_name=button_name, 
-                                              image_path=button_data['image'], 
-                                              description=button_data['description']: 
-                                              self.update_right_panel(header=button_name, 
-                                                                        image_path=image_path, 
-                                                                        description=description))
-            scene0_buttons[i].unhovered.connect(lambda: self.update_right_panel())
-            scene0_body_layout.addWidget(scene0_buttons[i], i // 3, i % 3)
+        self.create_scene_buttons(scene_body_layout=scene0_body_layout,
+                                  scene_tools=scene0_tools)
+
+
+
+
+
+
+
+
 
 
 
@@ -254,9 +241,27 @@ class AppWindow(QMainWindow):
         main.setLayout(main_layout)
         self.setCentralWidget(main)
 
-    def create_button(self, button_name:str, button_data:tuple) -> HoverButton:
 
-        pass
+
+    def create_scene_buttons(self, scene_body_layout: QGridLayout, scene_tools: dict) -> None:
+        scene_buttons = []
+        for i, (button_name, button_data) in enumerate(scene_tools.items()):
+            scene_buttons.append(HoverButton(button_name))
+            scene_buttons[i].setProperty('class', 'scene-button')
+            if button_data['action']:
+                scene_buttons[i].clicked.connect(button_data['action'])
+            else:                
+                pass
+            scene_buttons[i].hovered.connect(lambda button_name=button_name, 
+                                              image_path=button_data['image'], 
+                                              description=button_data['description']: 
+                                              self.update_right_panel(header=button_name, 
+                                                                        image_path=image_path, 
+                                                                        description=description))
+            scene_buttons[i].unhovered.connect(lambda: self.update_right_panel())
+            scene_body_layout.addWidget(scene_buttons[i], i // 3, i % 3) 
+
+
 
     def update_right_panel(self,
                            header:str='',
@@ -267,11 +272,9 @@ class AppWindow(QMainWindow):
         if image_path:
             try:
                 temp_image = QPixmap(image_path)
-                print(temp_image)
                 temp_scaled = temp_image.scaled(150, 150,
                                     Qt.AspectRatioMode.KeepAspectRatio, 
                                     Qt.TransformationMode.SmoothTransformation)
-                # self.right_panel_image_placeholder = QLabel()
                 self.right_panel_image_placeholder.setPixmap(temp_scaled)
             except Exception as e:
                 print(e)
