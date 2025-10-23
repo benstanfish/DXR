@@ -267,15 +267,16 @@ class AppWindow(QMainWindow):
         if image_path:
             try:
                 temp_image = QPixmap(image_path)
+                print(temp_image)
                 temp_scaled = temp_image.scaled(150, 150,
                                     Qt.AspectRatioMode.KeepAspectRatio, 
                                     Qt.TransformationMode.SmoothTransformation)
-                self.right_panel_image_placeholder = QLabel()
+                # self.right_panel_image_placeholder = QLabel()
                 self.right_panel_image_placeholder.setPixmap(temp_scaled)
             except Exception as e:
                 print(e)
         else:
-            self.right_panel_image_placeholder = QLabel()
+            self.right_panel_image_placeholder.setPixmap(QPixmap())
         self.right_panel_description.setText(description)
 
 
