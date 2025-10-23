@@ -26,6 +26,12 @@ from PyQt6.QtCore import Qt, QEvent, pyqtSignal
 from dxgui.spacers import VSpacer, HSpacer
 from digest_reports import batch_create_reports
 
+_VERSION = '0.0.3a'
+
+_ICON = './assets/Yagura Sunrays.png'
+_DEFAULT_PANEL_PANEL_TITLE = 'Tool Explorer'
+_DEFAULT_RIGHT_PANEL_IMAGE = './assets/Yagura Starfield.png'
+_DEFAULT_RIGHT_PANEL_DESCRIPTION = r"Hover the mouse over a tool button to display an explanation of it's functionality."
 
 class HoverButton(QPushButton):
     hovered = pyqtSignal()
@@ -47,8 +53,8 @@ class HoverButton(QPushButton):
 class AppWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle(f"DXR Tools {constants.__version__}")
-        self.setWindowIcon(QIcon('./assets/Yagura Sunrays.png'))
+        self.setWindowTitle(f"DXR Tools {_VERSION}")
+        self.setWindowIcon(QIcon(_ICON))
 
         window_left = 300
         window_top = 300
@@ -56,7 +62,7 @@ class AppWindow(QMainWindow):
         window_height = 600
 
         self.setGeometry(window_left, window_top, window_width, window_height)
-        self.setWindowIcon(QIcon('./assets/Yagura Sunrays.png'))
+        self.setWindowIcon(QIcon(_ICON))
 
         # Create Central Widget to serve as the main widget for the application.
         main = QWidget()
@@ -96,11 +102,10 @@ class AppWindow(QMainWindow):
         left_panel_body.setLayout(left_panel_body_layout)
 
         left_panel_buttons = {
-            'ProjNet Tools': lambda: stage_layout.setCurrentIndex(0),
-            'Library': lambda: stage_layout.setCurrentIndex(1),
-            'Links': '',
+            'Tools': lambda: stage_layout.setCurrentIndex(0),
+            'Resources': lambda: stage_layout.setCurrentIndex(1),
             'Documentation': '',
-            'Suggestions?': ''
+            'About': ''
         }
 
         for i, (button_name, button_action) in enumerate(left_panel_buttons.items()):
@@ -129,6 +134,8 @@ class AppWindow(QMainWindow):
 
         # Create a right panel bar
 
+
+
         right_panel = QWidget()
         right_panel.setProperty('class', 'right-panel')
         right_panel.setContentsMargins(0, 0, 0, 0)
@@ -141,7 +148,7 @@ class AppWindow(QMainWindow):
 
         right_panel_header = QWidget()
         right_panel_header.setProperty('class', 'right-panel-header')
-        self.right_panel_header_label = QLabel('Right Panel Header')
+        self.right_panel_header_label = QLabel(_DEFAULT_PANEL_PANEL_TITLE)
         self.right_panel_header_label.setProperty('class', 'header')
         self.right_panel_header_label.setText('Hello World')
         right_panel_header.setLayout(QHBoxLayout())
@@ -154,15 +161,16 @@ class AppWindow(QMainWindow):
         right_panel_body_layout.setSpacing(12)  
         right_panel_body.setLayout(right_panel_body_layout)
 
+
         self.right_panel_image_placeholder = QLabel()
         self.right_panel_image_placeholder.setMaximumHeight(150)
         self.right_panel_image_placeholder.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.right_panel_image = QPixmap('./assets/yagura sunrays.png')
+        self.right_panel_image = QPixmap(_DEFAULT_RIGHT_PANEL_IMAGE)
         right_panel_image_scaled = self.right_panel_image.scaled(150, 150,
                                 Qt.AspectRatioMode.KeepAspectRatio, 
                                 Qt.TransformationMode.SmoothTransformation)
         self.right_panel_image_placeholder.setPixmap(right_panel_image_scaled)
-        self.right_panel_description = QLabel(r"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum")
+        self.right_panel_description = QLabel(_DEFAULT_RIGHT_PANEL_DESCRIPTION)
         self.right_panel_description.setWordWrap(True)
 
         right_panel_body_layout.addWidget(self.right_panel_image_placeholder)
@@ -185,7 +193,7 @@ class AppWindow(QMainWindow):
 
         scene0_header = QWidget()
         scene0_header.setProperty('class', 'scene-header')
-        scene0_header_label = QLabel('Scene Header')
+        scene0_header_label = QLabel('ProjNet Tools')
         scene0_header_label.setProperty('class', 'header')
         scene0_header.setLayout(QHBoxLayout())
         scene0_header.layout().addWidget(scene0_header_label)
@@ -206,17 +214,17 @@ class AppWindow(QMainWindow):
             'DrX Review': {
                 'action': lambda: batch_create_reports(),
                 'image': './assets/drx_review.png',
-                'description': 'Process batch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments.'
+                'description': r"Process batch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments."
             },
             'Bidder RFI': {
                 'action': '',
-                'image': '',
-                'description': ''
+                'image': './assets/bidder_rfi.png',
+                'description': r"Process Bidder RFIs, exported as HTML files from ProjNet Bidder Module, into an RFI log used by JED and it's A/E consultants for planning bid rfi reponses and track amendments."
             },
             'JDG/JES Tracker': {
                 'action': '',
-                'image': '',
-                'description': ''
+                'image': './assets/jdg_tracker.png',
+                'description': r"Tool used by JED TS to summarize the Japan Design Guide (JDG) and Japan Edited Specifications (JES) suggested revisions. Similar to DrX Review, this tool processes XML reports, exporeted from ProjNet Dr Checks reviews, into a summary log."
             }
         }
 
@@ -236,7 +244,7 @@ class AppWindow(QMainWindow):
 
         scene1_header = QWidget()
         scene1_header.setProperty('class', 'scene-header')
-        scene1_header_label = QLabel('Scene Header')
+        scene1_header_label = QLabel('Library')
         scene1_header_label.setProperty('class', 'header')
         scene1_header.setLayout(QHBoxLayout())
         scene1_header.layout().addWidget(scene1_header_label)
@@ -254,23 +262,13 @@ class AppWindow(QMainWindow):
         scene1.setLayout(scene1_layout)
 
         scene1_tools = {
-            'DrX Review': {
-                'action': lambda: batch_create_reports(),
-                'image': './assets/Yagura Starfield.png',
-                'description': 'Here is a lengthy descriptions'
-            },
-            'Bidder RFI': {
-                'action': '',
+            'Button 1': {
+                'action': lambda: print('Test'),
                 'image': '',
                 'description': ''
             },
-            'JDG/JES Tracker': {
-                'action': '',
-                'image': '',
-                'description': ''
-            },
-            'Test': {
-                'action': '',
+            'Button 2': {
+                'action': lambda: print('Test'),
                 'image': '',
                 'description': ''
             }
@@ -306,7 +304,7 @@ class AppWindow(QMainWindow):
             if button_data['action']:
                 scene_buttons[i].clicked.connect(button_data['action'])
             else:                
-                pass
+                scene_buttons[i].setDisabled(True)
             scene_buttons[i].hovered.connect(lambda button_name=button_name, 
                                               image_path=button_data['image'], 
                                               description=button_data['description']: 
@@ -319,9 +317,9 @@ class AppWindow(QMainWindow):
 
 
     def update_right_panel(self,
-                           header:str='',
-                           image_path:str='',
-                           description:str=''):
+                           header:str=_DEFAULT_PANEL_PANEL_TITLE,
+                           image_path:str=_DEFAULT_RIGHT_PANEL_IMAGE,
+                           description:str=_DEFAULT_RIGHT_PANEL_DESCRIPTION):
         # Default settings will clear the right panel
         self.right_panel_header_label.setText(header)
         if image_path:
