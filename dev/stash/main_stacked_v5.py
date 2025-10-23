@@ -28,8 +28,6 @@ from digest_reports import batch_create_reports
 
 
 
-
-
 class AppWindow(QMainWindow):
     def __init__(self):
         super().__init__()

@@ -20,33 +20,27 @@ from PyQt6.QtWidgets import (QApplication,
                              QVBoxLayout,
                              QStackedLayout)
 from PyQt6.QtGui import QPixmap, QFont, QIcon
-from PyQt6.QtCore import Qt, QEvent
+from PyQt6.QtCore import Qt, QEvent, pyqtSignal
 
 
-from dxcore.dxcolor import WebColor
 from dxgui.spacers import VSpacer, HSpacer
-from dxgui.panel import Panel
 from digest_reports import batch_create_reports
 
 
-_TYPICAL_SPACING = 12
-_OUTER_MARGINS = (0, 0, 0, 0)
-_INNER_MARGINS = (6, 6, 6, 6)
-_SPACING = 12
-
-
 class HoverButton(QPushButton):
-    def __init__(self, text, parent=None):
-        super().__init__(text, parent)
+    hovered = pyqtSignal()
+    unhovered = pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setMouseTracking(True)
 
     def enterEvent(self, event: QEvent):
-        """Called when the mouse cursor enters the widget."""
-        # print(f"Mouse entered {self.text()} button!")
+        self.hovered.emit()
         super().enterEvent(event)
 
     def leaveEvent(self, event: QEvent):
-        """Called when the mouse cursor leaves the widget."""
-        # print(f"Mouse left {self.text()} button!")
+        self.unhovered.emit()
         super().leaveEvent(event)
 
 
@@ -146,11 +140,11 @@ class AppWindow(QMainWindow):
 
         right_panel_header = QWidget()
         right_panel_header.setProperty('class', 'right-panel-header')
-        right_panel_header_label = QLabel('Right Panel Header')
-        right_panel_header_label.setProperty('class', 'header')
-        right_panel_header_label.setText('Hello World')
+        self.right_panel_header_label = QLabel('Right Panel Header')
+        self.right_panel_header_label.setProperty('class', 'header')
+        self.right_panel_header_label.setText('Hello World')
         right_panel_header.setLayout(QHBoxLayout())
-        right_panel_header.layout().addWidget(right_panel_header_label)
+        right_panel_header.layout().addWidget(self.right_panel_header_label)
 
         right_panel_body = QWidget()
         right_panel_body.setProperty('class', 'right-panel-body')
@@ -159,26 +153,24 @@ class AppWindow(QMainWindow):
         right_panel_body_layout.setSpacing(12)  
         right_panel_body.setLayout(right_panel_body_layout)
 
-        right_panel_image_placeholder = QLabel()
-        right_panel_image_placeholder.setMaximumHeight(150)
-        right_panel_image_placeholder.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        right_panel_image = QPixmap('./assets/yagura sunrays.png')
-        right_panel_image_scaled = right_panel_image.scaled(150, 150,
+        self.right_panel_image_placeholder = QLabel()
+        self.right_panel_image_placeholder.setMaximumHeight(150)
+        self.right_panel_image_placeholder.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.right_panel_image = QPixmap('./assets/yagura sunrays.png')
+        right_panel_image_scaled = self.right_panel_image.scaled(150, 150,
                                 Qt.AspectRatioMode.KeepAspectRatio, 
                                 Qt.TransformationMode.SmoothTransformation)
-        right_panel_image_placeholder.setPixmap(right_panel_image_scaled)
-        right_panel_description = QLabel(r"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum")
-        right_panel_description.setWordWrap(True)
+        self.right_panel_image_placeholder.setPixmap(right_panel_image_scaled)
+        self.right_panel_description = QLabel(r"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum")
+        self.right_panel_description.setWordWrap(True)
 
-        right_panel_body_layout.addWidget(right_panel_image_placeholder)
-        right_panel_body_layout.addWidget(right_panel_description)
+        right_panel_body_layout.addWidget(self.right_panel_image_placeholder)
+        right_panel_body_layout.addWidget(self.right_panel_description)
 
         right_panel_layout.addWidget(right_panel_header)
         right_panel_layout.addWidget(right_panel_body)
         right_panel_layout.addSpacerItem(VSpacer())
         right_panel.setLayout(right_panel_layout)
-
-
 
 
 
@@ -210,30 +202,49 @@ class AppWindow(QMainWindow):
         scene0_layout.addSpacerItem(VSpacer())
         scene0.setLayout(scene0_layout)
 
-        # btns = []
+        scene0_tools = {
+            'DrX Review': {
+                'action': lambda: batch_create_reports(),
+                'image': './assets/Yagura Starfield.png',
+                'description': 'Here is a lengthy descriptions'
+            },
+            'Bidder RFI': {
+                'action': '',
+                'image': '',
+                'description': ''
+            },
+            'JDG/JES Tracker': {
+                'action': '',
+                'image': '',
+                'description': ''
+            },
+            'Test': {
+                'action': '',
+                'image': '',
+                'description': ''
+            }
+        }
 
-        # for i in range(8):
-        #     btn = QPushButton(f'Button {i + 1}')
-        #     btn.setProperty('class', 'scene-button')
-        #     btns.append(btn)
-        #     scene0_body_layout.addWidget(btn, i // 3, i % 3)
-
-        # for btn in btns:
-        #     btn.setMouseTracking(True)
-        #     btn.clicked.connect(lambda: print(f'Button {i + 1} clicked'))
-        #     # btn.enterEvent(
-        #     #     right_panel_header_label.setText(f'Button {i + 1} Data')
-        #     # )
-        #     # btn.leaveEvent(
-        #     #     right_panel_header_label.setText(f'')
-        #     # )
-
+        scene0_buttons = []
+        for i, (button_name, button_data) in enumerate(scene0_tools.items()):
+            scene0_buttons.append(HoverButton(button_name))
+            scene0_buttons[i].setProperty('class', 'scene-button')
+            if button_data['action']:
+                scene0_buttons[i].clicked.connect(button_data['action'])
+            else:                
+                pass
+            scene0_buttons[i].hovered.connect(lambda button_name=button_name, 
+                                              image_path=button_data['image'], 
+                                              description=button_data['description']: 
+                                              self.update_right_panel(header=button_name, 
+                                                                        image_path=image_path, 
+                                                                        description=description))
+            scene0_buttons[i].unhovered.connect(lambda: self.update_right_panel())
+            scene0_body_layout.addWidget(scene0_buttons[i], i // 3, i % 3)
 
 
 
         stage_layout.addWidget(scene0)
-
-
     
         # Finish layout creation
         main_layout.addWidget(left_panel)
@@ -243,8 +254,29 @@ class AppWindow(QMainWindow):
         main.setLayout(main_layout)
         self.setCentralWidget(main)
 
+    def create_button(self, button_name:str, button_data:tuple) -> HoverButton:
 
+        pass
 
+    def update_right_panel(self,
+                           header:str='',
+                           image_path:str='',
+                           description:str=''):
+        # Default settings will clear the right panel
+        self.right_panel_header_label.setText(header)
+        if image_path:
+            try:
+                temp_image = QPixmap(image_path)
+                temp_scaled = temp_image.scaled(150, 150,
+                                    Qt.AspectRatioMode.KeepAspectRatio, 
+                                    Qt.TransformationMode.SmoothTransformation)
+                self.right_panel_image_placeholder = QLabel()
+                self.right_panel_image_placeholder.setPixmap(temp_scaled)
+            except Exception as e:
+                print(e)
+        else:
+            self.right_panel_image_placeholder = QLabel()
+        self.right_panel_description.setText(description)
 
 
 
