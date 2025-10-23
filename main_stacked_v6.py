@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (QApplication,
                              QWidget,
                              QLabel,
                              QPushButton,
+                             QFrame,
                              QSpacerItem,
                              QSizePolicy,
                              QGridLayout,
@@ -22,9 +23,9 @@ from PyQt6.QtWidgets import (QApplication,
 from PyQt6.QtGui import QPixmap, QFont, QIcon, QGuiApplication
 from PyQt6.QtCore import Qt, QEvent, pyqtSignal
 
-
 from dxgui.spacers import VSpacer, HSpacer
 from digest_reports import batch_create_reports
+from dxmail import open_default_email
 
 _VERSION = '0.0.3a'
 
@@ -89,7 +90,7 @@ class AppWindow(QMainWindow):
 
         left_panel_header = QWidget()
         left_panel_header.setProperty('class', 'left-panel-header')
-        left_panel_header_label = QLabel('Left Panel Header')
+        left_panel_header_label = QLabel('Modules')
         left_panel_header_label.setProperty('class', 'header')
         left_panel_header.setLayout(QHBoxLayout())
         left_panel_header.layout().addWidget(left_panel_header_label)
@@ -103,9 +104,12 @@ class AppWindow(QMainWindow):
 
         left_panel_buttons = {
             'Tools': lambda: stage_layout.setCurrentIndex(0),
-            'Resources': lambda: stage_layout.setCurrentIndex(1),
-            'Documentation': '',
-            'About': ''
+            'Links': lambda: stage_layout.setCurrentIndex(1),
+            'Help': '',
+            'Suggestions?': lambda: open_default_email(to_list=['benstanfish@gmail.com', 'benjamin.s.fisher@usace.army.mil'], 
+                                                       cc_list=None, 
+                                                       subject=f'DXR App v{_VERSION} Suggestion/Issue', 
+                                                       body=f'Hi Ben\n\nI have a suggestion or issue regarding the DXR App v{_VERSION}:\n\n')
         }
 
         for i, (button_name, button_action) in enumerate(left_panel_buttons.items()):
@@ -122,7 +126,6 @@ class AppWindow(QMainWindow):
         left_panel.setLayout(left_panel_layout)
             
 
-
         # The stage is the stacked layout widget that will host all the content layouts ('scenes')
         stage = QWidget()
         stage.setProperty('class', 'stage')
@@ -133,9 +136,6 @@ class AppWindow(QMainWindow):
 
 
         # Create a right panel bar
-
-
-
         right_panel = QWidget()
         right_panel.setProperty('class', 'right-panel')
         right_panel.setContentsMargins(0, 0, 0, 0)
@@ -182,6 +182,9 @@ class AppWindow(QMainWindow):
         right_panel.setLayout(right_panel_layout)
 
 
+
+        
+
         scene0 = QWidget()
         scene0.setProperty('class', 'scene')
         scene0.setContentsMargins(0, 0, 0, 0)
@@ -193,7 +196,7 @@ class AppWindow(QMainWindow):
 
         scene0_header = QWidget()
         scene0_header.setProperty('class', 'scene-header')
-        scene0_header_label = QLabel('ProjNet Tools')
+        scene0_header_label = QLabel(list(left_panel_buttons.keys())[0])
         scene0_header_label.setProperty('class', 'header')
         scene0_header.setLayout(QHBoxLayout())
         scene0_header.layout().addWidget(scene0_header_label)
@@ -202,6 +205,8 @@ class AppWindow(QMainWindow):
         scene0_body.setProperty('class', 'scene-body')
         scene0_body.setContentsMargins(0, 0, 0, 0)
         scene0_body_layout = QGridLayout()
+        for i in range(3):
+            scene0_body_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum), 0, i)
         scene0_body_layout.setSpacing(12)  
         scene0_body.setLayout(scene0_body_layout)
 
@@ -214,22 +219,38 @@ class AppWindow(QMainWindow):
             'DrX Review': {
                 'action': lambda: batch_create_reports(),
                 'image': './assets/drx_review.png',
-                'description': r"Process batch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments."
+                'description': r"Process batch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments.",
+                'position': (0, 0, 1, 1)
             },
             'Bidder RFI': {
                 'action': '',
                 'image': './assets/bidder_rfi.png',
-                'description': r"Process Bidder RFIs, exported as HTML files from ProjNet Bidder Module, into an RFI log used by JED and it's A/E consultants for planning bid rfi reponses and track amendments."
+                'description': r"Process Bidder RFIs, exported as HTML files from ProjNet Bidder Module, into an RFI log used by JED and it's A/E consultants for planning bid rfi reponses and track amendments.",
+                'position': (0, 1, 1, 1)
             },
             'JDG/JES Tracker': {
                 'action': '',
                 'image': './assets/jdg_tracker.png',
-                'description': r"Tool used by JED TS to summarize the Japan Design Guide (JDG) and Japan Edited Specifications (JES) suggested revisions. Similar to DrX Review, this tool processes XML reports, exporeted from ProjNet Dr Checks reviews, into a summary log."
+                'description': r"Tool used by JED TS to summarize the Japan Design Guide (JDG) and Japan Edited Specifications (JES) suggested revisions. Similar to DrX Review, this tool processes XML reports, exporeted from ProjNet Dr Checks reviews, into a summary log.",
+                'position': (0, 2, 1, 1)
+            },
+            'ProjNet Login': {
+                'action': lambda: self.open_webpage(url=r'https://projnet.org/projnet/binKornHome/index.cfm'),
+                'image': './assets/projnet.png',
+                'description': 'Link to the main login page for ProjNet, home to Dr Checks, Bidder Inquiry and other tools. New users can register a new account, or use a Quick-Access Key (provided by their ProjNet review manager) to access the tools from this page.',
+                'position': (1, 0, 1, 1)
+            },
+            'Japanese Industry Database': {
+                'action': '',
+                'image': '',
+                'description': r"",
+                'position': (3, 0, 1, 1)
             }
         }
 
         self.create_scene_buttons(scene_body_layout=scene0_body_layout,
                                   scene_tools=scene0_tools)
+
 
 
 
@@ -244,7 +265,7 @@ class AppWindow(QMainWindow):
 
         scene1_header = QWidget()
         scene1_header.setProperty('class', 'scene-header')
-        scene1_header_label = QLabel('Library')
+        scene1_header_label = QLabel(list(left_panel_buttons.keys())[1])
         scene1_header_label.setProperty('class', 'header')
         scene1_header.setLayout(QHBoxLayout())
         scene1_header.layout().addWidget(scene1_header_label)
@@ -253,6 +274,8 @@ class AppWindow(QMainWindow):
         scene1_body.setProperty('class', 'scene-body')
         scene1_body.setContentsMargins(0, 0, 0, 0)
         scene1_body_layout = QGridLayout()
+        for i in range(3):
+            scene1_body_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum), 0, i)
         scene1_body_layout.setSpacing(12)  
         scene1_body.setLayout(scene1_body_layout)
 
@@ -262,25 +285,40 @@ class AppWindow(QMainWindow):
         scene1.setLayout(scene1_layout)
 
         scene1_tools = {
-            'Button 1': {
-                'action': lambda: print('Test'),
-                'image': '',
-                'description': ''
+            'JED Resources': {
+                'action': lambda: self.open_webpage(url=r'https://www.poj.usace.army.mil/Business-With-Us/References/'),
+                'image': './assets/jed_webpage.png',
+                'description': r"A link to the USACE Japan Engineer District resources webpage. Use this link to access the most current versions of the Japan Edited Specifications, Japan District Design Guide, Japan District Cost Estimating Guide, etc.",
+                'position': (0, 0, 1, 1)
             },
-            'Button 2': {
-                'action': lambda: print('Test'),
-                'image': '',
-                'description': ''
+            'UFC/UFGS' : {
+                'action': lambda: self.open_webpage(url=r'https://www.wbdg.org/dod'),
+                'image': './assets/wbdg.png',
+                'description': 'Link to the DoD Unified Facilities Criteria Program resources on Whole Building Design Guide (WBDG), which includes current and past UFCs as well as UFGS specifications and other facilities criteria documents.',
+                'position': (2, 0, 1, 1)
+            },
+            'ICC Codes' : {
+                'action': lambda: self.open_webpage(url=r'https://codes.iccsafe.org/'),
+                'image': './assets/icc.png',
+                'description': 'Link Internation Code Council (ICC) website of online i-code documents, included the IBC, IEBC, IFC, IMC, IPC, IgCC, etc.',
+                'position': (2, 1, 1, 1)
+            },
+            'MLIT (EN)' : {
+                'action': lambda: self.open_webpage(url=r'https://www.mlit.go.jp/en/'),
+                'image': './assets/mlit_en.png',
+                'description': 'Link the the English language version of the Ministry if Land, Infrastructure, Transport and Tourism (MLIT).',
+                'position': (3, 0, 1, 1)
+            },
+            'MLIT (JP)' : {
+                'action': lambda: self.open_webpage(url=r'https://www.mlit.go.jp/en/'),
+                'image': './assets/mlit_jp.png',
+                'description': 'Link the the Japanese language version of the Ministry if Land, Infrastructure, Transport and Tourism (MLIT).',
+                'position': (3, 1, 1, 1)
             }
         }
 
         self.create_scene_buttons(scene_body_layout=scene1_body_layout,
                                   scene_tools=scene1_tools)
-
-
-
-
-
 
 
         stage_layout.addWidget(scene0)
@@ -312,7 +350,11 @@ class AppWindow(QMainWindow):
                                                                         image_path=image_path, 
                                                                         description=description))
             scene_buttons[i].unhovered.connect(lambda: self.update_right_panel())
-            scene_body_layout.addWidget(scene_buttons[i], i // 3, i % 3) 
+            if button_data['position']:
+                (row, column, row_span, column_span) = button_data['position']
+                scene_body_layout.addWidget(scene_buttons[i], row, column, row_span, column_span) 
+            else:
+                scene_body_layout.addWidget(scene_buttons[i], i // 3, i % 3) 
 
 
 
@@ -335,6 +377,13 @@ class AppWindow(QMainWindow):
             self.right_panel_image_placeholder.setPixmap(QPixmap())
         self.right_panel_description.setText(description)
 
+
+    def open_webpage(self, url=r'https://www.poj.usace.army.mil/Business-With-Us/References/'):
+        """
+        Function to open the specified URL in the default web browser.
+        """
+        webbrowser.open(url)
+        # self.status_bar.showMessage(f'Opening url: {url}')
 
 
 

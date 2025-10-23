@@ -6,4 +6,5 @@ import dxconfig
 import dxcore
 import dxgui
 import dxreport
+import dxmail
 

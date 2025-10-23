@@ -1,0 +1,1 @@
+from .emailto import open_default_email
