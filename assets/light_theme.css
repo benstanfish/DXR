@@ -1,0 +1,28 @@
+QPushButton {
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+
+.scene {
+    background: yellow;
+    border-right: 1px solid #ccc;
+}
+
+.scene-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+.scene-button {
+    background-color: #4CAF50;
+    color: white;
+}
+.scene-button:hover {
+    background-color: #45a049;
+}
+
+QWidget#panel {
+    background: red;
+}

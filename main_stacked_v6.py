@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import (QApplication,
                              QHBoxLayout,
                              QVBoxLayout,
                              QStackedLayout)
-from PyQt6.QtGui import QPixmap, QFont, QIcon
+from PyQt6.QtGui import QPixmap, QFont, QIcon, QGuiApplication
 from PyQt6.QtCore import Qt, QEvent, pyqtSignal
 
 
@@ -96,9 +96,11 @@ class AppWindow(QMainWindow):
         left_panel_body.setLayout(left_panel_body_layout)
 
         left_panel_buttons = {
-            'Review Tools': lambda: print('Hello World'),
-            'Library': lambda: print('test two'),
-            'Resources': ''
+            'ProjNet Tools': lambda: stage_layout.setCurrentIndex(0),
+            'Library': lambda: stage_layout.setCurrentIndex(1),
+            'Links': '',
+            'Documentation': '',
+            'Suggestions?': ''
         }
 
         for i, (button_name, button_action) in enumerate(left_panel_buttons.items()):
@@ -203,8 +205,8 @@ class AppWindow(QMainWindow):
         scene0_tools = {
             'DrX Review': {
                 'action': lambda: batch_create_reports(),
-                'image': './assets/Yagura Starfield.png',
-                'description': 'Here is a lengthy descriptions'
+                'image': './assets/drx_review.png',
+                'description': 'Process batch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments.'
             },
             'Bidder RFI': {
                 'action': '',
@@ -223,7 +225,59 @@ class AppWindow(QMainWindow):
 
 
 
+        scene1 = QWidget()
+        scene1.setProperty('class', 'scene')
+        scene1.setContentsMargins(0, 0, 0, 0)
 
+        scene1_layout = QVBoxLayout()
+        scene1_layout.setProperty('class', 'scene-layout')
+        scene1_layout.setContentsMargins(0, 0, 0, 0)
+        scene1_layout.setSpacing(12)
+
+        scene1_header = QWidget()
+        scene1_header.setProperty('class', 'scene-header')
+        scene1_header_label = QLabel('Scene Header')
+        scene1_header_label.setProperty('class', 'header')
+        scene1_header.setLayout(QHBoxLayout())
+        scene1_header.layout().addWidget(scene1_header_label)
+
+        scene1_body = QWidget()
+        scene1_body.setProperty('class', 'scene-body')
+        scene1_body.setContentsMargins(0, 0, 0, 0)
+        scene1_body_layout = QGridLayout()
+        scene1_body_layout.setSpacing(12)  
+        scene1_body.setLayout(scene1_body_layout)
+
+        scene1_layout.addWidget(scene1_header)
+        scene1_layout.addWidget(scene1_body)
+        scene1_layout.addSpacerItem(VSpacer())
+        scene1.setLayout(scene1_layout)
+
+        scene1_tools = {
+            'DrX Review': {
+                'action': lambda: batch_create_reports(),
+                'image': './assets/Yagura Starfield.png',
+                'description': 'Here is a lengthy descriptions'
+            },
+            'Bidder RFI': {
+                'action': '',
+                'image': '',
+                'description': ''
+            },
+            'JDG/JES Tracker': {
+                'action': '',
+                'image': '',
+                'description': ''
+            },
+            'Test': {
+                'action': '',
+                'image': '',
+                'description': ''
+            }
+        }
+
+        self.create_scene_buttons(scene_body_layout=scene1_body_layout,
+                                  scene_tools=scene1_tools)
 
 
 
@@ -232,6 +286,7 @@ class AppWindow(QMainWindow):
 
 
         stage_layout.addWidget(scene0)
+        stage_layout.addWidget(scene1)
     
         # Finish layout creation
         main_layout.addWidget(left_panel)
@@ -288,8 +343,14 @@ class AppWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    with open('./dxgui/styles.css') as file:
-        styles = file.read()
+    style_hints = QGuiApplication.styleHints()
+    color_scheme = style_hints.colorScheme()
+    if color_scheme == Qt.ColorScheme.Dark:
+        with open('./dxgui/dark_theme.css') as file:
+            styles = file.read()
+    else:
+        with open('./dxgui/light_theme.css') as file:
+            styles = file.read()
     app.setStyleSheet(styles)
 
 
