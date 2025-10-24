@@ -1,14 +1,7 @@
-/* QWidget {border: 1px solid tomato;} */
-
-/* .central-widget {background: rgb(0, 46, 6);}
-.panel {background: rgb(70, 63, 0);}
-.stage{background: rgb(8, 0, 83);}
-.profile {background: rgb(70, 7, 0);} */
-
 QPushButton {
     font-weight: bold;
 
-    padding: 8px;
+    padding: 12px;
     border-radius: 16px;
 
     background: qlineargradient(
@@ -24,6 +17,10 @@ QPushButton:hover {
 
 QPushButton:disabled {
     background: #555;
+}
+
+#exit_button {
+    margin: 10px;
 }
 
 .scene-button {
@@ -43,20 +40,36 @@ QPushButton:disabled {
     border-radius: 6px;
 }   
 
-.left-panel,
+.left-panel {
+    background: #333;
+    border: none;
+    border-radius: 12px;
+}
+
 .right-panel {
-    background: #777;
-    border: 1px solid #666;
+    background: #555;
+    border: none;
     border-radius: 12px;
 }
 
 .left-panel-header,
 .right-panel-header,
 .scene-header {
-    background: #555;
-    border-bottom: 1px solid #666;
+    border-bottom: none;
     border-radius: 12px;
     padding: 4px;
+}
+
+.left-panel-header {
+    background: #333;
+}
+
+.scene-header {
+    background: #222;
+}
+
+.right-panel-header {
+    background: #555;
 }
 
 .scene {
@@ -67,6 +80,10 @@ QPushButton:disabled {
 
 .header {
     font-size: 14px;
+    font-weight: bold;
+}
+
+.section-header {
     font-weight: bold;
 }
 
