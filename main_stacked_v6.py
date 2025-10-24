@@ -28,10 +28,19 @@ from dxmail import open_default_email
 
 _VERSION = '0.0.3a'
 
+def get_rsx_path(relative_path: str) -> str:
+    try:
+        base_path = sys._MEIPASS
+    except Exception as e:
+        base_path = os.path.abspath('.')
+    return os.path.join(base_path, relative_path)    
+
+
 _ICON = './assets/Yagura Sunrays.png'
 _DEFAULT_PANEL_PANEL_TITLE = 'Tool Explorer'
 _DEFAULT_RIGHT_PANEL_IMAGE = './assets/Yagura Starfield.png'
 _DEFAULT_RIGHT_PANEL_DESCRIPTION = r"Hover the mouse over a tool button to display an explanation of it's functionality."
+
 
 class HoverButton(QPushButton):
     hovered = pyqtSignal()
@@ -457,15 +466,13 @@ if __name__ == "__main__":
     style_hints = QGuiApplication.styleHints()
     color_scheme = style_hints.colorScheme()
     if color_scheme == Qt.ColorScheme.Dark:
-        with open('./dxgui/dark_theme.css') as file:
+        with open('./assets/dark_theme.css') as file:
             styles = file.read()
     else:
-        with open('./dxgui/light_theme.css') as file:
+        with open('./assets/light_theme.css') as file:
             styles = file.read()
     app.setStyleSheet(styles)
 
-
     window = AppWindow()
     window.show()
-    window.status_bar.showMessage('Select a Tool')
     app.exec()
