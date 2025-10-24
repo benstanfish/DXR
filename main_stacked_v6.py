@@ -472,10 +472,10 @@ if __name__ == "__main__":
     style_hints = QGuiApplication.styleHints()
     color_scheme = style_hints.colorScheme()
     if color_scheme == Qt.ColorScheme.Dark:
-        with open('./assets/dark_theme.css') as file:
+        with open('./dxgui/dark_theme.css') as file:
             styles = file.read()
     else:
-        with open('./assets/light_theme.css') as file:
+        with open('./dxgui/light_theme.css') as file:
             styles = file.read()
     app.setStyleSheet(styles)
 
