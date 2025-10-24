@@ -13,14 +13,13 @@ from PyQt6.QtWidgets import (QApplication,
                              QWidget,
                              QLabel,
                              QPushButton,
-                             QFrame,
                              QSpacerItem,
                              QSizePolicy,
                              QGridLayout,
                              QHBoxLayout,
                              QVBoxLayout,
                              QStackedLayout)
-from PyQt6.QtGui import QPixmap, QFont, QIcon, QGuiApplication
+from PyQt6.QtGui import QPixmap, QIcon, QGuiApplication
 from PyQt6.QtCore import Qt, QEvent, pyqtSignal
 
 from dxgui.spacers import VSpacer, HSpacer
@@ -66,6 +65,7 @@ class AppWindow(QMainWindow):
         self.setWindowIcon(QIcon(_ICON))
 
         # Create Central Widget to serve as the main widget for the application.
+
         main = QWidget()
         main.setProperty("class", "main-widget")
         main.setContentsMargins(0, 0, 0, 0)
@@ -127,6 +127,7 @@ class AppWindow(QMainWindow):
             
 
         # The stage is the stacked layout widget that will host all the content layouts ('scenes')
+
         stage = QWidget()
         stage.setProperty('class', 'stage')
         stage.setContentsMargins(0, 0, 0, 0)
@@ -136,6 +137,7 @@ class AppWindow(QMainWindow):
 
 
         # Create a right panel bar
+        
         right_panel = QWidget()
         right_panel.setProperty('class', 'right-panel')
         right_panel.setContentsMargins(0, 0, 0, 0)
@@ -250,8 +252,6 @@ class AppWindow(QMainWindow):
 
         self.create_scene_buttons(scene_body_layout=scene0_body_layout,
                                   scene_tools=scene0_tools)
-
-
 
 
         scene1 = QWidget()

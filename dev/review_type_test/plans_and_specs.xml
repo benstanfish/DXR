@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+		<ProjNet>
+			<DrChecks>
+				<ProjectID>70802</ProjectID>
+				<ProjectControlNbr>515796</ProjectControlNbr>
+				<ProjectName>FY26 H2406 Repair Whole House Building 1255, Iwakuni</ProjectName>
+				<ReviewID>257216</ReviewID>
+				<ReviewName>Backcheck RFP</ReviewName>
+			</DrChecks>
+			
+			<Comments>
+					<comment>
+						<id>11580203</id>
+						<spec>Spec Section</spec>
+						<sheet>Plan Sheet</sheet>
+						<detail>Plan Detail</detail>
+						<critical>No</critical>
+						<commentText>This review is only intended to provide review docs for reviewers to close out comments.</commentText>
+						<attachment></attachment>
+						<DocRef>Doc Ref Number</DocRef>
+						<createdBy>Benjamin Fisher</createdBy>
+						<createdOn>Oct 24 2025 09:21 AM</createdOn>
+						<status>Open</status>
+						<Discipline>Project Management</Discipline>
+						<DocType>Plans and Specs</DocType>
+						<CoordinatingDiscipline>Project Management</CoordinatingDiscipline>
+
+						<evaluations>
+							
+						</evaluations>
+						
+						<backchecks>
+							
+						</backchecks>
+					</comment>
+				
+			</Comments>
+		</ProjNet>
+		

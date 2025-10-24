@@ -302,6 +302,7 @@ class ReviewComments(Frameable, Parseable):
         self.frames['comments_header'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=1, max_row=1)
         self.frames['comments_body'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=2, max_row=self.count + 1)
 
+        
         from dxbuild.variables import INDEXED_COMMENT_COLUMNS
         self.frames['id_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['id'], max_col=INDEXED_COMMENT_COLUMNS['id'], min_row=2, max_row=self.count + 1)
         self.frames['status_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['status'], max_col=INDEXED_COMMENT_COLUMNS['status'], min_row=2, max_row=self.count + 1)

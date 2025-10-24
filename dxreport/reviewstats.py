@@ -204,13 +204,18 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     bic_commentor_dic = {}
     
     byDiscipline = False
+    
     if byDiscipline:
         for discipline in open_by_discipline_commentor:
             bic_commentor_dic[discipline] = list(set([comment.id for comment in review.review_comments.comments if comment.discipline == discipline and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))       
+            if len(bic_commentor_dic[discipline]) == 0:
+                del bic_commentor_dic[discipline]
     else:
         for commentor in reviewer_open_comments_dict:
             bic_commentor_dic[commentor] = list(set([comment.id for comment in review.review_comments.comments if comment.author == commentor and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
-       
+            if len(bic_commentor_dic[commentor]) == 0:
+                del bic_commentor_dic[commentor]
+            
 
     ball_in_court_commentor_anchor = ws_stats[project_header_anchor.coord].offset(
         row=len(project_header) + _PADDING_OFFSET + 
@@ -256,7 +261,6 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
         ws_stats[project_header_anchor.coord].offset(row=i, column=0).font = Font(name='Aptos Narrow', sz=10, bold=True)
         if i == 4:
             ws_stats[project_header_anchor.coord].offset(row=i, column=1).font = Font(name='Aptos Narrow', sz=12, bold=True)
-
 
     # Format the headers of each overall regions
     def create_formatting_regions(initial_anchor: str, region_width: int) -> str:

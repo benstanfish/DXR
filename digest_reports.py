@@ -41,7 +41,6 @@ def batch_create_reports() -> str | bool:
         filter='XML Files (*.xml);;HTML Files (*.html);;All Files (*)'
     )
 
-
     # Check to see if the user selected any files or cancelled the file select dialog.
     if len(xml_paths) > 0:
         for i, xml_path in enumerate(xml_paths):
