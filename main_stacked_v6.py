@@ -36,7 +36,7 @@ def get_rsx_path(relative_path: str) -> str:
     return os.path.join(base_path, relative_path)    
 
 
-_ICON = './assets/Yagura Sunrays.png'
+_ICON = get_rsx_path('./assets/Yagura Sunrays.png')
 _DEFAULT_PANEL_PANEL_TITLE = 'Tool Explorer'
 _DEFAULT_RIGHT_PANEL_IMAGE = './assets/Yagura Starfield.png'
 _DEFAULT_RIGHT_PANEL_DESCRIPTION = r"Hover the mouse over a tool button to display an explanation of it's functionality."
@@ -331,6 +331,12 @@ class AppWindow(QMainWindow):
                 'description': r"A link to the USACE Japan Engineer District resources webpage. Use this link to access the most current versions of the Japan Edited Specifications, Japan District Design Guide, Japan District Cost Estimating Guide, etc.",
                 'position': (0, 0, 1, 1)
             },
+            'ProjNet Login': {
+                'action': lambda: self.open_webpage(url=r'https://projnet.org/projnet/binKornHome/index.cfm'),
+                'image': './assets/projnet.png',
+                'description': 'Link to the main login page for ProjNet, home to Dr Checks, Bidder Inquiry and other tools. New users can register a new account, or use a Quick-Access Key (provided by their ProjNet review manager) to access the tools from this page.',
+                'position': (1, 0, 1, 1)
+            },
             'UFC/UFGS' : {
                 'action': lambda: self.open_webpage(url=r'https://www.wbdg.org/dod'),
                 'image': './assets/wbdg.png',
@@ -374,7 +380,7 @@ class AppWindow(QMainWindow):
         scene1_body_layout.addWidget(usg_link_section, 0, 0, 1, 2)
         scene1_body_layout.addWidget(scene1_buttons['JED Resources'], 1, 0)
         scene1_body_layout.addWidget(scene1_buttons['ERDC Library'], 1, 1)
-        scene1_body_layout.addWidget(scene0_buttons['ProjNet Login'], 1, 2)
+        scene1_body_layout.addWidget(scene1_buttons['ProjNet Login'], 1, 2)
 
         us_design_header = QLabel('US Design Links')
         us_design_header.setProperty('class', 'section-header')
@@ -437,7 +443,7 @@ class AppWindow(QMainWindow):
         self.right_panel_header_label.setText(header)
         if image_path:
             try:
-                temp_image = QPixmap(image_path)
+                temp_image = QPixmap(get_rsx_path(image_path))
                 temp_scaled = temp_image.scaled(150, 150,
                                     Qt.AspectRatioMode.KeepAspectRatio, 
                                     Qt.TransformationMode.SmoothTransformation)
