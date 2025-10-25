@@ -1,4 +1,4 @@
-
+dark_theme = """
 QPushButton {
     font-weight: bold;
 
@@ -89,3 +89,4 @@ QPushButton:disabled {
 }
 
 
+"""

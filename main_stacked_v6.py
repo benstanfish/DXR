@@ -22,6 +22,8 @@ from PyQt6.QtWidgets import (QApplication,
 from PyQt6.QtGui import QPixmap, QIcon, QGuiApplication
 from PyQt6.QtCore import Qt, QEvent, pyqtSignal
 
+from dxgui.dark import dark_theme
+from dxgui.light import light_theme
 from dxgui.spacers import VSpacer, HSpacer
 from digest_reports import batch_create_reports
 from dxmail import open_default_email
@@ -38,7 +40,7 @@ def get_rsx_path(relative_path: str) -> str:
 
 _ICON = get_rsx_path('./assets/Yagura Sunrays.png')
 _DEFAULT_PANEL_PANEL_TITLE = 'Tool Explorer'
-_DEFAULT_RIGHT_PANEL_IMAGE = './assets/Yagura Starfield.png'
+_DEFAULT_RIGHT_PANEL_IMAGE = get_rsx_path('./assets/Yagura Starfield.png')
 _DEFAULT_RIGHT_PANEL_DESCRIPTION = r"Hover the mouse over a tool button to display an explanation of it's functionality."
 
 
@@ -62,8 +64,9 @@ class HoverButton(QPushButton):
 class AppWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        # self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        # self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setWindowTitle(f"DXR Tools {_VERSION}")
-        self.setWindowIcon(QIcon(_ICON))
         
         self.status_bar = self.statusBar()
         self.status_bar.showMessage(f'Welcome to DXR Tools v{_VERSION}')
@@ -472,11 +475,13 @@ if __name__ == "__main__":
     style_hints = QGuiApplication.styleHints()
     color_scheme = style_hints.colorScheme()
     if color_scheme == Qt.ColorScheme.Dark:
-        with open('./dxgui/dark_theme.css') as file:
-            styles = file.read()
+        styles = dark_theme
+        # with open('./dxgui/dark_theme.css') as file:
+        #     styles = file.read()
     else:
-        with open('./dxgui/light_theme.css') as file:
-            styles = file.read()
+        styles = light_theme
+        # with open('./dxgui/light_theme.css') as file:
+        #     styles = file.read()
     app.setStyleSheet(styles)
 
     window = AppWindow()

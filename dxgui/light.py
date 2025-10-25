@@ -1,7 +1,8 @@
+light_theme = """
 
 QPushButton {
     font-weight: bold;
-
+    color: white;
     padding: 12px;
     border-radius: 16px;
 
@@ -17,7 +18,7 @@ QPushButton:hover {
 }
 
 QPushButton:disabled {
-    background: #555;
+    background: #aaa;
 }
 
 #exit_button {
@@ -42,13 +43,13 @@ QPushButton:disabled {
 }   
 
 .left-panel {
-    background: #333;
+    background: #ccc;
     border: none;
     border-radius: 12px;
 }
 
 .right-panel {
-    background: #555;
+    background: #aaa;
     border: none;
     border-radius: 12px;
 }
@@ -62,19 +63,19 @@ QPushButton:disabled {
 }
 
 .left-panel-header {
-    background: #333;
+    background: #ccc;
 }
 
 .scene-header {
-    background: #222;
+    background: #ddd;
 }
 
 .right-panel-header {
-    background: #555;
+    background: #aaa;
 }
 
 .scene {
-    background: #444;
+    background: #bbb;
 
     border-radius: 12px;
 }
@@ -88,4 +89,4 @@ QPushButton:disabled {
     font-weight: bold;
 }
 
-
+"""
