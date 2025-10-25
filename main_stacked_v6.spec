@@ -5,7 +5,7 @@ a = Analysis(
     ['main_stacked_v6.py'],
     pathex=['C:\\Users\\benst\\Documents\\Workspace\\DXR'],
     binaries=[],
-    datas=[('C:\\Users\\benst\\Documents\\Workspace\\DXR\\assets\\projnet.png', '.'), ('C:\\Users\\benst\\Documents\\Workspace\\DXR\\assets\\drx_review.png', '.')],
+    datas=[('C:\\Users\\benst\\Documents\\Workspace\\DXR\\assets', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
