@@ -10,19 +10,19 @@ from openpyxl.worksheet.cell_range import CellRange
 
 from dxbuild.reviews import Review
 import dxbuild.buildtools as buildtools
-from dxbuild.constants import RESPONSE_COLUMNS, USER_NOTES_COLUMNS
+from dxbuild.variables import RESPONSE_COLUMNS, USER_NOTES_COLUMNS
 from dxcore.conditionalformats import *
 from dxcore.cellformats import *
-from dxbuild.constants import FALLBACKS, _TRUE_SYMBOLIC
+from dxbuild.variables import FALLBACKS, _TRUE_SYMBOLIC
 
-from dxbuild.constants import _LOG_DIR
+from constants import LOG_DIR
 
 import logging
 from dxcore.logconstants import log_format_string
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
 log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
+log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
 

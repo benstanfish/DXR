@@ -1,8 +1,6 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
-import os
 import datetime
-
 
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles import DEFAULT_FONT, Font, Alignment
@@ -16,26 +14,22 @@ from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.chart.axis import ChartLines
 from openpyxl.drawing.colors import ColorChoice
 
-
-from PyQt6.QtWidgets import QApplication, QFileDialog
-
 from dxbuild.reviews import Review
-from dxbuild.constants import FALLBACKS, _LOG_DIR
+from constants import LOG_DIR
 from dxbuild.buildtools import timestamp, copy_to_range, apply_styles_to_region
 from dxcore.cellformats import *
-from dxreport import singlereport
 
-if not os.path.exists(_LOG_DIR):
-    os.makedirs(_LOG_DIR)
 
 import logging
+from constants import LOG_DIR
 from dxcore.logconstants import log_format_string
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
 log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'{_LOG_DIR}/{__name__}.log')
+log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
 log_file_handler.setFormatter(log_formatter)
 logger.addHandler(log_file_handler)
+
 
 _PADDING_OFFSET = 1
 
@@ -208,18 +202,30 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
     open_by_discipline_commentor = list(set([comment.discipline for comment in review.review_comments.comments if comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
     open_by_discipline_commentor.sort()
     bic_commentor_dic = {}
-    for discipline in open_by_discipline_commentor:
-        bic_commentor_dic[discipline] = list(set([comment.id for comment in review.review_comments.comments if comment.discipline == discipline and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
-       
+    
+    byDiscipline = False
+    
+    if byDiscipline:
+        for discipline in open_by_discipline_commentor:
+            bic_commentor_dic[discipline] = list(set([comment.id for comment in review.review_comments.comments if comment.discipline == discipline and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))       
+            if len(bic_commentor_dic[discipline]) == 0:
+                del bic_commentor_dic[discipline]
+    else:
+        for commentor in reviewer_open_comments_dict:
+            bic_commentor_dic[commentor] = list(set([comment.id for comment in review.review_comments.comments if comment.author == commentor and comment.status == 'Open' and comment.ball_in_court == 'Commentor']))
+            if len(bic_commentor_dic[commentor]) == 0:
+                del bic_commentor_dic[commentor]
+            
+
     ball_in_court_commentor_anchor = ws_stats[project_header_anchor.coord].offset(
         row=len(project_header) + _PADDING_OFFSET + 
             status_region_max_rows + _PADDING_OFFSET + 
             review_open_comments_region_height + _PADDING_OFFSET +
             bic_evaluator_comments_region_height + _PADDING_OFFSET + 1, column=0)
-    ball_in_court_commentor_anchor.value = 'Open Comments --- Ball in Court: Commentor'
-    for i, discipline in enumerate(bic_commentor_dic.keys()):
-        ball_in_court_commentor_anchor.offset(row=1, column=i).value = discipline
-        comment_id_list = bic_commentor_dic[discipline]
+    ball_in_court_commentor_anchor.value = 'Open Comments --- Ball in Court: Backchecker'
+    for i, author in enumerate(bic_commentor_dic.keys()):
+        ball_in_court_commentor_anchor.offset(row=1, column=i).value = author
+        comment_id_list = bic_commentor_dic[author]
         comment_id_list.sort()
         for j, comment_id in enumerate(comment_id_list):
             ball_in_court_commentor_anchor.offset(row=2 + j, column=i).value = comment_id    
@@ -255,7 +261,6 @@ def make_stats_sheet(review: Review, ws: Worksheet) -> None:
         ws_stats[project_header_anchor.coord].offset(row=i, column=0).font = Font(name='Aptos Narrow', sz=10, bold=True)
         if i == 4:
             ws_stats[project_header_anchor.coord].offset(row=i, column=1).font = Font(name='Aptos Narrow', sz=12, bold=True)
-
 
     # Format the headers of each overall regions
     def create_formatting_regions(initial_anchor: str, region_width: int) -> str:

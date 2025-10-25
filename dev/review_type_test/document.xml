@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+		<ProjNet>
+			<DrChecks>
+				<ProjectID>81234</ProjectID>
+				<ProjectControlNbr>569960</ProjectControlNbr>
+				<ProjectName>FY26 CFAY HY2602 SOQ Gridley, Halsey &amp; Edwina Revitalization</ProjectName>
+				<ReviewID>259551</ReviewID>
+				<ReviewName>Final RFP Submittal</ReviewName>
+			</DrChecks>
+			
+			<Comments>			
+					<comment>
+						<id>11580206</id>
+						<spec>Section/Figure</spec>
+						<sheet>Page Number</sheet>
+						<detail>Line Number</detail>
+						<critical>No</critical>
+						<commentText>Test. *BEN FISHER* Please delete.</commentText>
+						<attachment></attachment>
+						<DocRef>Reference</DocRef>
+						<createdBy>Benjamin Fisher</createdBy>
+						<createdOn>Oct 24 2025 09:23 AM</createdOn>
+						<status>Open</status>
+						<Discipline>Project Management</Discipline>
+                        
+						<evaluations>
+							
+						</evaluations>
+						
+						<backchecks>
+							
+						</backchecks>
+					</comment>
+			</Comments>
+		</ProjNet>
+		

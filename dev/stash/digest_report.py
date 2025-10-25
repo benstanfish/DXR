@@ -8,10 +8,10 @@ from openpyxl.styles import DEFAULT_FONT
 
 from dxbuild.reviews import Review
 import dxbuild.buildtools as buildtools
-from dxbuild.constants import RESPONSE_COLUMNS, USER_NOTES_COLUMNS
+from dxbuild.variables import RESPONSE_COLUMNS, USER_NOTES_COLUMNS
 from dxcore.conditionalformats import *
 from dxcore.cellformats import *
-from dxbuild.constants import FALLBACKS, _TRUE_SYMBOLIC
+from dxbuild.variables import FALLBACKS, _TRUE_SYMBOLIC
 
 # Debug information
 _WRITE_FILE = True

@@ -3,7 +3,7 @@
 from enum import IntEnum
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from .dxcolor import DXColor, WebColor
-from dxbuild.constants import FALLBACKS
+from dxbuild.variables import FALLBACKS
 
 class Widths(IntEnum):
     XX_SMALL = 5
