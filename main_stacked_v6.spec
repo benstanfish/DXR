@@ -1,11 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
     ['main_stacked_v6.py'],
-    pathex=['C:\\Users\\benst\\Documents\\Workspace\\DXR'],
+    pathex=['C:\\Users\\j2ee9bsf\\Documents\\00 Workspace\\DXR'],
     binaries=[],
-    datas=[('C:\\Users\\benst\\Documents\\Workspace\\DXR\\assets', '.')],
+    datas=[('C:\\Users\\j2ee9bsf\\Documents\\00 Workspace\\DXR\\assets', '.\\assets'), ('C:\\Users\\j2ee9bsf\\Documents\\00 Workspace\\DXR\\dxgui', '.\\dxgui')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,5 +34,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['C:\\Users\\benst\\Documents\\Workspace\\DXR\\assets\\icon.ico'],
+    icon=['C:\\Users\\j2ee9bsf\\Documents\\00 Workspace\\DXR\\assets\\icon.ico'],
 )

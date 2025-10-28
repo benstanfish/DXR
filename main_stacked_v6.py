@@ -31,12 +31,12 @@ from dxmail import open_default_email
 _VERSION = '0.0.3a'
 
 def get_rsx_path(relative_path: str) -> str:
-    # try:
-    #     base_path = sys._MEIPASS
-    # except Exception as e:
-    #     base_path = os.path.abspath('.')
-    # return os.path.join(base_path, relative_path)    
-    return relative_path
+    try:
+        base_path = sys._MEIPASS
+    except Exception as e:
+        base_path = os.path.abspath('.')
+    return os.path.join(base_path, relative_path)    
+
 
 _ICON = get_rsx_path('./assets/Yagura Sunrays.png')
 _DEFAULT_PANEL_PANEL_TITLE = 'Tool Explorer'
