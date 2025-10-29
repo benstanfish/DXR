@@ -412,6 +412,7 @@ class AppWindow(QMainWindow):
         main.setLayout(main_layout)
         self.setCentralWidget(main)
 
+
     def create_scene_buttons(self, scene_body_layout: QGridLayout, scene_tools: dict, are_buttons_automatically_added: bool=False) -> dict:
         scene_buttons = {}
         for i, (button_name, button_data) in enumerate(scene_tools.items()):
@@ -486,4 +487,5 @@ if __name__ == "__main__":
 
     window = AppWindow()
     window.show()
+    
     app.exec()

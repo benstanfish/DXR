@@ -32,7 +32,7 @@ exe = EXE(
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
-    codesign_identity=None,
+    codesign_identity='Developer ID Application: Ben Fisher (4d2771dfc6504e1fad77441da50391c3)',
     entitlements_file=None,
     icon=['C:\\Users\\j2ee9bsf\\Documents\\00 Workspace\\DXR\\assets\\icon.ico'],
 )
