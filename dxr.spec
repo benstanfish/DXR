@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 a = Analysis(
-    ['main_stacked_v6.py'],
+    ['dxr.py'],
     pathex=['C:\\Users\\j2ee9bsf\\Documents\\00 Workspace\\DXR'],
     binaries=[],
     datas=[('C:\\Users\\j2ee9bsf\\Documents\\00 Workspace\\DXR\\assets', '.\\assets'), ('C:\\Users\\j2ee9bsf\\Documents\\00 Workspace\\DXR\\dxgui', '.\\dxgui')],
