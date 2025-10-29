@@ -1,11 +1,7 @@
-import random
+# Copyright (c) 2018-2025 Ben Fisher
+
 import sys, os
-
-# import logging
 import constants
-# if not os.path.exists(constants.LOG_DIR):
-#     os.makedirs(constants.LOG_DIR)
-
 import webbrowser
 from PyQt6.QtWidgets import (QApplication,
                              QMainWindow,
@@ -22,13 +18,11 @@ from PyQt6.QtWidgets import (QApplication,
 from PyQt6.QtGui import QPixmap, QIcon, QGuiApplication
 from PyQt6.QtCore import Qt, QEvent, pyqtSignal
 
-from dxgui.dark import dark_theme
-from dxgui.light import light_theme
-from dxgui.spacers import VSpacer, HSpacer
+from dxgui.spacers import VSpacer
 from dxreport.digest_reports import batch_create_reports
 from dxmail import open_default_email
 
-_VERSION = '0.0.3a'
+_VERSION = constants.__version__
 
 def get_rsx_path(relative_path: str) -> str:
     try:
@@ -40,7 +34,6 @@ def get_rsx_path(relative_path: str) -> str:
 
 _ICON = get_rsx_path('./assets/Yagura Sunrays.png')
 _DEFAULT_PANEL_PANEL_TITLE = 'Tool Explorer'
-_DEFAULT_RIGHT_PANEL_IMAGE = get_rsx_path('./assets/Yagura Starfield.png')
 _DEFAULT_RIGHT_PANEL_DESCRIPTION = r"Hover the mouse over a tool button to display an explanation of it's functionality."
 
 
@@ -476,13 +469,11 @@ if __name__ == "__main__":
     style_hints = QGuiApplication.styleHints()
     color_scheme = style_hints.colorScheme()
     if color_scheme == Qt.ColorScheme.Dark:
-        styles = dark_theme
-        # with open('./dxgui/dark_theme.css') as file:
-        #     styles = file.read()
+        with open('./dxgui/dark_theme.css') as file:
+            styles = file.read()
     else:
-        styles = light_theme
-        # with open('./dxgui/light_theme.css') as file:
-        #     styles = file.read()
+        with open('./dxgui/light_theme.css') as file:
+            styles = file.read()
     app.setStyleSheet(styles)
 
     window = AppWindow()

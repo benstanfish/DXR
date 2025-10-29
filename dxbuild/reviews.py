@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
-from constants import LOG_DIR
+# from constants import LOG_DIR
 
 from os.path import getctime
 from datetime import datetime

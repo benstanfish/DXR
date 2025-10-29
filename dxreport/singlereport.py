@@ -15,7 +15,7 @@ from dxcore.conditionalformats import *
 from dxcore.cellformats import *
 from dxbuild.variables import FALLBACKS, _TRUE_SYMBOLIC
 
-from constants import LOG_DIR
+# from constants import LOG_DIR
 
 # import logging
 # from dxcore.logconstants import log_format_string

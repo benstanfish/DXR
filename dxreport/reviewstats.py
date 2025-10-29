@@ -15,7 +15,7 @@ from openpyxl.chart.axis import ChartLines
 from openpyxl.drawing.colors import ColorChoice
 
 from dxbuild.reviews import Review
-from constants import LOG_DIR
+# from constants import LOG_DIR
 from dxbuild.buildtools import timestamp, copy_to_range, apply_styles_to_region
 from dxcore.cellformats import *
 
