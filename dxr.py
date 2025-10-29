@@ -1,10 +1,10 @@
 import random
 import sys, os
 
-import logging
+# import logging
 import constants
-if not os.path.exists(constants.LOG_DIR):
-    os.makedirs(constants.LOG_DIR)
+# if not os.path.exists(constants.LOG_DIR):
+#     os.makedirs(constants.LOG_DIR)
 
 import webbrowser
 from PyQt6.QtWidgets import (QApplication,
@@ -25,7 +25,7 @@ from PyQt6.QtCore import Qt, QEvent, pyqtSignal
 from dxgui.dark import dark_theme
 from dxgui.light import light_theme
 from dxgui.spacers import VSpacer, HSpacer
-from digest_reports import batch_create_reports
+from dxreport.digest_reports import batch_create_reports
 from dxmail import open_default_email
 
 _VERSION = '0.0.3a'

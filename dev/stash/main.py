@@ -21,7 +21,7 @@ from PyQt6.QtGui import QPixmap, QFont, QIcon
 from PyQt6.QtCore import Qt
 
 from dxcore.dxcolor import WebColor
-from digest_reports import batch_create_reports
+from dxreport.digest_reports import batch_create_reports
 
 
 class AppWindow(QMainWindow):

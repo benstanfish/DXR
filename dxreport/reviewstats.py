@@ -20,15 +20,15 @@ from dxbuild.buildtools import timestamp, copy_to_range, apply_styles_to_region
 from dxcore.cellformats import *
 
 
-import logging
-from constants import LOG_DIR
-from dxcore.logconstants import log_format_string
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.WARNING)
-log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
-log_file_handler.setFormatter(log_formatter)
-logger.addHandler(log_file_handler)
+# import logging
+# from constants import LOG_DIR
+# from dxcore.logconstants import log_format_string
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.WARNING)
+# log_formatter = logging.Formatter(log_format_string)
+# log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
+# log_file_handler.setFormatter(log_formatter)
+# logger.addHandler(log_file_handler)
 
 
 _PADDING_OFFSET = 1

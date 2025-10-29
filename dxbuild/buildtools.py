@@ -12,15 +12,15 @@ from openpyxl.utils.cell import coordinate_to_tuple, get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.cell_range import CellRange
 
-import logging
-from constants import LOG_DIR
-from dxcore.logconstants import log_format_string
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.WARNING)
-log_formatter = logging.Formatter(log_format_string)
-log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
-log_file_handler.setFormatter(log_formatter)
-logger.addHandler(log_file_handler)
+# import logging
+# from constants import LOG_DIR
+# from dxcore.logconstants import log_format_string
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.WARNING)
+# log_formatter = logging.Formatter(log_format_string)
+# log_file_handler = logging.FileHandler(f'{LOG_DIR}/{__name__}.log')
+# log_file_handler.setFormatter(log_formatter)
+# logger.addHandler(log_file_handler)
 
 
 #TODO: Need to split the DrChecks Review formatting tools from the basic range operations tools (different modules)

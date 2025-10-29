@@ -24,7 +24,7 @@ from PyQt6.QtCore import Qt
 
 from dxgui.scene import Panel
 from dxcore.dxcolor import WebColor
-from digest_reports import batch_create_reports
+from dxreport.digest_reports import batch_create_reports
 
 
 
