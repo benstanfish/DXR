@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup, element
 
 file_path = './dev/html/ProjNet_ Logged In User.html'
 
-
-
 def get_inner_html(element: element.Tag) -> str:
     """Get the inner-html of a html element from BeautifulSoup soup object."""
     return element.decode_contents()
