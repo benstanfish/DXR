@@ -15,7 +15,7 @@ a = Analysis(
 )
 pyz = PYZ(a.pure)
 splash = Splash(
-    'C:\\Users\\j2ee9bsf\\Documents\\00 Workspace\\DXR\\assets\\thumb.png',
+    './assets/thumb.png',
     binaries=a.binaries,
     datas=a.datas,
     text_pos=None,

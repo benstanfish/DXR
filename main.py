@@ -1,6 +1,11 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
 import sys, os
+
+# if getattr(sys, 'frozen', False):
+#     """Splash screen for frozen application."""
+#     import pyi_splash
+
 import constants
 import webbrowser
 from PyQt6.QtWidgets import (QApplication,
@@ -462,21 +467,23 @@ class AppWindow(QMainWindow):
         # self.status_bar.showMessage(f'Opening url: {url}')
 
 
-
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     style_hints = QGuiApplication.styleHints()
     color_scheme = style_hints.colorScheme()
     if color_scheme == Qt.ColorScheme.Dark:
-        with open('./dxgui/dark_theme.css') as file:
+        with open(get_rsx_path('./dxgui/dark_theme.css')) as file:
             styles = file.read()
     else:
-        with open('./dxgui/light_theme.css') as file:
+        with open(get_rsx_path('./dxgui/light_theme.css')) as file:
             styles = file.read()
     app.setStyleSheet(styles)
 
     window = AppWindow()
+
+    # if getattr(sys, 'frozen', False):
+    #     pyi_splash.close()
+        
     window.show()
     
     app.exec()

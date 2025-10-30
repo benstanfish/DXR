@@ -1,0 +1,65 @@
+body {margin:0; padding:0; line-height: 1.4em; word-spacing:1px; letter-spacing:0.2px; font: 12px Arial, Helvetica,"Lucida Grande", serif; color: #000;}
+
+/*Header*/
+h2 ,h1, h3, h4,h5,h6{color: #000; font-size: 14px;}
+strong {color: #000;}
+/* Links */
+a:link, a:visited {background: transparent; color:#333; text-decoration:none;}
+/*a:link[href^="http://"]:after, a[href^="http://"]:visited:after {content: " (" attr(href) ") "; font-size: 11px;}*/
+a[href^="http://"] {color:#000;} 
+.warning {color: red;font-weight:bold;}
+/*Image*/
+img, img a, .more-link a {border:none;}
+
+
+
+.home_small, #assignment_filter, #global_bar_container, #header_container,#footer_wrapper, div#footer_wrapper,#extruderLeft, .page_title, .pageTitle {display:none}
+
+
+#content_wrapper{
+	width:100%;
+	background:#FFF url(../images/logo_blue2.gif) no-repeat 95% 1%;
+
+}
+table, td, th{
+  background: white !important;
+}
+
+#footer_wrapper_print{ display: block; text-align: center; }
+div.taskerRow {
+	clear:both;
+        width:94%;
+	padding:0px;
+	margin-bottom:10px;
+
+}
+div.taskerRow span.label {
+  /*float: left;*/
+	width: 20%;
+	padding: 2px;
+	text-align: right;
+	font-weight: bold;
+}
+div.taskerRow span.item {
+	
+	vertical-align: middle;
+        /*float: right;*/
+	width: 78%;
+	padding: 2px;
+	text-align: left;
+}
+
+div.dl_color_box_div_header_title{
+  padding-bottom: 20px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+div.dl_color_box_div_body table th, div.dl_color_box_div_body table td{
+  border: 1px solid;
+}
+
+#print_footer_as_header{display: block !important;}
+
+.botBorder {
+	border-bottom:2px solid black;
+}
