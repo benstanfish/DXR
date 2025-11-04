@@ -243,32 +243,37 @@ class AppWindow(QMainWindow):
             'DrX Review': {
                 'action': lambda: batch_create_reports(),
                 'image': './assets/drx_review.png',
-                'description': r"Process batch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments.",
-                'position': (0, 0, 1, 1)
+                'description': r"Process batch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments."
             },
             'Bidder RFI': {
                 'action': '',
                 'image': './assets/bidder_rfi.png',
-                'description': r"Process Bidder RFIs, exported as HTML files from ProjNet Bidder Module, into an RFI log used by JED and it's A/E consultants for planning bid rfi reponses and track amendments.",
-                'position': (0, 1, 1, 1)
+                'description': r"Process Bidder RFIs, exported as HTML files from ProjNet Bidder Module, into an RFI log used by JED and it's A/E consultants for planning bid rfi reponses and track amendments."
             },
             'JDG/JES Tracker': {
                 'action': '',
                 'image': './assets/jdg_tracker.png',
-                'description': r"Tool used by JED TS to summarize the Japan Design Guide (JDG) and Japan Edited Specifications (JES) suggested revisions. Similar to DrX Review, this tool processes XML reports, exporeted from ProjNet Dr Checks reviews, into a summary log.",
-                'position': (0, 2, 1, 1)
+                'description': r"Tool used by JED TS to summarize the Japan Design Guide (JDG) and Japan Edited Specifications (JES) suggested revisions. Similar to DrX Review, this tool processes XML reports, exporeted from ProjNet Dr Checks reviews, into a summary log."
             },
             'ProjNet Login': {
                 'action': lambda: self.open_webpage(url=r'https://projnet.org/projnet/binKornHome/index.cfm'),
                 'image': './assets/projnet.png',
-                'description': 'Link to the main login page for ProjNet, home to Dr Checks, Bidder Inquiry and other tools. New users can register a new account, or use a Quick-Access Key (provided by their ProjNet review manager) to access the tools from this page.',
-                'position': (1, 0, 1, 1)
+                'description': 'Link to the main login page for ProjNet, home to Dr Checks, Bidder Inquiry and other tools. New users can register a new account, or use a Quick-Access Key (provided by their ProjNet review manager) to access the tools from this page.'
+            },
+            'SEC Inspector': {
+                'action': '',
+                'image': './assets/specsinspec.png',
+                'description': r"Digest .sec files into web-viewable HTML files with ability for users to interact with tags and settings."
+            },
+            'SI eLearning': {
+                'action': lambda: self.open_webpage(url=r'https://stg.wbdg.org/dod/specsintact/elearning'),
+                'image': './assets/sielearning.png',
+                'description': r"Link to SpecsIntact eLearning website (free online SpecsIntact tutorial videos)."
             },
             'Industry Database': {
                 'action': '',
                 'image': '',
-                'description': r"A database of commonly know Japanese manufacturers, companies, organzations, etc., relating to the design and construction industry. This database is not intended to endorse any particular organization, but is merely a reference tool, intended to help users find a starting point for their own research into the Japanese market.",
-                'position': (3, 0, 1, 1)
+                'description': r"A database of commonly know Japanese manufacturers, companies, organzations, etc., relating to the design and construction industry. This database is not intended to endorse any particular organization, but is merely a reference tool, intended to help users find a starting point for their own research into the Japanese market."
             },
             'Common Terms Database' : {
                 'action': '',
@@ -286,11 +291,17 @@ class AppWindow(QMainWindow):
         scene0_body_layout.addWidget(scene0_buttons['Bidder RFI'], 2, 1)
         scene0_body_layout.addWidget(scene0_buttons['JDG/JES Tracker'], 2, 2)
 
+        specs_section = QLabel('Specs Related Tools')
+        specs_section.setProperty('class', 'section-header')
+        scene0_body_layout.addWidget(specs_section, 3, 0, 1, 2)
+        scene0_body_layout.addWidget(scene0_buttons['SEC Inspector'], 4, 0)
+        scene0_body_layout.addWidget(scene0_buttons['SI eLearning'], 4, 1)
+
         industry_section = QLabel('Japanese Industry Resources')
         industry_section.setProperty('class', 'section-header')
-        scene0_body_layout.addWidget(industry_section, 3, 0, 1, 2)
-        scene0_body_layout.addWidget(scene0_buttons['Industry Database'], 4, 0)
-        scene0_body_layout.addWidget(scene0_buttons['Common Terms Database'], 4, 1)
+        scene0_body_layout.addWidget(industry_section, 5, 0, 1, 2)
+        scene0_body_layout.addWidget(scene0_buttons['Industry Database'], 6, 0)
+        scene0_body_layout.addWidget(scene0_buttons['Common Terms Database'], 6, 1)
 
 
 
