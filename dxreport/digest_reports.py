@@ -32,9 +32,7 @@ def batch_create_reports() -> str | bool:
 
     DEFAULT_FONT.__init__(name=FALLBACKS['font_name'], size=FALLBACKS['font_size'])
     wb = Workbook()
-
-
-    # app = QApplication(sys.argv)
+    
     xml_paths, _ = QFileDialog.getOpenFileNames(
         parent=None, 
         caption='Select Files Dialog',
