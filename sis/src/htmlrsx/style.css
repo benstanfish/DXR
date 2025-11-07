@@ -1,0 +1,590 @@
+:root {
+    --standard-text-color: black;
+    --standard-margin: 12px;
+
+    --rid-color: magenta;
+    --rtl-color: rgb(209, 15, 209);
+    --rtl-bg: rgb(255, 195, 255);
+
+    --sub-color: blue;
+    --sub-bg: rgb(179, 179, 255);
+    --add-color: red; 
+    --del-color: green;
+    --note-color: #aaa;
+
+    --met-color: rgb(14, 113, 212);
+    --met-bg: rgb(174, 213, 252);
+    --eng-color: orangered;
+    --eng-bg: rgb(255, 192, 181);
+
+    --srf-color: indigo;
+    --srf-bg: violet;
+
+    --stl-color: indigo;
+    --stl-bg: violet;
+}
+
+body {
+    max-width: 100ch;
+    margin: 72px auto;
+    margin-top: 0;
+    font-size: 16px;
+    line-height: 1.375;
+}
+
+main {
+    margin-top: 72px;
+}
+
+strong {
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+hr {
+    border-width: 0.25px;
+}
+
+label {
+    display: inline-block;
+}
+
+td + td {
+    padding: 0 16px;
+}
+
+
+brk {
+    /* this is used by specsintact instead of <br /> line breaks */
+    display: block;
+    margin-bottom: var(--standard-margin);
+}
+
+scn,
+stl,
+dte,
+ttl,
+org,
+spt {
+    display: block;
+    margin-bottom: var(--standard-margin);
+}
+
+url {
+    color: blue;
+    border-bottom: 1px solid blue;
+}
+
+lst {
+    display: block;
+}
+
+lst sub {
+    color: black;
+}
+
+itm {
+    display: list-item;
+    list-style-type: disc;
+    list-style-position: inside;
+}
+
+hdr {
+    display: none;
+    color: var(--note-color);
+}
+
+pra {
+    color: tomato;
+    font-weight: bold;
+}
+
+ast {
+    display: block;
+    color: grey
+}
+
+scn {
+    margin-top: 72px;
+}
+
+srf {
+    background-color: var(--srf-bg);
+    color: var(--srf-color);
+    font-weight: bold;
+}
+
+
+scn,
+stl:first-of-type,
+dte {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    /* color: var(--standard-text-color);
+    background-color: transparent; */
+}
+
+stl:not(:first-of-type) {
+    background-color: var(--stl-bg);
+    color: var(--stl-color);
+    font-weight: bold;
+}
+
+
+dte {
+    margin-bottom: 72px;
+    font-size: 20px;
+}
+
+ttl {
+    font-weight: bold;
+    margin-top: var(--standard-margin);
+}
+
+npr,
+nte,
+ast {
+    color: var(--note-color);
+    display: none;
+}
+
+ref org {
+    display: block;
+    font-weight: bold;
+    margin-top: var(--standard-margin);
+}
+
+rid {
+    font-weight: bolder;
+    color: var(--rid-color);
+}
+
+rtl {
+    font-weight: normal;
+    background-color: none;
+}
+
+ref br {
+    display: block;
+}
+
+ref org + br {
+    display: none;
+}
+
+ref rid {
+    display: table-cell;
+    min-width: 25ch;
+}
+
+ref rtl {
+    display: table-cell;
+    padding-left: 6px;
+
+}
+
+del {
+    display: none;
+    color: var(--del-color);
+}
+
+ttl {
+    font-size: 18px;
+    margin-bottom: 18px;
+}
+
+add {
+    display: inline;
+    color: var(--standard-text-color);
+}
+
+
+sub {
+    /* specsintact overrides the standard sub tag for 'submittals' */
+    color: var(--sub-color);
+    font-weight: bold;
+    vertical-align: baseline;
+    font-size: inherit;
+    display: inline;
+}
+
+lst {
+    list-style-type: none;
+}
+
+lst sub {
+    display: inline;
+    color: var(--sub-color);
+    margin: var(--standard-margin) 0;
+}
+
+ttl sub {
+    color: var(--sub-color);
+}
+
+met {
+    background-color:var(--met-bg);
+    color: var(--met-color);
+    font-weight: bold;
+}
+
+eng {
+    background-color: var(--eng-bg);
+    color: var(--eng-color);
+    font-weight: bold;
+}
+
+
+tab {
+    border: 1px solid tomato;
+    border-radius: 6px;
+    padding: 6px;
+    display: table;
+}
+
+tab row {
+    display: table-row;
+}
+
+tab cel {
+    display: table-cell;
+    background-color: mistyrose;
+    border: 1px solid white;
+}
+
+prt > ttl {
+    margin-top: 48px !important;
+}
+
+
+.this_section_number {
+    font-weight: bold !important;
+}
+
+.user-selections {
+    top: 0;
+    position: fixed;
+    display: none;
+
+    background-color: aliceblue;
+    border: 1px solid dodgerblue;
+    
+    border-radius: 12px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: none;  
+
+    margin: -24px;
+    padding: 24px;
+    padding-bottom: 0;
+    padding-top: 36px;
+    margin-top: -24px;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+}
+
+.user-instructions {
+    width: calc(8in + 2 * var(--standard-margin));
+    margin-bottom: 12px;
+
+}
+
+.user-instructions p {
+    margin-bottom: 12px;
+}
+
+.user-table-container {
+    overflow: auto;
+}
+
+tr {
+    margin-bottom: 12px;
+}
+
+tr td:first-of-type {
+    font-weight: bold;
+}
+
+[class^="display_"] {
+    display: none;
+    font-size: 14px;
+    font-weight: normal;
+    color: var(--note-color);
+}
+
+
+.display_NTE,
+.display_NPR {
+    display: none;
+    color: white;
+    background-color: orange;
+    font-weight: bold;
+    font-size: inherit;
+}
+
+.display_ENG,
+.display_MET {
+    display: none;
+    font-weight: bold;
+    font-size: inherit;
+}
+
+.display_ENG {
+    background-color: var(--eng-color);
+    color: white;
+    font-weight: bold;
+    font-size: inherit;
+}
+
+.display_MET {
+    background-color: var(--met-color);
+    color: white;
+    font-weight: bold;
+    font-size: inherit;
+}
+
+.display_RID {
+    background-color: magenta;
+    color: white;
+    font-weight: bold;
+    display: none;
+    font-size: inherit;
+}
+
+.display_RTL {
+    display: none;
+    color: var(--rtl-color);
+    background-color: rgb(255, 211, 255);
+    font-size: inherit;
+}
+
+.display_DEL {
+    background-color: var(--del-color);
+    color: white;
+    font-weight: bold;
+    display: none;
+    font-size: inherit;
+}
+
+.display_ADD {
+    background-color: var(--add-color);
+    color: white;
+    font-weight: bold;
+    display: none;
+    font-size: inherit;
+}
+/* 
+.display_AST {
+
+}
+
+.display_DTE {
+
+}
+
+.display_HDR {
+
+}
+
+.display_HL1 {
+
+}
+
+.display_HL4 {
+
+}
+
+.display_ITM {
+
+}
+
+.display_LST {
+
+}
+
+.display_ORG {
+
+}
+
+.display_PRT {
+
+}
+
+.display_REF {
+
+}
+
+
+
+.display_SCN {
+
+}
+
+.display_SCP {
+
+}
+
+.display_SPT { 
+
+}*/
+
+.display_SRF {
+    display: none;
+    font-size: inherit;
+}
+
+.display_STL {
+    display: none;
+}
+
+.display_SUB {
+    display: none;
+    color: var(--sub-color) !important;
+    background-color: var(--sub-bg) !important;
+    font-size: inherit;
+}
+
+/* .display_TAB {
+
+}
+
+.display_TAI {
+
+}
+
+.display_TST {
+
+}
+
+.display_TTL {
+
+}
+
+.display_TXT {
+
+}
+
+.display_URL {
+
+} */
+
+.brackets {
+    background-color: yellow;
+    display: inline;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+button {
+    z-index: 99; 
+    border: none; 
+    outline: none;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 10px;
+
+    color: white;
+    background-color: #555;
+}
+
+button:hover {
+    background-color: dodgerblue !important;
+}
+
+
+
+#menuBtn {
+    display: block; 
+    position: fixed; 
+    bottom: 20px; 
+    right: 30px;
+    background-color: darkslateblue;
+}
+
+#indexBtn {
+    display: block; 
+    position: fixed; 
+    bottom: 20px; 
+    right: 100px;
+}
+
+#topBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 170px;
+}
+
+
+#hideBtn {
+    display: block;
+    margin: 16px auto;
+
+    border: none; 
+    outline: none;
+    color: black; 
+    background-color: rgba(30, 143, 255, 0.2);
+
+    padding: 6px; 
+    border: 1px solid dodgerblue;
+}
+
+
+
+
+
+
+
+
+
+
+@media screen and (max-width: 768px) {
+  /* CSS rules for screens with a maximum width of 768px (e.g., tablets and mobiles) */
+    body {
+            max-width: none;
+            padding: 12px;
+    }
+
+    .user-selections {
+        top: 5vh;
+        left: 5vw;
+        position: fixed;
+        display: block;
+
+        margin: 0;
+        padding: 12px;
+
+        max-width: none;
+        height: 90dvh;
+        width: 90dvw;
+
+        border: 1px solid dodgerblue;
+        
+        border-radius: 12px;
+    }   
+
+    .user-instructions {
+        width: calc(90dvw - 2 * var(--standard-margin));
+        margin-bottom: 0;
+    }
+
+    .user-table-container {
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+
+}

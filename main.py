@@ -27,6 +27,8 @@ from dxgui.spacers import VSpacer
 from dxreport.digest_reports import batch_create_reports
 from dxmail import open_default_email
 
+from sis.digest_specs import batch_create_html
+
 _VERSION = constants.__version__
 
 def get_rsx_path(relative_path: str) -> str:
@@ -261,7 +263,7 @@ class AppWindow(QMainWindow):
                 'description': 'Link to the main login page for ProjNet, home to Dr Checks, Bidder Inquiry and other tools. New users can register a new account, or use a Quick-Access Key (provided by their ProjNet review manager) to access the tools from this page.'
             },
             'SEC Inspector': {
-                'action': '',
+                'action': lambda: batch_create_html(),
                 'image': './assets/specsinspec.png',
                 'description': r"Digest .sec files into web-viewable HTML files with ability for users to interact with tags and settings."
             },

@@ -1,0 +1,164 @@
+:root {
+    --standard-text-color: black;
+    --standard-margin: 12px;
+
+}
+
+body {
+    max-width: 100ch;
+    margin: 72px auto;
+    font-size: 16px;
+    line-height: 1.375;
+}
+
+strong {
+    font-weight: bold;
+}
+
+h1 {
+    font-weight: bold;
+    font-size: 2rem;
+    margin: 1.5rem 0;
+}
+
+h2 {
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin: 1.25rem 0;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+button {
+    z-index: 99; 
+    border: none; 
+    outline: none;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 10px;
+
+    color: white;
+    background-color: #555;
+}
+
+button:hover {
+    background-color: dodgerblue !important;
+}
+
+.page_list {
+    columns: 3;
+}
+
+table {
+    margin-left: -12px;
+}
+
+table * {
+    text-align: start;
+}
+
+th {
+    background-color: #eee;
+    border-radius: 6px;
+    border: 1px solid white;
+    padding: 3px 12px;
+    width: 20ch;
+}
+
+td {
+    padding: 0 12px;
+}
+
+.page_list_container {
+    margin: 0 16px;
+}
+
+ol {
+    list-style-type: disc;
+}
+
+.error-row {
+    display: table-row;
+}
+
+.error-section {
+    font-weight: bold;
+    display: table-cell;
+    width: 25ch;
+}
+
+.error-value {
+    display: table-cell;
+}
+
+
+
+
+button {
+    z-index: 99; 
+    border: none; 
+    outline: none;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 10px;
+
+    color: white;
+    background-color: #555;
+}
+
+button:hover {
+    background-color: dodgerblue !important;
+}
+
+
+
+#menuBtn {
+    display: block; 
+    position: fixed; 
+    bottom: 20px; 
+    right: 30px;
+    background-color: darkslateblue;
+}
+
+#indexBtn {
+    display: block; 
+    position: fixed; 
+    bottom: 20px; 
+    right: 100px;
+}
+
+#topBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 170px;
+}
+
+
+#hideBtn {
+    display: block;
+    margin: 16px auto;
+
+    border: none; 
+    outline: none;
+    color: black; 
+    background-color: rgba(30, 143, 255, 0.2);
+
+    padding: 6px; 
+    border: 1px solid dodgerblue;
+}
+
+@media screen and (max-width: 768px) {
+  /* CSS rules for screens with a maximum width of 768px (e.g., tablets and mobiles) */
+    body {
+            max-width: none;
+            padding: 12px;
+    }
+
+    .page_list {
+        columns: 1;
+    }
+
+}
