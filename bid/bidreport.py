@@ -5,23 +5,18 @@ import os, sys, shutil
 from openpyxl import load_workbook
 from openpyxl.styles import DEFAULT_FONT
 
-from PyQt6.QtWidgets import QApplication, QFileDialog
-from .bidconstants import FALLBACKS, timestamp
+from PyQt6.QtWidgets import QFileDialog
+from .bidconstants import FALLBACKS, timestamp, BID_TABLE_HEADERS
 from .bidhtml import read_bid_html_to_list
 
 import dxbuild.buildtools as buildtools
 
-template_path = './bid/template.xlsx'
-
-
-
+_template_path = './bid/template.xlsx'
 
 def create_bid_log() -> str | bool:
 
     _WRITE_FILE = True
-
     DEFAULT_FONT.__init__(name=FALLBACKS['font_name'], size=FALLBACKS['font_size'])
-
     html_path, _ = QFileDialog.getOpenFileName(
         parent=None, 
         caption='Select File Dialog',
@@ -29,7 +24,7 @@ def create_bid_log() -> str | bool:
     )
 
     copied_file_path = os.path.join(os.path.dirname(html_path), f'Bidder RFI Log {timestamp('%Y-%m-%d %H-%M-%S')}.xlsx')
-    copied_file = shutil.copy(template_path, copied_file_path)
+    copied_file = shutil.copy(_template_path, copied_file_path)
 
     try:
         wb = load_workbook(copied_file)
@@ -46,25 +41,24 @@ def create_bid_log() -> str | bool:
             ws = wb.create_sheet('Bidder RFIs', index=3)
 
             comments_list = read_bid_html_to_list(html_path)
-            buildtools.copy_to_range(comments_list, worksheet=ws, anchor_cell='A10')
 
+            buildtools.copy_to_range(BID_TABLE_HEADERS, ws, 'A9')
+            buildtools.copy_to_range(comments_list, ws, 'A10')
+
+
+
+
+        else:
+            print('No bidder RFIs found in the HTML file.')
+            _WRITE_FILE = False
 
         if _WRITE_FILE:
-            # copied_file_path = os.path.join(os.path.dirname(html_path[0]), f'Bidder RFI Log {timestamp('%Y-%m-%d %H-%M-%S')}.xlsx')
             wb.save(copied_file_path)
         wb.close()
         print(f'{copied_file_path} written to disk.')
-        # os.startfile(os.path.dirname(copied_file_path))
+        os.startfile(os.path.dirname(copied_file_path))
         # os.startfile(copied_file_path)
         return copied_file_path
     else:
         return False
         
-
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    create_bid_log()
-    exit()
-    sys.exit(app.exec())

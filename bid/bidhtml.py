@@ -72,8 +72,8 @@ def read_bid_html_to_list(html_path:str) -> list:
         }
 
     comment_list = []
-    for key, item in comments_dict.items():
-        comment_list.append([key, item['comment'], item['discipline'], item['sheet'], item['detail'], item['spec'], item['classification']])
+    for i, (key, item) in enumerate(comments_dict.items()):
+        comment_list.append([i + 1, key, item['discipline'], item['sheet'], item['detail'], item['spec'], item['comment']])
 
     return comment_list
 

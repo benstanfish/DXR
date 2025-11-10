@@ -28,6 +28,8 @@ from dxgui.spacers import VSpacer
 from dxreport.digest_reports import batch_create_reports
 from dxmail import open_default_email
 
+from bid.bidreport import create_bid_log
+
 from sis.digest_specs import batch_create_html
 
 _VERSION = constants.__version__
@@ -249,7 +251,7 @@ class AppWindow(QMainWindow):
                 'description': r"Process batch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments."
             },
             'Bidder RFI': {
-                'action': '',
+                'action': lambda: create_bid_log(),
                 'image': './assets/bidder_rfi.png',
                 'description': r"Process Bidder RFIs, exported as HTML files from ProjNet Bidder Module, into an RFI log used by JED and it's A/E consultants for planning bid rfi reponses and track amendments."
             },
