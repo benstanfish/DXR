@@ -3,14 +3,15 @@
 import re, html
 from bs4 import BeautifulSoup, element
 
+from dxbuild.frameable import Frameable
+
 file_path = './dev/html/ProjNet_ Logged In User.html'
-
-
 
 
 def get_inner_html(element: element.Tag) -> str:
     """Get the inner-html of a html element from BeautifulSoup soup object."""
     return element.decode_contents()
+
 
 def cleanse_string(base_string:str) -> str:
     """Returns processed 'inner html' string that does the following:
@@ -23,58 +24,76 @@ def cleanse_string(base_string:str) -> str:
     """
     return html.unescape(re.sub(r' +', ' ', base_string).strip().replace('\xa0', ' ').replace('\n', ' ').replace('<br/>', '\n'))
 
-# def comment_dict_to_list(comment_dict: dict) -> list:
-#     temp = []
-#     for key, item in comment_dict:
 
 
-def read_bid_html_to_list(html_path:str) -> list:
+class BidLog(Frameable):
 
-    try:
-        with open(html_path, 'r', encoding='utf-8') as file:
-            html_content = file.read()
-        soup = BeautifulSoup(html_content, 'html.parser')
-    except FileNotFoundError:
-        print(f"Error: The file '{html_path}' was not found.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    def __init__(self, html_path:str):
+        super().__init__()
+        
+        comments_dictionary = self.from_html(html_path)
 
-    project_header = soup.find(class_='reportSubHeader').get_text(strip=True)
-    project_title = project_header.split('Review:')[0].replace('Project: ', '').strip()
+    @classmethod
+    def from_html(html_path:str) -> list:
+        try:
+            with open(html_path, 'r', encoding='utf-8') as file:
+                html_content = file.read()
+            soup = BeautifulSoup(html_content, 'html.parser')
+        except FileNotFoundError:
+            print(f"Error: The file '{html_path}' was not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
-    raw_tds = soup.find_all('td')
+        project_header = soup.find(class_='reportSubHeader').get_text(strip=True)
+        project_title = project_header.split('Review:')[0].replace('Project: ', '').strip()
 
-    id_pattern = r'^\d{6,8}$'
+        raw_tds = soup.find_all('td')
 
-    comment_ids = [td.text for td in raw_tds if re.match(id_pattern, td.text)]
-    comment_text = [cleanse_string(get_inner_html(comment)) for comment in soup.find_all(class_='report_comment')]
-    comment_discipline = [td.next_sibling.next_sibling for td in raw_tds if re.match(id_pattern, td.text)]
-    comment_sheet = [td.next_sibling.next_sibling.next_sibling.next_sibling for td in raw_tds if re.match(id_pattern, td.text)]
-    comment_detail = [td.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling for td in raw_tds if re.match(id_pattern, td.text)]
-    comment_spec = [td.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling for td in raw_tds if re.match(id_pattern, td.text)]
-    comment_class = [comment.text.replace('Comment Classification: ', '') for comment in soup.find_all(class_='commentClassification')]
+        id_pattern = r'^\d{6,8}$'
 
-    comments_dict = {}
-    for comment_id, comment, discipline, sheet, detail, spec, classification in zip(comment_ids, 
-                                                                                    comment_text, 
-                                                                                    comment_discipline, 
-                                                                                    comment_sheet, 
-                                                                                    comment_detail, 
-                                                                                    comment_spec, 
-                                                                                    comment_class):
-        comments_dict[comment_id] = {
-            'comment': comment,
-            'discipline': cleanse_string(get_inner_html(discipline)),
-            'sheet': cleanse_string(get_inner_html(sheet)),
-            'detail': cleanse_string(get_inner_html(detail)),
-            'spec': cleanse_string(get_inner_html(spec)),
-            'classification': classification
-        }
+        comment_ids = [td.text for td in raw_tds if re.match(id_pattern, td.text)]
+        comment_text = [cleanse_string(get_inner_html(comment)) for comment in soup.find_all(class_='report_comment')]
+        comment_discipline = [td.next_sibling.next_sibling for td in raw_tds if re.match(id_pattern, td.text)]
+        comment_sheet = [td.next_sibling.next_sibling.next_sibling.next_sibling for td in raw_tds if re.match(id_pattern, td.text)]
+        comment_detail = [td.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling for td in raw_tds if re.match(id_pattern, td.text)]
+        comment_spec = [td.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling.next_sibling for td in raw_tds if re.match(id_pattern, td.text)]
+        comment_class = [comment.text.replace('Comment Classification: ', '') for comment in soup.find_all(class_='commentClassification')]
 
-    comment_list = []
-    for i, (key, item) in enumerate(comments_dict.items()):
-        comment_list.append([i + 1, key, item['discipline'], item['sheet'], item['detail'], item['spec'], item['comment']])
+        comments_dict = {}
+        for comment_id, comment, discipline, sheet, detail, spec, classification in zip(comment_ids, 
+                                                                                        comment_text, 
+                                                                                        comment_discipline, 
+                                                                                        comment_sheet, 
+                                                                                        comment_detail, 
+                                                                                        comment_spec, 
+                                                                                        comment_class):
+            comments_dict[comment_id] = {
+                'comment': comment,
+                'discipline': cleanse_string(get_inner_html(discipline)),
+                'sheet': cleanse_string(get_inner_html(sheet)),
+                'detail': cleanse_string(get_inner_html(detail)),
+                'spec': cleanse_string(get_inner_html(spec)),
+                'classification': classification
+            }
 
-    return comment_list
+        comment_list = []
+        for i, (key, item) in enumerate(comments_dict.items()):
+            comment_list.append([i + 1, key, item['discipline'], item['sheet'], item['detail'], item['spec'], item['comment']])
+
+        return comment_list
 
 
+
+
+class BidRFI():
+
+    def __init__(self, rfi_id:str, text:str, discipline:str, sheet:str, detail:str, spec:str, classification:str):
+        self.id = rfi_id
+        self.text = text
+        self.discipline = discipline
+        self.sheet = sheet
+        self.detail = detail
+        self.spec= spec
+        self.classification = classification
+    
+    
