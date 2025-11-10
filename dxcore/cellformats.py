@@ -12,6 +12,7 @@ class Widths(IntEnum):
     SMALL_12 = 12
     SMALL_MEDIUM = 15
     MEDIUM = 20
+    MEDIUM_LARGE = 30
     LARGE = 50
     X_LARGE = 70
 
@@ -30,6 +31,17 @@ RESPONSE_COLUMN_WIDTHS = [Widths.SMALL, Widths.MEDIUM,
                         #   Widths.SMALL, 
                           Widths.SMALL, Widths.X_LARGE, Widths.X_SMALL]
 
+BID_LOG_COLUMN_WIDTHS = [
+        Widths.XX_SMALL,
+        Widths.SMALL, Widths.SMALL, Widths.SMALL, Widths.SMALL, Widths.SMALL, 
+        Widths.X_LARGE,
+        Widths.SMALL_12,
+        Widths.SMALL, Widths.SMALL,
+        Widths.MEDIUM_LARGE, Widths.MEDIUM_LARGE,
+        Widths.SMALL, Widths.SMALL,
+        Widths.MEDIUM_LARGE, Widths.SMALL,
+        Widths.MEDIUM_LARGE, Widths.MEDIUM_LARGE, Widths.MEDIUM_LARGE, Widths.MEDIUM_LARGE, Widths.MEDIUM_LARGE, Widths.MEDIUM_LARGE
+    ]
 
 _FONT_NAME = FALLBACKS['font_name']
 _FONT_SIZE = FALLBACKS['font_size']

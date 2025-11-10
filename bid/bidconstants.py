@@ -67,6 +67,11 @@ BID_TABLE_HEADERS = [
     'JED LL Capture'
     ]
 
+
+# See ..dxcore.cellformats for width definitions
+
+
+
 DISCIPLINE_LIST = ['Installation', 
                    'Civil', 
                    'Geotech', 
