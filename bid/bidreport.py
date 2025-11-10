@@ -1,23 +1,31 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
-import os, sys
+import os, sys, shutil
 
-from openpyxl import Workbook
+from openpyxl import load_workbook
 from openpyxl.styles import DEFAULT_FONT
-from openpyxl.worksheet.worksheet import Worksheet
 
 from PyQt6.QtWidgets import QApplication, QFileDialog
 from bidconstants import FALLBACKS, timestamp
 from bidhtml import read_bid_html_to_list
 
+template_path = './bid/template.xlsx'
 
 def batch_create_reports() -> str | bool:
 
     _WRITE_FILE = True
 
+    copied_file_path = os.path.join(os.path.dirname(template_path), f'Bidder RFI Log {timestamp('%Y-%m-%d %H-%M-%S')}.xlsx')
+    copied_file = shutil.copy(template_path, copied_file_path)
+
     DEFAULT_FONT.__init__(name=FALLBACKS['font_name'], size=FALLBACKS['font_size'])
-    wb = Workbook()
+    try:
+        wb = load_workbook(copied_file)
+    except FileNotFoundError as e:
+        print(f'Could not find the template file: {e}')
+        exit()
     
+
     html_path, _ = QFileDialog.getOpenFileName(
         parent=None, 
         caption='Select File Dialog',
@@ -28,22 +36,19 @@ def batch_create_reports() -> str | bool:
     if len(html_path) > 0:
         bidder_rfis = read_bid_html_to_list(html_path=html_path)
         if bidder_rfis:
-            if len(wb.sheetnames) == 1: 
-                ws = wb.active
-                ws.title = 'Bidder RFIs'
+            print('Will create new sheet')
+            ws = wb.create_sheet('Bidder RFIs', index=3)
+            
 
-                
 
-            else:
-                pass  
         if _WRITE_FILE:
-            save_name = os.path.join(os.path.dirname(html_path[0]), f'Bidder RFI Log {timestamp('%Y-%m-%d %H-%M-%S')}.xlsx')
-            wb.save(save_name)
+            # copied_file_path = os.path.join(os.path.dirname(html_path[0]), f'Bidder RFI Log {timestamp('%Y-%m-%d %H-%M-%S')}.xlsx')
+            wb.save(copied_file_path)
         wb.close()
-        print(f'{save_name} written to disk.')
-        os.startfile(os.path.dirname(save_name))
-        os.startfile(save_name)
-        return save_name
+        print(f'{copied_file_path} written to disk.')
+        # os.startfile(os.path.dirname(copied_file_path))
+        # os.startfile(copied_file_path)
+        return copied_file_path
     else:
         return False
         
