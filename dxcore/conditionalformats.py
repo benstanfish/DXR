@@ -3,7 +3,7 @@
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.styles.differential import DifferentialStyle
 from .dxcolor import DXColor
-from dxbuild.variables import FALLBACKS
+from dxbuild.reviewconstants import FALLBACKS
 
 _FONT_NAME = FALLBACKS['font_name']
 _FONT_SIZE = FALLBACKS['font_size']

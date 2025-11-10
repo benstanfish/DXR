@@ -5,7 +5,7 @@ from datetime import datetime
 from heapq import merge
 from typing import List, Dict, Tuple
 
-from .variables import (_TRUE_SYMBOLIC, COMMENT_COLUMNS, RESPONSE_COLUMNS, RESPONSE_VALUES)
+from .reviewconstants import (_TRUE_SYMBOLIC, COMMENT_COLUMNS, RESPONSE_COLUMNS, RESPONSE_VALUES)
 from .parseable import Parseable
 
 # import logging

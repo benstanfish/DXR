@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import (QApplication,
                              QPushButton,
                              QSpacerItem,
                              QSizePolicy,
+                             QScrollArea,
                              QGridLayout,
                              QHBoxLayout,
                              QVBoxLayout,
@@ -417,7 +418,16 @@ class AppWindow(QMainWindow):
     
         # Finish layout creation
         main_layout.addWidget(left_panel)
-        main_layout.addWidget(stage)
+
+        center_scrollable_area = QScrollArea()
+        center_scrollable_area.setMinimumWidth(600)
+        center_scrollable_area.setWidget(stage)
+        center_scrollable_area.setWidgetResizable(True)
+        center_scrollable_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        center_scrollable_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+
+        main_layout.addWidget(center_scrollable_area)
         main_layout.addWidget(right_panel)
 
         main.setLayout(main_layout)

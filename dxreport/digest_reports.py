@@ -9,7 +9,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 from PyQt6.QtWidgets import QApplication, QFileDialog
 
 from dxbuild.reviews import Review
-from dxbuild.variables import FALLBACKS
+from dxbuild.reviewconstants import FALLBACKS
 from dxbuild.buildtools import timestamp, clean_name, autoincrement_name
 from dxreport import singlereport, reviewstats
 

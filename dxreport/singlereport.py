@@ -10,10 +10,10 @@ from openpyxl.worksheet.cell_range import CellRange
 
 from dxbuild.reviews import Review
 import dxbuild.buildtools as buildtools
-from dxbuild.variables import RESPONSE_COLUMNS, USER_NOTES_COLUMNS
+from dxbuild.reviewconstants import RESPONSE_COLUMNS, USER_NOTES_COLUMNS
 from dxcore.conditionalformats import *
 from dxcore.cellformats import *
-from dxbuild.variables import FALLBACKS, _TRUE_SYMBOLIC
+from dxbuild.reviewconstants import FALLBACKS, _TRUE_SYMBOLIC
 
 # from constants import LOG_DIR
 

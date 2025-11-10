@@ -8,7 +8,7 @@ from typing import List, Dict, Tuple
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.worksheet.cell_range import CellRange
 
-from .variables import (COMMENT_COLUMNS, 
+from .reviewconstants import (COMMENT_COLUMNS, 
                         RESPONSE_COLUMNS, 
                         USER_NOTES_COLUMNS,
                         _PROJECT_INFO_INDEX,
@@ -303,7 +303,7 @@ class ReviewComments(Frameable, Parseable):
         self.frames['comments_body'] = CellRange(min_col=1, max_col=self.comment_columns_count, min_row=2, max_row=self.count + 1)
 
         
-        from dxbuild.variables import INDEXED_COMMENT_COLUMNS
+        from dxbuild.reviewconstants import INDEXED_COMMENT_COLUMNS
         self.frames['id_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['id'], max_col=INDEXED_COMMENT_COLUMNS['id'], min_row=2, max_row=self.count + 1)
         self.frames['status_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['status'], max_col=INDEXED_COMMENT_COLUMNS['status'], min_row=2, max_row=self.count + 1)
         self.frames['discipline_column'] = CellRange(min_col=INDEXED_COMMENT_COLUMNS['discipline'], max_col=INDEXED_COMMENT_COLUMNS['discipline'], min_row=2, max_row=self.count + 1)
