@@ -30,7 +30,7 @@ class BidLog(Frameable):
 
     def __init__(self, html_path:str):
         super().__init__()
-        
+
         comments_dictionary = self.from_html(html_path)
 
     @classmethod
@@ -48,7 +48,6 @@ class BidLog(Frameable):
         project_title = project_header.split('Review:')[0].replace('Project: ', '').strip()
 
         raw_tds = soup.find_all('td')
-
         id_pattern = r'^\d{6,8}$'
 
         comment_ids = [td.text for td in raw_tds if re.match(id_pattern, td.text)]
@@ -60,12 +59,12 @@ class BidLog(Frameable):
         comment_class = [comment.text.replace('Comment Classification: ', '') for comment in soup.find_all(class_='commentClassification')]
 
         comments_dict = {}
-        for comment_id, comment, discipline, sheet, detail, spec, classification in zip(comment_ids, 
-                                                                                        comment_text, 
-                                                                                        comment_discipline, 
-                                                                                        comment_sheet, 
-                                                                                        comment_detail, 
-                                                                                        comment_spec, 
+        for comment_id, comment, discipline, sheet, detail, spec, classification in zip(comment_ids,
+                                                                                        comment_text,
+                                                                                        comment_discipline,
+                                                                                        comment_sheet,
+                                                                                        comment_detail,
+                                                                                        comment_spec,
                                                                                         comment_class):
             comments_dict[comment_id] = {
                 'comment': comment,
@@ -79,7 +78,6 @@ class BidLog(Frameable):
         comment_list = []
         for i, (key, item) in enumerate(comments_dict.items()):
             comment_list.append([i + 1, key, item['discipline'], item['sheet'], item['detail'], item['spec'], item['comment']])
-
         return comment_list
 
 
@@ -87,7 +85,14 @@ class BidLog(Frameable):
 
 class BidRFI():
 
-    def __init__(self, rfi_id:str, text:str, discipline:str, sheet:str, detail:str, spec:str, classification:str):
+    def __init__(self,
+                 rfi_id:str,
+                 text:str,
+                 discipline:str,
+                 sheet:str,
+                 detail:str,
+                 spec:str,
+                 classification:str):
         self.id = rfi_id
         self.text = text
         self.discipline = discipline
@@ -95,5 +100,17 @@ class BidRFI():
         self.detail = detail
         self.spec= spec
         self.classification = classification
-    
-    
+
+    def to_list(self, index:str = '') -> list:
+        # Note that 'classification' is not included in the output list.
+        # It's assumed that all fields will be unclassified.
+        return [
+            index,
+            self.id,
+            self.discipline,
+            self.sheet,
+            self.detail,
+            self.spec,
+            self.text
+        ]
+
