@@ -1,15 +1,18 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
 import os, sys, shutil
+from datetime import datetime
 
 from openpyxl import load_workbook
-from openpyxl.styles import DEFAULT_FONT
+from openpyxl.styles import DEFAULT_FONT, Alignment
+from openpyxl.utils.cell import get_column_letter
 
 from PyQt6.QtWidgets import QFileDialog
 from .bidconstants import FALLBACKS, timestamp, BID_TABLE_HEADERS
 from .bidhtml import read_bid_html_to_list
 
 import dxbuild.buildtools as buildtools
+from dxcore.cellformats import BID_LOG_COLUMN_WIDTHS, table_body_wrap_styles, table_body_styles
 
 _template_path = './bid/template.xlsx'
 
@@ -39,14 +42,23 @@ def create_bid_log() -> str | bool:
 
             print('Will create new sheet')
             ws = wb.create_sheet('Bidder RFIs', index=3)
+            ws.sheet_view.showGridLines = False
 
             comments_list = read_bid_html_to_list(html_path)
 
             buildtools.copy_to_range(BID_TABLE_HEADERS, ws, 'A9')
             buildtools.copy_to_range(comments_list, ws, 'A10')
 
+            for i, col_width in enumerate(BID_LOG_COLUMN_WIDTHS):
+                ws.column_dimensions[get_column_letter(i + 1)].width = col_width
 
-
+            top_left_alignment = Alignment(horizontal='left', vertical='top')
+            used_range = ws.calculate_dimension()
+            for row in ws[used_range]:
+                for cell in row:
+                    if isinstance(cell.value, datetime):
+                        cell.number_format = 'm/d/yy'
+                    cell.format = table_body_wrap_styles
 
         else:
             print('No bidder RFIs found in the HTML file.')
