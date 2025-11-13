@@ -9,7 +9,8 @@ from openpyxl.utils.cell import get_column_letter
 
 from PyQt6.QtWidgets import QFileDialog
 from .bidconstants import FALLBACKS, timestamp, BID_TABLE_HEADERS
-from .bidhtml import read_bid_html_to_list
+
+from .bidhtml import read_bid_html_to_list  #TODO refactor this now that we have Classes
 
 import dxbuild.buildtools as buildtools
 from dxcore.cellformats import BID_LOG_COLUMN_WIDTHS, table_body_wrap_styles, table_body_styles

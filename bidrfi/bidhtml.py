@@ -1,5 +1,12 @@
 # Copyright (c) 2018-2025 Ben Fisher
 
+__all__ = [
+    'BidRFI',
+    'BidLog',
+    'get_inner_html',
+    'cleanse_string'
+]
+
 import re, html
 from bs4 import BeautifulSoup, element
 
@@ -23,8 +30,6 @@ def cleanse_string(base_string:str) -> str:
         5. converts html entities back to human-readable characters
     """
     return html.unescape(re.sub(r' +', ' ', base_string).strip().replace('\xa0', ' ').replace('\n', ' ').replace('<br/>', '\n'))
-
-
 
 class BidLog(Frameable):
 
