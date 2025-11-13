@@ -248,7 +248,7 @@ class AppWindow(QMainWindow):
             'DrX Review': {
                 'action': lambda: batch_create_reports(),
                 'image': './assets/drx_review.png',
-                'description': r"Process batch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments."
+                'description': r"Process ba`tch process XML reports, exported from ProjNet Dr Checks reviews, into a colorized Excel report. Summary reports also include reviewer statistics for following up on comments."
             },
             'Bidder RFI': {
                 # 'action': 'lambda: create_bid_log()',
