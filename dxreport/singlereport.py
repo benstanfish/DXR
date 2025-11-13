@@ -100,12 +100,13 @@ def create_report(review:Review, ws: Worksheet) -> bool:
 
         user_notes_states = 'Working, Delegated, Ready, Done, N/A'
         user_notes_states_column = buildtools.build_column_vectors(buildtools.get_columns_by_name('State', TABLE_INFO), TABLE_INFO)
+        print(user_notes_states_column)
         buildtools.add_data_validation_to_column(user_notes_states, user_notes_states_column, ws)
-        buildtools.conditionally_format_range(user_notes_states_column[0], 'working', ws, red_dx)
-        buildtools.conditionally_format_range(user_notes_states_column[0], 'delegated', ws, yellow_dx)
-        buildtools.conditionally_format_range(user_notes_states_column[0], 'ready', ws, green_dx)
-        buildtools.conditionally_format_range(user_notes_states_column[0], 'done', ws, blue_dx)
-        buildtools.conditionally_format_range(user_notes_states_column[0], 'n/a', ws, gray_dx)
+        buildtools.conditionally_format_range(user_notes_states_column[1], 'working', ws, red_dx)
+        buildtools.conditionally_format_range(user_notes_states_column[1], 'delegated', ws, yellow_dx)
+        buildtools.conditionally_format_range(user_notes_states_column[1], 'ready', ws, green_dx)
+        buildtools.conditionally_format_range(user_notes_states_column[1], 'done', ws, blue_dx)
+        buildtools.conditionally_format_range(user_notes_states_column[1], 'n/a', ws, gray_dx)
 
         status_options = 'Concur, For Information Only, Non-Concur, Check and Resolve'
         status_column_letters = buildtools.get_columns_by_name('status', TABLE_INFO)
