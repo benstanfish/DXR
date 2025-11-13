@@ -1,0 +1,134 @@
+# Proto-POAM Ideas
+
+### Design Concerns
+- Contract vehicle-related mentality
+	- DBB
+	- DB
+- Funding source constraints
+	- Host-Nation
+	- MILCON
+	- SRM
+	- O&M
+	- NAF
+	- Other
+- Cost Estimate Concerns
+	- CWE exceeds PA by 10%
+	- CWE under PA by...
+- Long lead items 
+- Spare parts
+- Phasing
+- Bid Options/CLINs
+- GFCI or GFGI
+- FF&E
+- Special equipment installed
+- Special equipment to build
+- Waiver/exemptions: design requires UFC exemptions (planning premised on seeking UFC exceptions)
+- J/As
+	- Existing J/As
+	- Expiration dates of J/As
+	- Needed J/As
+- Site approval requirements
+- Utility conflicts
+- Environmental concerns
+- [[Code Triggers]]
+	- Life Safety: UFC 1-200-01, Sec. 302.1.1: NFPA 101 compliance?
+	- Seismic Assessment (30% UFC 3-301-01)
+	- ATFP (cf. UFC 1-200-01, Sec. 302.2.3), 50%
+	- Progressive Collapse (UFC 4-010-01)
+	- Sustainability (cf. UFC 1-200-01, Sec. 302.2.2, Table 1-1 and Ch. 2)
+	- Phasing (UFC 1-200-01, Sec. 3-3, 302.2.7 (cf. UFC 3-701-01))
+	- Fire Protection:
+		- UFC 1-200-01, 302.2.5 (50% replacement cost)
+		- Sec. 3-8.2.1 (50% floor plan) or 3-8.3.1
+- Construction practice differences
+- Acceptable alternatives 
+- DD1391 compliance 
+	- Scope 
+	- Budget 
+	- CSRA
+- MCX or COS involvement
+- SCIF/SIPRNet/NIPRNet
+- Paperwork/Submittal deficiencies
+- Host Nation (civil) influence/dependencies/requirements 
+- Adjacency influence/dependencies 
+- Must match/integrate with existing 
+- Drawing issues 
+- Specs issues
+- QC documentation 
+- ECIFP
+- DA
+- Investigations
+	- Hazmat
+	- Geotechnical
+		- Basic characterisation 
+		- GPR
+		- Shear wave velocity testing 
+	- Topo
+	- Utilities locates
+	- Seismic Assessment 
+- Known HAZMAT concerns
+	- ACM
+	- Lead/PCB
+	- Arsenic
+	- Radon
+- UXO
+- Cultural studies 
+- Historic considerations
+- DD1354 - property transfer
+- As-builts and existing data
+- Local US requirements
+	- Service component 
+	- Installation 
+	- Unit
+- Blast protection design
+- Explosive safety review/certification
+- Blast arc encumbrance 
+- Physical security
+- ABA/ADA considerations
+	- Building compliance
+	- Site compliance
+- Deep foundations 
+- Soil improvements
+- Site approval constraints and requirements 
+- Site drainage plans
+- Height Restrictions 
+- Commissioning requirements
+- Third party certification
+- OPR (JDDG 18.4)
+- Electrical power requirements
+- Cyber for Facility Related Control Systems
+	- Energy Management and Control Systems (EMCS) 
+    - Utility Monitoring and Control Systems (UMCS)
+	- Electronic Security Systems (ESS)
+	- Building Automation Systems (BAC)
+	- Supervisory Control and Data Acquisition (SCADA) systems
+    - HVAC Direct Digital Controls (DDC) Controls
+	- Network Utility Control Systems
+	- IP-based Smart Meters
+	- IP-based lighting control systems
+	- IP-based public clock systems
+	- IP-based photovoltaic (PV) system monitoring
+	- Fire alarm reporting systems
+- Operations and Maintenance Support Information (OMSI)
+
+
+
+### Performance Concerns
+- Design Phases
+	- Design submittals skipped (e.g. 35%, 65%, etc.)?
+- Design Submittals
+	- Rejected submissions
+	- Delayed submissions
+- Design Delays causing delay in acquistion schedule
+	- During design
+	- During bidder inquiry phase
+- DQCP
+	- No Design QC Plan
+	- Rejected DQCP
+	- A/E not adhering to DQCP
+- Site Investigation Work and Safety Plan
+- CPS (Construction Phase Services) contract
+	- No CPS task order for A/E
+	- Does project complexity warrent CPS?
+- Reports of possible E/O
+
