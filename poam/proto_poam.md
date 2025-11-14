@@ -132,3 +132,125 @@
 	- Does project complexity warrent CPS?
 - Reports of possible E/O
 
+
+### MCX/TCX/COS Involvement
+- USACE Centers of Expertise (https://mrsi.erdc.dren.mil/coe/), ER 1110-1-8158
+- Mandatory Centers of Expertise (MCX)
+	- Centers of Standardization
+		- Fort Worth
+			- Advanced Individual Training Complex
+			- Basic Training and One Station Unit Training Complex
+			- Central Issue Facility
+			- General Purpose Warehouse
+			- Institutional Post-Initial Military Training Unaccompanied Housing
+			- Permanent Party Unaccompanied Housing
+			- Reception Barracks
+			- Unit Supply Support Activity Facility
+		- Huntsville
+			- Child Development - School Age Center (SAC)
+			- Child Development Center - Less than 6 Years of Age
+			- Fire Station
+			- Physical Fitness Center
+			- Soldier Performance Readiness Center
+			- Youth Center
+		- Louisville
+			- Judicial Center with Courtroom
+			- Operational Readiness Training Complex
+			- Senior Leaders Quarters
+		- Middle East
+			- Administration
+			- Billeting
+			- Briefing/Assembly/Classroom
+			- Dining
+			- Envelopes
+			- Fire Station (temporary/semi-permanent)
+			- Force Protection
+			- Headquarters
+			- Joint Operation Center
+			- Latrine
+			- Laundry
+			- Low Density Barracks (Officer Quarters)
+			- Medical
+			- MWR-Fitness
+			- Religious
+			- Tactical Operation Center
+			- Weapon Storage
+		- Mobile
+			- Aircraft Clear Water Rinse Facility
+			- Fixed Wing Aviation Unit Aircraft Maintenance Hangar
+			- Tactical Unmanned Aircraft Systems Maintenance Hangar
+			- TDA Aviation Unit Aircraft Maintenance Hangar
+			- TOE Rotary Wing Aviation Battalion Aircraft Maintenance Hangar
+		- Norfolk
+			- Army Family Housing
+			- Automation-Aided Instruction
+			- Criminal Investigation Command
+			- Enlisted Personnel Dining Facility (EPDF)
+			- General Instruction Building
+			- Information Systems Facility
+			- Non-Commissioned Officer Academy
+		- Omaha
+			- Access Control Points
+			- Chapels
+			- Family Life Center
+			- Initial Entry Training Chapels
+			- Religious Education Facility
+		- Savannah
+			- Air Operations Building and Air Traffic Control Tower (AOB/ATCT)
+			- BattleField Weather Support Facility
+			- Brigade/Battalion Headquarters
+			- Company Operations Facility
+			- Echelons Above Brigade Command & Control Facility
+			- General Purpose Maintenance Facility - Logistics Readiness Center
+			- Tactical Equipment Maintenance Facility
+	- Control System Cybersecurity
+	- Cost Engineering Center of Expertise
+	- Critical Infrastructure Cybersecurity UCIC
+	- Curation/Mgmt Archaeological Collections
+	- Dam Safety Modification
+	- Electronic Security Systems
+	- Environmental and Munitions
+	- Facilities Explosives Safety
+	- Fuel Facilities (Petroleum, Oils and Lubricants)
+	- Homeowners Assistance Program (HAP)
+	- Hydroelectric Design Center
+	- Inland Navigation Design Center
+	- Marine Design Center
+	- Medical Facilities
+	- Missile Defense Mandatory Center of Expertise and Standardization
+	- Modeling, Mapping & Consequences Production Center
+	- Protective Design Center (PDC)
+	- Range Training Land Program (RTLP)
+	- Risk Management Center
+	- Sign Standards Program
+	- Transportation Systems Center (TSMCX)
+	- Utility Monitoring & Control System
+- Technical Centers of Expertise (TCX)
+	- Aircraft Hangar Fire Protection
+	- CAD/BIM Technology Center
+	- Collaboration & Public Participation Center
+	- Corrosion Control & Cathodic Protection
+	- DD1391/Eng Form 3086 Review Center
+	- DoD National Relocation Program (DNRP)
+	- Facility Systems Safety (FASS)
+	- Heating, Ventilating, & Air Conditioning
+	- Historic Structures & Buildings
+	- Historical Photographic Analysis *NEW*
+	- Hydroelectric Design Center Pumping Plant Design
+	- Hydrologic Engineering Center (HEC)
+	- Installation Support
+	- Joint Airborne Lidar Bathymetry Center
+	- Military Housing Privatization Initiative Includes PAL, RCI and UPH
+	- Paint Technology Center
+	- Photogrammetric Mapping
+	- Power Reliability Enhancement Program (PREP)
+	- Rapid Response Technical Center of Expertise (Rapid Response SATOC and Rapid Disaster Infrastructure MATOC)
+	- Remote Sensing/GIS Technology Center
+	- Reserves Real Property Exchange Program
+	- Subsurface Exploration Center
+	- Survey Engineering and Mapping Center
+	- Sustainment Management Systems
+	- Tribal Nation (TNTCX)
+	- Water and Wastewater Treatment
+	- Welding and Metallurgy Technical Center of Expertise
+
