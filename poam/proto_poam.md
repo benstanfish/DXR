@@ -7,6 +7,7 @@
 - Funding source constraints
 	- Host-Nation
 	- MILCON
+		- Army MILCON Code 2 Process & MRSI Wizard (https://mrsi.erdc.dren.mil/code2/)
 	- SRM
 	- O&M
 	- NAF
@@ -20,6 +21,7 @@
 - Bid Options/CLINs
 - GFCI or GFGI
 - FF&E
+	- Huntsville Furniture Program (https://mrsi.erdc.dren.mil/furniture/) - part of Military Installation Design Support TCX
 - Special equipment installed
 - Special equipment to build
 - Waiver/exemptions: design requires UFC exemptions (planning premised on seeking UFC exceptions)
