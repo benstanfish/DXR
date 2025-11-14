@@ -7,7 +7,7 @@
 - Funding source constraints
 	- Host-Nation
 	- MILCON
-		- Army MILCON Code 2 Process & MRSI Wizard (https://mrsi.erdc.dren.mil/code2/)
+		- Army: MILCON Code 2 Process & MRSI Wizard (https://mrsi.erdc.dren.mil/code2/)
 	- SRM
 	- O&M
 	- NAF
@@ -48,7 +48,8 @@
 	- Scope 
 	- Budget 
 	- CSRA
-- MCX or COS involvement
+	- Navy: Consistency Review Board (CRB) comment and review
+- MCX or COS involvement (see below)
 - SCIF/SIPRNet/NIPRNet
 - Paperwork/Submittal deficiencies
 - Host Nation (civil) influence/dependencies/requirements 
@@ -112,8 +113,6 @@
 	- IP-based photovoltaic (PV) system monitoring
 	- Fire alarm reporting systems
 - Operations and Maintenance Support Information (OMSI)
-
-
 
 ### Performance Concerns
 - Design Phases
