@@ -99,6 +99,7 @@
 - Third party certification
 - OPR (JDDG 18.4)
 - Electrical power requirements
+- Electrification Policy (repealed)
 - Cyber for Facility Related Control Systems
 	- Energy Management and Control Systems (EMCS) 
     - Utility Monitoring and Control Systems (UMCS)
