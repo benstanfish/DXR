@@ -21,10 +21,22 @@
 - Force majeure
 
 ## Phase
-- Planning 
+- Planning
 - Design
-- Solicitation 
-- Construction 
-- Handover
-- Operations 
+    - Charrette
+    - Concept
+    - Intermediate
+        - Construction documents for Market Research
+    - Final
+    - Backcheck
+    - RTA
+- Solicitation
+    - Bidder RFIs/Ammendments
+    - Conformed Set
+- Construction
+    - Demolition
+    - Construction
+    - Commissioning/Punchlist
+    - Handover
+- Operations
 
