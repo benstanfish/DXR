@@ -20,6 +20,11 @@
 - Contractor Actions
 - Force majeure
 
-## Topical
-- XXX
+## Phase
+- Planning 
+- Design
+- Solicitation 
+- Construction 
+- Handover
+- Operations 
 
